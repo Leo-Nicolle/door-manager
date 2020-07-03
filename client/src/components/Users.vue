@@ -16,6 +16,7 @@
         </tr>
       </tbody>
     </table>
+    <button @click="onAddUser()">Ajouter Utilisateur</button>
     <User :user="selectedUser" />
   </div>
 </template>
@@ -30,12 +31,17 @@ export default {
       selectedUser: null,
     };
   },
-  props: {
-    users: [],
-  },
+  props: ["users"],
   methods: {
     onUserClick(user) {
       this.selectedUser = user;
+    },
+    onAddUser() {
+      this.selectedUser = {
+        firstname: "",
+        lastname: "",
+        groups: [],
+      };
     },
   },
   components: {
