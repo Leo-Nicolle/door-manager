@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "firstname": "john",
+      "lastname": "doe",
+      "groups": [
+        "admin"
+      ]
+    }
+  ],
+  "doors": []
+}
