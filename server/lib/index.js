@@ -21,6 +21,13 @@ app.get("/user", (req, res) => {
   const users = db.get("users").value();
   res.send(users);
 });
+app.get("/user/:id", (req, res) => {
+  const user = db
+    .get("users")
+    .find({ id: +req.params.id })
+    .value();
+  res.send(user);
+});
 
 // app.post("/user", (req, res) => {});
 

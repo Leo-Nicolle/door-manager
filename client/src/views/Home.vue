@@ -23,6 +23,10 @@ export default {
     axios
       .get("http://localhost:3000/user")
       .then(({ data }) => (this.users = data));
+
+    axios
+      .get("http://localhost:3000/user/1")
+      .then(({ data }) => console.log("icic", data));
   },
   components: {
     Users,
