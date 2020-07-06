@@ -1,0 +1,26 @@
+button,
+input[type="submit"] {
+  display: block;
+  font-family: "Open Sans", Helvetica, Arial, sans-serif;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75em;
+  letter-spacing: 1px;
+  height: 38px;
+  width: 120px;
+  line-height: 38px;
+  overflow: hidden;
+  background: #4dbecf;
+  border-radius: 3px;
+  box-shadow: 0 15px 30px rgba(black, 0.1);
+  border: 0;
+  cursor: pointer;
+}
+
+.validate {
+  background: #04ec87 !important;
+}
+
+.delete {
+  background: #e71b04 !important;
+}

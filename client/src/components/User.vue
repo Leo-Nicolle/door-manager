@@ -1,30 +1,33 @@
 <template>
   <form v-if="user">
-    <label>
-      nom de famille
-      <input
-        :class="getClass('lastname')"
-        type="text"
-        v-model="user.lastname"
-        id="lastname"
-        name="lastname"
-        required
-      />
-    </label>
-    <label>
-      Prenom
-      <input
-        :class="getClass('firstname')"
-        type="text"
-        v-model="user.firstname"
-        id="firstname"
-        name="firstname"
-        required
-      />
-    </label>
-    <div>
-      <input type="submit" value="valider" @click="onSubmit" />
-      <input type="submit" value="anuler" @click="onCancel" />
+    <div class="body">
+      <label>
+        nom de famille
+        <input
+          :class="getClass('lastname')"
+          type="text"
+          v-model="user.lastname"
+          id="lastname"
+          name="lastname"
+          required
+        />
+      </label>
+      <label>
+        Prenom
+        <input
+          :class="getClass('firstname')"
+          type="text"
+          v-model="user.firstname"
+          id="firstname"
+          name="firstname"
+          required
+        />
+      </label>
+    </div>
+    <div class="footer">
+      <input class="validate" type="submit" value="valider" @click="onSubmit" />
+      <button @click="onCancel">cancel</button>
+      <input class="delete" type="submit" value="suprimer" @click="onDelete" />
     </div>
   </form>
 </template>
@@ -48,7 +51,6 @@ export default {
       return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
     },
     onSubmit(event) {
-      console.log("sending");
       axios
         .post(getUrl("user"), this.user)
         .then(({ data }) => console.log("validated", data))
@@ -60,7 +62,15 @@ export default {
         });
     },
     onCancel() {
-      this.$router.push({ name: "Users" });
+      this.$emit("cancel");
+    },
+    onDelete() {
+      axios
+        .delete(getUrl("user"), this.user)
+        .then(({ data }) => console.log("deleted", data))
+        .catch((e) => {
+          console.error(e);
+        });
     },
   },
 };
@@ -69,13 +79,58 @@ export default {
 .invalid {
   background: #f00;
 }
-
 form {
   display: flex;
+  align-items: center;
   flex-direction: column;
-  align-items: start;
+  justify-content: space-between;
+  height: 100%;
+  margin: 20px;
   width: 100%;
-  justify-content: space-around;
-  margin: 0px 20px;
+}
+.body {
+  min-width: 310px;
+  max-width: 500px;
+  align: center;
+}
+
+label {
+  margin: 12px 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+.footer {
+  min-width: calc(100% - 20px);
+  max-width: calc(100% - 20px);
+  display: flex;
+  justify-content: space-between;
+}
+
+&.unfold {
+  transform: scale(1);
+  .modal-background {
+    background: rgba(0, 0, 0, 0);
+    animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    .modal {
+      opacity: 0;
+      animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+  }
+  + .content {
+    animation: scaleBack 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+  }
+  &.out {
+    animation: quickScaleDown 0s 0.5s linear forwards;
+    .modal-background {
+      animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+      .modal {
+        animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+      }
+    }
+    + .content {
+      animation: scaleForward 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
+    }
+  }
 }
 </style>
