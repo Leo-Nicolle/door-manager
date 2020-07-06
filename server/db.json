@@ -7,7 +7,23 @@
       "groups": [
         "admin"
       ]
+    },
+    {
+      "firstname": "toi",
+      "lastname": "cooucou",
+      "groups": []
     }
   ],
-  "doors": []
+  "doors": [],
+  "groups": [
+    {
+      "name": "admin"
+    },
+    {
+      "name": "adherent"
+    },
+    {
+      "name": "coworker"
+    }
+  ]
 }

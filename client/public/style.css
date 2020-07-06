@@ -24,3 +24,10 @@ input[type="submit"] {
 .delete {
   background: #e71b04 !important;
 }
+
+.typeahead-badges > span {
+  font-size: 0.9em;
+}
+.typeahead-badges > :first-child {
+  display: none !important;
+}

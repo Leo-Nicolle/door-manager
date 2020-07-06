@@ -5,5 +5,6 @@ const adapter = new FileSync("db.json");
 const db = low(adapter);
 
 // Set some defaults
-db.defaults({ users: [], doors: [] }).write();
+db.defaults({ users: [], doors: [], groups: [] }).write();
+
 export default db;

@@ -40,20 +40,26 @@ app.post(
       return res.status(422).json({ errors: errors.array() });
     }
     // // modify entry
-    let user;
     if (req.body.id) {
-      user = db
-        .get("users")
+      db.get("users")
         .find({ id: +req.body.id })
         .assign(req.body)
-        .value();
+        .write();
     } else {
       // make new entry
-      user = db.get("users").push(req.body).value();
+      db.get("users").push(req.body).write();
     }
     res.send(200);
   }
 );
+app.delete("/user", (req, res) => {
+  console.log(req.body, req.params);
+});
+
+app.get("/group", (req, res) => {
+  const groups = db.get("groups").value();
+  res.send(groups);
+});
 
 // app.post("/user", (req, res) => {});
 

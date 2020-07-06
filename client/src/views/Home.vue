@@ -25,16 +25,16 @@ export default {
 
     axios.get(getUrl("user/1")).then(({ data }) => console.log("user 1", data));
 
-    axios
-      .post(getUrl("user"), {
-        firstname: "",
-        lastname: "user",
-        groups: [],
-      })
-      .then(({ data }) => console.log("icic", data))
-      .catch((e) => {
-        console.error(e), console.log(e.response.data);
-      });
+    // axios
+    //   .post(getUrl("user"), {
+    //     firstname: "",
+    //     lastname: "user",
+    //     groups: [],
+    //   })
+    //   .then(({ data }) => console.log("icic", data))
+    //   .catch((e) => {
+    //     console.error(e), console.log(e.response.data);
+    //   });
   },
   components: {
     Users,

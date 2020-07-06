@@ -23,6 +23,14 @@
           required
         />
       </label>
+      <label class="long-input">
+        Groupes
+        <VoerroTagsInput
+          v-model="selectedGroups"
+          :existing-tags="groups"
+          :typeahead="true"
+        />
+      </label>
     </div>
     <div class="footer">
       <input class="validate" type="submit" value="valider" @click="onSubmit" />
@@ -35,6 +43,7 @@
 <script>
 import { getUrl } from "../js/utils";
 import axios from "axios";
+import VoerroTagsInput from "@voerro/vue-tagsinput";
 
 export default {
   name: "User",
@@ -44,11 +53,28 @@ export default {
   data() {
     return {
       invalidFields: [],
+      groups: [],
+      selectedGroups: [],
     };
+  },
+  watch: {
+    user: function() {
+      console.log("ici");
+      this.fetchGroups();
+    },
   },
   methods: {
     getClass(fieldName) {
       return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
+    },
+    fetchGroups() {
+      axios
+        .get(getUrl("group"))
+        .then(
+          ({ data }) =>
+            (this.groups = data.map(({ name }) => ({ value: name })))
+        )
+        .then(() => console.log("groups", this.groups));
     },
     onSubmit(event) {
       axios
@@ -72,6 +98,12 @@ export default {
           console.error(e);
         });
     },
+  },
+  mounted() {
+    this.fetchGroups();
+  },
+  components: {
+    VoerroTagsInput,
   },
 };
 </script>
@@ -106,31 +138,6 @@ label {
   display: flex;
   justify-content: space-between;
 }
-
-&.unfold {
-  transform: scale(1);
-  .modal-background {
-    background: rgba(0, 0, 0, 0);
-    animation: fadeIn 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    .modal {
-      opacity: 0;
-      animation: scaleUp 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
-  }
-  + .content {
-    animation: scaleBack 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-  }
-  &.out {
-    animation: quickScaleDown 0s 0.5s linear forwards;
-    .modal-background {
-      animation: fadeOut 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-      .modal {
-        animation: scaleDown 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-      }
-    }
-    + .content {
-      animation: scaleForward 0.5s cubic-bezier(0.165, 0.84, 0.44, 1) forwards;
-    }
-  }
+.long-input {
 }
 </style>
