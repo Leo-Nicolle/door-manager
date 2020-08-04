@@ -25,11 +25,7 @@
       </label>
       <label class="long-input">
         Groupes
-        <VoerroTagsInput
-          v-model="selectedGroups"
-          :existing-tags="groups"
-          :typeahead="true"
-        />
+        <VoerroTagsInput v-model="selectedGroups" :existing-tags="groups" :typeahead="true" />
       </label>
     </div>
     <div class="footer">
@@ -58,8 +54,7 @@ export default {
     };
   },
   watch: {
-    user: function() {
-      console.log("ici");
+    user: function () {
       this.fetchGroups();
     },
   },

@@ -22,8 +22,27 @@ export default {
   },
   mounted() {
     axios.get(getUrl("user")).then(({ data }) => (this.users = data));
+    axios.get(getUrl("group")).then(({ data }) => console.log("/group", data));
 
     axios.get(getUrl("user/1")).then(({ data }) => console.log("user 1", data));
+    axios
+      .get(getUrl("testAuth"))
+      .then(({ data }) => console.log("testAuth", data))
+      .catch((e) => console.error("auth error", e.response.data));
+
+    axios
+      .post(getUrl("login"), {
+        email: "toi.coucou@mail.com",
+        password: "password",
+      })
+      .then(({ data }) => {
+        console.log("auth", data);
+        axios
+          .get(getUrl("testAuth"))
+          .then(({ data }) => console.log("testAuth2", data))
+          .catch((e) => console.error("auth error2", e.response.data));
+      })
+      .catch((e) => console.error("auth error", e.response.data));
 
     // axios
     //   .post(getUrl("user"), {
