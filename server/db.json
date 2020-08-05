@@ -7,6 +7,7 @@
       "email": "john.doe@mail.com",
       "password": "password",
       "groups": [
+        "adherent",
         "admin"
       ],
       "token": "ac4875cc-7469-4d07-ae4b-ad0f4cd63e32"
@@ -17,7 +18,9 @@
       "lastname": "cooucou",
       "email": "toi.coucou@mail.com",
       "password": "password",
-      "groups": [],
+      "groups": [
+        "admin"
+      ],
       "tokens": [],
       "token": "af15ece1-d153-4934-b00f-c37c71168eaf"
     }

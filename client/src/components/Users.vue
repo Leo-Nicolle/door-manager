@@ -6,6 +6,7 @@
           <th>Nom</th>
           <th>Prenom</th>
           <th>Badges</th>
+          <th>Groupes</th>
         </tr>
       </thead>
       <tbody>
@@ -13,6 +14,7 @@
           <td>{{ user.lastname }}</td>
           <td>{{ user.firstname }}</td>
           <td>TODO</td>
+          <td>{{ user.groups.join(" ") }}</td>
         </tr>
       </tbody>
     </table>
@@ -26,15 +28,17 @@
 <script>
 import User from "./User";
 import Modal from "./Modal";
+import axios from "axios";
+import { getUrl } from "../js/utils";
 
 export default {
   name: "Users",
   data() {
     return {
+      users: [],
       selectedUser: null,
     };
   },
-  props: ["users"],
   methods: {
     onUserClick(user) {
       this.selectedUser = user;
@@ -53,6 +57,9 @@ export default {
   components: {
     User,
     Modal,
+  },
+  mounted() {
+    axios.get(getUrl("user")).then(({ data }) => (this.users = data));
   },
 };
 </script>

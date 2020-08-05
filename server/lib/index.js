@@ -87,7 +87,7 @@ app.get("/user/:id", authMiddleware, (req, res) => {
   res.send(user);
 });
 app.post(
-  "/user/",
+  "/user",
   authMiddleware,
   [
     body("lastname").isString().notEmpty(),
@@ -99,8 +99,9 @@ app.post(
     if (!errors.isEmpty()) {
       return res.status(422).json({ errors: errors.array() });
     }
-    // // modify entry
+    // modify entry
     if (req.body.id) {
+      console.log("modify entry", req.body);
       db.get("users")
         .find({ id: +req.body.id })
         .assign(req.body)

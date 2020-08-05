@@ -25,7 +25,11 @@
       </label>
       <label class="long-input">
         Groupes
-        <VoerroTagsInput v-model="selectedGroups" :existing-tags="groups" :typeahead="true" />
+        <VoerroTagsInput
+          v-model="selectedGroups"
+          :existing-tags="groups"
+          :typeahead="true"
+        />
       </label>
     </div>
     <div class="footer">
@@ -54,24 +58,28 @@ export default {
     };
   },
   watch: {
-    user: function () {
-      this.fetchGroups();
+    user: function() {
+      this.fetchGroups().then(() => this.updateSelectedGroups());
     },
   },
   methods: {
+    updateSelectedGroups() {
+      if (!this.user) return;
+      this.selectedGroups = this.user.groups.map((g) => ({ value: g }));
+    },
     getClass(fieldName) {
       return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
     },
     fetchGroups() {
-      axios
+      return axios
         .get(getUrl("group"))
         .then(
           ({ data }) =>
             (this.groups = data.map(({ name }) => ({ value: name })))
-        )
-        .then(() => console.log("groups", this.groups));
+        );
     },
     onSubmit(event) {
+      this.user.groups = this.selectedGroups.map(({ value }) => value);
       axios
         .post(getUrl("user"), this.user)
         .then(({ data }) => console.log("validated", data))
@@ -96,6 +104,7 @@ export default {
   },
   mounted() {
     this.fetchGroups();
+    this.updateSelectedGroups();
   },
   components: {
     VoerroTagsInput,
