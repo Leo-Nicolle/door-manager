@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Utilisateurs</router-link>|
+      <router-link to="/user">Utilisateurs</router-link>|
       <router-link to="/group">Groupes</router-link>|
       <router-link to="/login">login</router-link>
     </div>

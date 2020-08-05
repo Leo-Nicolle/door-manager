@@ -5,7 +5,6 @@
         <label>
           email
           <input
-            :class="getClass('email')"
             type="text"
             v-model="userData.email"
             id="email"
@@ -16,7 +15,6 @@
         <label>
           Prenom
           <input
-            :class="getClass('password')"
             type="password"
             v-model="userData.password"
             id="password"
@@ -24,6 +22,7 @@
             required
           />
         </label>
+        <p class="invalid">{{ errorMessage }}</p>
       </div>
       <div class="footer">
         <!-- <input class="validate" type="submit" value="login" @click="onSubmit" /> -->
@@ -38,14 +37,10 @@ import { getUrl } from "../js/utils";
 import axios from "axios";
 
 export default {
-  name: "User",
-  props: {
-    user: null,
-  },
+  name: "Login",
   data() {
     return {
-      invalidFields: [],
-
+      errorMessage: "",
       userData: {
         email: "",
         password: "",
@@ -53,21 +48,21 @@ export default {
     };
   },
   methods: {
-    getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
-    },
-
-    onSubmit(event) {
+    onSubmit() {
+      this.errorMessage = "";
       axios
-        .post(getUrl("login"), this.userData)
-        .then(() => {
+        .post(getUrl("login"), {
+          email: this.userData.email,
+          // TODO: use hash
+          password: this.userData.password,
+        })
+        .then(({ data }) => {
+          localStorage.setItem("token", data.token);
           this.$router.push("/user");
         })
         .catch((e) => {
-          if (!e.response.data) return console.error(e);
-          console.log("response error", e.response.data[2].message);
-          event.preventDefault();
-          event.stopPropagation();
+          this.errorMessage = "Mauvais login ou mot de passe";
+          console.error("auth error", e.response.data);
         });
     },
   },
@@ -75,5 +70,4 @@ export default {
   components: {},
 };
 </script>
-<style>
-</style>
+<style></style>

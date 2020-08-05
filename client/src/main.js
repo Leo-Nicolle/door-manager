@@ -8,7 +8,7 @@ Vue.config.productionTip = false;
 Vue.use(VueCookies);
 
 // Add a request interceptor
-axios.interceptors.request.use(function(config) {
+axios.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   config.headers.authorization = token;
   return config;

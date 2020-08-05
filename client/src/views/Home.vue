@@ -31,21 +31,6 @@ export default {
       .then(({ data }) => console.log("testAuth", data))
       .catch((e) => console.error("auth error", e.response.data));
 
-    // axios
-    //   .post(getUrl("login"), {
-    //     email: "toi.coucou@mail.com",
-    //     password: "password",
-    //   })
-    //   .then(({ data }) => {
-    //     console.log("data", data);
-    //     localStorage.setItem("token", data.token);
-    //     axios
-    //       .get(getUrl("testAuth"))
-    //       .then(({ data }) => console.log("testAuth2", data))
-    //       .catch((e) => console.error("auth error2", e.response.data));
-    //   })
-    //   .catch((e) => console.error("auth error", e.response.data));
-
     axios
       .post(getUrl("user"), {
         firstname: "",

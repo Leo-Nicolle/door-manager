@@ -18,6 +18,9 @@ const routes = [
     path: "/user",
     name: "Users",
     component: Home,
+    meta: {
+      requiresAuth: true,
+    },
   },
   {
     path: "/login",
@@ -28,6 +31,9 @@ const routes = [
     path: "/group",
     name: "Group",
     component: Groups,
+    meta: {
+      requiresAuth: true,
+    },
   },
 
   {
@@ -45,6 +51,20 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+});
+
+router.beforeEach((to, from, next) => {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (localStorage.getItem("token") == null) {
+      next({
+        path: "/login",
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;
