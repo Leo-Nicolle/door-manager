@@ -2,6 +2,7 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../components/Login.vue";
+import Groups from "../components/Groups.vue";
 
 // import Users from "../components/Users.vue";
 
@@ -22,6 +23,11 @@ const routes = [
     path: "/login",
     name: "Login",
     component: Login,
+  },
+  {
+    path: "/group",
+    name: "Group",
+    component: Groups,
   },
 
   {
