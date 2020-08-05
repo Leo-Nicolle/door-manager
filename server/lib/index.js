@@ -3,44 +3,10 @@ import express from "express";
 import * as Utils from "./Utils";
 import db from "./database";
 import cors from "cors";
-// var cors = require("cors");
 import { body, validationResult } from "express-validator";
 import bodyParser from "body-parser";
-import cookieSession from "cookie-session";
 import passport from "passport";
-import { Strategy } from "passport-local";
-
-let app = express();
-app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-
-app.use(
-  cookieSession({
-    name: "labaux-session",
-    keys: ["vueauthrandomkey"],
-    maxAge: 24 * 60 * 60 * 1000, // 24 hours
-  })
-);
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(
-  new Strategy(
-    {
-      usernameField: "email",
-      passwordField: "password",
-    },
-
-    (username, password, done) => {
-      const user = db.get("users").find({ email: username, password }).value();
-      if (user) {
-        done(null, user);
-      } else {
-        done(null, false, { message: "Incorrect username or password" });
-      }
-    }
-  )
-);
+import { v4 as uuid } from "uuid";
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -53,60 +19,67 @@ passport.deserializeUser((id, done) => {
 });
 
 const authMiddleware = (req, res, next) => {
-  if (!req.isAuthenticated()) {
-    res.status(401).send("You are not authenticated");
-  } else {
-    return next();
+  try {
+    const token = req.headers.authorization.replace("Bearer ", "");
+    const user = db.get("users").find({ token }).value();
+    if (!user) {
+      console.log("auth failed");
+      throw new Error("Authtentication failed");
+    }
+    console.log("logged in");
+    next();
+  } catch (err) {
+    return res.status(401).json({
+      message: "Authentification Failed",
+    });
   }
 };
-// app.use(authMiddleware);
+
+let app = express();
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.get("/", (req, res) => {
   res.send("text");
 });
 
 app.post("/login", (req, res, next) => {
-  console.log("log in !");
-  passport.authenticate("local", (err, user, info) => {
-    if (err) {
-      return next(err);
-    }
-
-    if (!user) {
-      console.log("cannot log in !", info);
-
-      return res.status(400).send([user, "Cannot log in", info]);
-    }
-    req.login(user, (err) => {
-      res.send("Logged in");
-    });
-  })(req, res, next);
+  const email = req.body.email;
+  const password = req.body.password;
+  const user = db.get("users").find({ email, password }).value();
+  if (!user) {
+    return res.status(401).send("Wrong email or password");
+  }
+  const token = uuid();
+  db.get("users").find({ email, password }).assign({ token }).write();
+  res.status(201).json({ user, token });
 });
 
 app.get("/api/logout", function (req, res) {
-  req.logout();
-
-  console.log("logged out");
-
+  const token = db
+    .get("users")
+    .find({ email, password })
+    .assign({ token })
+    .write()
+    .then(() => res.status(201).json({ user, token }));
   return res.send();
 });
 
 app.get("/testAuth", authMiddleware, (req, res) => {
   console.log("test auth");
-  res.send(400);
-  // let user = users.find((user) => {
-  //   return user.id === req.session.passport.user;
-  // });
-
-  // console.log([user, req.session]);
-
-  // res.send({ user: user });
+  res.send(200);
 });
 
-app.get("/user", (req, res) => {
+app.get("/user", authMiddleware, (req, res) => {
+  console.log("/USER ! ");
   const users = db.get("users").value();
   res.send(users);
 });
-app.get("/user/:id", (req, res) => {
+app.get("/user/:id", authMiddleware, (req, res) => {
   const user = db
     .get("users")
     .find({ id: +req.params.id })
@@ -115,6 +88,7 @@ app.get("/user/:id", (req, res) => {
 });
 app.post(
   "/user/",
+  authMiddleware,
   [
     body("lastname").isString().notEmpty(),
     body("firstname").isString().notEmpty(),
@@ -138,11 +112,11 @@ app.post(
     res.send(200);
   }
 );
-app.delete("/user", (req, res) => {
+app.delete("/user", authMiddleware, (req, res) => {
   console.log(req.body, req.params);
 });
 
-app.get("/group", (req, res) => {
+app.get("/group", authMiddleware, (req, res) => {
   console.log("request groups");
   const groups = db.get("groups").value();
   res.send(groups);

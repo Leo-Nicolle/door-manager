@@ -16,7 +16,9 @@
       "lastname": "cooucou",
       "email": "toi.coucou@mail.com",
       "password": "password",
-      "groups": []
+      "groups": [],
+      "tokens": [],
+      "token": "af15ece1-d153-4934-b00f-c37c71168eaf"
     }
   ],
   "doors": [],

@@ -21,6 +21,7 @@ export default {
     };
   },
   mounted() {
+    console.log("token", localStorage.getItem("token"));
     axios.get(getUrl("user")).then(({ data }) => (this.users = data));
     axios.get(getUrl("group")).then(({ data }) => console.log("/group", data));
 
@@ -30,30 +31,31 @@ export default {
       .then(({ data }) => console.log("testAuth", data))
       .catch((e) => console.error("auth error", e.response.data));
 
-    axios
-      .post(getUrl("login"), {
-        email: "toi.coucou@mail.com",
-        password: "password",
-      })
-      .then(({ data }) => {
-        console.log("auth", data);
-        axios
-          .get(getUrl("testAuth"))
-          .then(({ data }) => console.log("testAuth2", data))
-          .catch((e) => console.error("auth error2", e.response.data));
-      })
-      .catch((e) => console.error("auth error", e.response.data));
-
     // axios
-    //   .post(getUrl("user"), {
-    //     firstname: "",
-    //     lastname: "user",
-    //     groups: [],
+    //   .post(getUrl("login"), {
+    //     email: "toi.coucou@mail.com",
+    //     password: "password",
     //   })
-    //   .then(({ data }) => console.log("icic", data))
-    //   .catch((e) => {
-    //     console.error(e), console.log(e.response.data);
-    //   });
+    //   .then(({ data }) => {
+    //     console.log("data", data);
+    //     localStorage.setItem("token", data.token);
+    //     axios
+    //       .get(getUrl("testAuth"))
+    //       .then(({ data }) => console.log("testAuth2", data))
+    //       .catch((e) => console.error("auth error2", e.response.data));
+    //   })
+    //   .catch((e) => console.error("auth error", e.response.data));
+
+    axios
+      .post(getUrl("user"), {
+        firstname: "",
+        lastname: "user",
+        groups: [],
+      })
+      .then(({ data }) => console.log("icic", data))
+      .catch((e) => {
+        console.error(e), console.log(e.response.data);
+      });
   },
   components: {
     Users,
