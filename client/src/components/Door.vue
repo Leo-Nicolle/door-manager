@@ -1,38 +1,17 @@
 <template>
-  <form v-if="group">
+  <form v-if="door">
     <div class="body">
       <label>
         nom
         <input
           :class="getClass('name')"
           type="text"
-          v-model="group.name"
+          v-model="door.name"
           id="name"
           name="name"
           required
         />
       </label>
-      <div>
-        <label>
-          Portes
-          <span>
-            <label v-for="(door,i) in doors" :key="i">
-              {{door}}
-              <input
-                :class="getClass(`door-${i}`)"
-                type="checkbox"
-                id="`door-${i}`"
-                name="`door-${i}`"
-                required
-              />
-            </label>
-          </span>
-        </label>
-        <label>
-          Horraires
-          <button>Definir</button>
-        </label>
-      </div>
     </div>
     <div class="footer">
       <input class="validate" type="submit" value="valider" @click="onSubmit" />
@@ -47,37 +26,27 @@ import { getUrl } from "../js/utils";
 import axios from "axios";
 
 export default {
-  name: "Group",
+  name: "Door",
   props: {
-    group: null,
+    door: null,
   },
   data() {
     return {
       invalidFields: [],
-      doors: [],
     };
   },
   watch: {
-    group: function () {
-      this.fetchGroups();
+    door: function () {
+      this.fetchDoors();
     },
   },
   methods: {
     getClass(fieldName) {
       return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
     },
-    fetchSchedules() {
-      axios
-        .get(getUrl("schedule"))
-        .then(
-          ({ data }) =>
-            (this.schedules = data.map(({ name }) => ({ value: name })))
-        )
-        .then(() => console.log("groups", this.groups));
-    },
     onSubmit(event) {
       axios
-        .post(getUrl("group"), this.group)
+        .post(getUrl("door"), this.door)
         .then(({ data }) => console.log("validated", data))
         .catch((e) => {
           if (!e.response.data) return console.error(e);
@@ -91,15 +60,12 @@ export default {
     },
     onDelete() {
       axios
-        .delete(getUrl("group"), this.group)
+        .delete(getUrl("door"), this.door)
         .then(({ data }) => console.log("deleted", data))
         .catch((e) => {
           console.error(e);
         });
     },
-  },
-  mounted() {
-    this.fetchSchedules();
   },
 };
 </script>

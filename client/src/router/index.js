@@ -5,6 +5,7 @@ import Login from "../components/Login.vue";
 import Groups from "../components/Groups.vue";
 import Users from "../components/Users.vue";
 import Schedules from "../components/Schedules.vue";
+import Doors from "../components/Doors.vue";
 
 // import Users from "../components/Users.vue";
 
@@ -33,6 +34,14 @@ const routes = [
     path: "/group",
     name: "Group",
     component: Groups,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/door",
+    name: "Door",
+    component: Doors,
     meta: {
       requiresAuth: true,
     },
