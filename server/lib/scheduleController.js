@@ -16,12 +16,15 @@ export default function scheduleController({ app, db, authMiddleware }) {
   app.post(
     "/schedule",
     authMiddleware,
-    [body("name").isString().notEmpty()],
+    [body("name").isString().notEmpty(), body("days").isArray().notEmpty()],
     (req, res) => {
-      const errors = validationResult(req);
+      let errors = validationResult(req);
+      // validate times:
+      // TODO!!
       if (!errors.isEmpty()) {
         return res.status(422).json({ errors: errors.array() });
       }
+      console.log("post schedules", req.body.days[0]);
       // modify entry
       if (req.body.id) {
         db.get("schedules").find({ id: req.body.id }).assign(req.body).write();

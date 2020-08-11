@@ -23,6 +23,7 @@ export default function groupController({ app, db, authMiddleware }) {
         return res.status(422).json({ errors: errors.array() });
       }
       // modify entry
+      console.log(JSON.stringify(req.body));
       if (req.body.id) {
         db.get("groups").find({ id: req.body.id }).assign(req.body).write();
       } else {

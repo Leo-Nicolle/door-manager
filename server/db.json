@@ -31,7 +31,73 @@
     },
     {
       "name": "coworker"
+    },
+    {
+      "id": "2abfe54f-ecd3-4621-b3dd-ca749aca4971",
+      "name": "admin",
+      "doorAccess": []
+    },
+    {
+      "id": "f0bbad10-7000-4998-8fcf-08d185175ec3",
+      "name": "dsad",
+      "doorAccess": []
     }
   ],
-  "schedules": []
+  "schedules": [
+    {
+      "id": "a082136e-c712-413d-a1b0-6202cb950345",
+      "name": "tout tout le temps",
+      "days": [
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ],
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ],
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ],
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ],
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ],
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ],
+        [
+          {
+            "start": null,
+            "end": null,
+            "allDay": false
+          }
+        ]
+      ]
+    }
+  ]
 }

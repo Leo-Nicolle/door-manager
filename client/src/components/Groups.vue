@@ -37,9 +37,8 @@ export default {
     },
     onAddGroup() {
       this.selectedGroup = {
-        firstname: "",
-        lastname: "",
-        groups: [],
+        name: "",
+        doorAccess: [],
       };
     },
     onCancel() {

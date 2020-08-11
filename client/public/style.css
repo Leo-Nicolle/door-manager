@@ -31,3 +31,7 @@ input[type="submit"] {
 .typeahead-badges > :first-child {
   display: none !important;
 }
+
+.hidden {
+  visibility: hidden;
+}

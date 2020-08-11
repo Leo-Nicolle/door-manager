@@ -24,13 +24,13 @@
       </div>
       <div>
         <label>
-          <input type="checkbox" v-model="schedule[indexDay].allDay" />
+          <input type="checkbox" v-model="schedule.days[indexDay].allDay" />
           Toute la journee
         </label>
         <span
           class="date-container"
-          :visible="!schedule[indexDay].allDay"
-          v-for="(interval, j) in schedule[indexDay]"
+          :class="getDateContainerClass(indexDay)"
+          v-for="(interval, j) in schedule.days[indexDay]"
           :key="j"
         >
           <p>de</p>
@@ -65,7 +65,7 @@ import TimePicker from "vue2-timepicker";
 import "vue2-timepicker/dist/VueTimepicker.css";
 export default {
   name: "Schedule",
-  props: {},
+  props: ["schedule"],
   data() {
     return {
       invalidFields: [],
@@ -79,18 +79,7 @@ export default {
         "samedi",
         "dimanche",
       ],
-      schedule: new Array(7).fill(0).map(() => [
-        {
-          start: null,
-          end: null,
-        },
-      ]),
     };
-  },
-  watch: {
-    schedule: function () {
-      this.fetchSchedules();
-    },
   },
   methods: {
     getDayButtonClass(i) {
@@ -99,8 +88,11 @@ export default {
     getClass(fieldName) {
       return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
     },
+    getDateContainerClass(indexDay) {
+      return this.schedule.days[indexDay].allDay ? "hidden" : "";
+    },
     onDatePicked(i, j) {
-      const intervals = this.schedule[i];
+      const intervals = this.schedule.days[i];
       const { start, end } = intervals[j];
       if (
         start &&
@@ -111,11 +103,7 @@ export default {
         end.hh &&
         end.mm
       ) {
-        intervals.push({ start: null, end: null });
-        // this.schedule = this.schedule
-        //   .slice(0, i)
-        //   .concat(interval.concat({ start: null, end: null }))
-        //   .concat(this.schedule.slice(i + 1));
+        intervals.push({ start: null, end: null, allDay: false });
       }
     },
     onDayClick(i, evt) {
@@ -125,18 +113,9 @@ export default {
       evt.preventDefault();
     },
 
-    fetchSchedules() {
-      axios
-        .get(getUrl("schedule"))
-        .then(
-          ({ data }) =>
-            (this.schedules = data.map(({ name }) => ({ value: name })))
-        )
-        .then(() => console.log("schedules", this.schedules));
-    },
     onSubmit(event) {
       axios
-        .post(getUrl("schedule"), this.schedule)
+        .post(getUrl("schedule"), JSON.parse(JSON.stringify(this.schedule)))
         .then(({ data }) => console.log("validated", data))
         .catch((e) => {
           if (!e.response.data) return console.error(e);
@@ -144,6 +123,9 @@ export default {
           this.invalidFields = e.response.data.errors.map(({ param }) => param);
           event.preventDefault();
         });
+      console.log(event);
+      event.preventDefault();
+      event.stopPropagation();
     },
     onCancel() {
       this.$emit("cancel");
@@ -156,9 +138,6 @@ export default {
           console.error(e);
         });
     },
-  },
-  mounted() {
-    this.fetchSchedules();
   },
   components: { TimePicker },
 };

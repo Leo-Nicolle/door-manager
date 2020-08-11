@@ -22,30 +22,41 @@
 <script>
 import Schedule from "./Schedule";
 import Modal from "./Modal";
+import axios from "axios";
+import { getUrl } from "../js/utils";
 
 export default {
   name: "Schedules",
   data() {
     return {
       selectedSchedule: null,
+      schedules: [],
     };
   },
-  props: ["schedules"],
   methods: {
     onScheduleClick(schedule) {
       this.selectedSchedule = schedule;
     },
     onAddSchedule() {
       this.selectedSchedule = {
-        firstname: "",
-        lastname: "",
-        schedules: [],
+        name: "",
+        days: new Array(7).fill(0).map(() => [
+          {
+            start: null,
+            end: null,
+            allDay: false,
+          },
+        ]),
       };
     },
     onCancel() {
       this.selectedSchedule = null;
     },
   },
+  mounted() {
+    axios.get(getUrl("schedule")).then(({ data }) => (this.schedules = data));
+  },
+
   components: {
     Schedule,
     Modal,

@@ -12,25 +12,26 @@
           required
         />
       </label>
+      <div class="large-form-container">
+        <span class="date-container">
+          <button
+            v-for="(door,i) in doors"
+            :key="i"
+            @click="onDoorClick(i, $event)"
+            :class="getDoorButtonClass(i)"
+          >{{door.name}}</button>
+        </span>
+      </div>
       <div>
         <label>
-          Portes
-          <span>
-            <label v-for="(door,i) in doors" :key="i">
-              {{door}}
-              <input
-                :class="getClass(`door-${i}`)"
-                type="checkbox"
-                id="`door-${i}`"
-                name="`door-${i}`"
-                required
-              />
-            </label>
-          </span>
-        </label>
-        <label>
-          Horraires
-          <button>Definir</button>
+          Horraire
+          <select type="select" v-model="group.doorAccess[doors[indexDoor].id]">
+            <option
+              v-for="(schedule, j) in schedules"
+              :key="j"
+              :value="schedule.id"
+            >{{schedule.name}}</option>
+          </select>
         </label>
       </div>
     </div>
@@ -55,25 +56,29 @@ export default {
     return {
       invalidFields: [],
       doors: [],
+      schedules: [],
+      indexDoor: 0,
     };
-  },
-  watch: {
-    group: function () {
-      this.fetchGroups();
-    },
   },
   methods: {
     getClass(fieldName) {
       return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
     },
+    getDoorButtonClass(i) {
+      return i === this.indexDoor ? "validate" : "";
+    },
+
+    onDoorClick(i, evt) {
+      this.indexDoor = i;
+      evt.stopPropagation();
+      evt.preventDefault();
+    },
+
     fetchSchedules() {
-      axios
-        .get(getUrl("schedule"))
-        .then(
-          ({ data }) =>
-            (this.schedules = data.map(({ name }) => ({ value: name })))
-        )
-        .then(() => console.log("groups", this.groups));
+      axios.get(getUrl("schedule")).then(({ data }) => (this.schedules = data));
+    },
+    fetchDoors() {
+      axios.get(getUrl("door")).then(({ data }) => (this.doors = data));
     },
     onSubmit(event) {
       axios
@@ -100,6 +105,7 @@ export default {
   },
   mounted() {
     this.fetchSchedules();
+    this.fetchDoors();
   },
 };
 </script>
