@@ -3,11 +3,13 @@ import express from "express";
 import * as Utils from "./Utils";
 import db from "./database";
 import cors from "cors";
-import { body, validationResult } from "express-validator";
 import bodyParser from "body-parser";
 import passport from "passport";
 import { v4 as uuid } from "uuid";
 import doorController from "./doorController";
+import userController from "./userController";
+import scheduleController from "./scheduleController";
+import groupController from "./groupController";
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -77,51 +79,9 @@ app.get("/testAuth", authMiddleware, (req, res) => {
 });
 
 doorController({ authMiddleware, app, db });
-
-app.get("/user", authMiddleware, (req, res) => {
-  console.log("/USER ! ");
-  const users = db.get("users").value();
-  res.send(users);
-});
-app.get("/user/:id", authMiddleware, (req, res) => {
-  const user = db
-    .get("users")
-    .find({ id: +req.params.id })
-    .value();
-  res.send(user);
-});
-app.post(
-  "/user",
-  authMiddleware,
-  [
-    body("lastname").isString().notEmpty(),
-    body("firstname").isString().notEmpty(),
-    body("groups").isArray(),
-  ],
-  (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(422).json({ errors: errors.array() });
-    }
-    // modify entry
-    if (req.body.id) {
-      console.log("modify entry", req.body);
-      db.get("users")
-        .find({ id: +req.body.id })
-        .assign(req.body)
-        .write();
-    } else {
-      // make new entry
-      db.get("users")
-        .push({ id: uuid(), ...req.body })
-        .write();
-    }
-    res.send(200);
-  }
-);
-app.delete("/user", authMiddleware, (req, res) => {
-  console.log(req.body, req.params);
-});
+userController({ authMiddleware, app, db });
+scheduleController({ authMiddleware, app, db });
+groupController({ authMiddleware, app, db });
 
 app.get("/group", authMiddleware, (req, res) => {
   console.log("request groups");

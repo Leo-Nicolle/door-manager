@@ -1,20 +1,20 @@
 import { body, validationResult } from "express-validator";
 import { v4 as uuid } from "uuid";
 
-export default function doorController({ app, db, authMiddleware }) {
-  app.get("/door", authMiddleware, (req, res) => {
-    const doors = db.get("doors").value();
-    res.send(doors);
+export default function groupController({ app, db, authMiddleware }) {
+  app.get("/group", authMiddleware, (req, res) => {
+    const groups = db.get("groups").value();
+    res.send(groups);
   });
-  app.get("/door/:id", authMiddleware, (req, res) => {
-    const door = db
-      .get("doors")
+  app.get("/group/:id", authMiddleware, (req, res) => {
+    const group = db
+      .get("groups")
       .find({ id: +req.params.id })
       .value();
-    res.send(door);
+    res.send(group);
   });
   app.post(
-    "/door",
+    "/group",
     authMiddleware,
     [body("name").isString().notEmpty()],
     (req, res) => {
@@ -24,17 +24,17 @@ export default function doorController({ app, db, authMiddleware }) {
       }
       // modify entry
       if (req.body.id) {
-        db.get("doors").find({ id: req.body.id }).assign(req.body).write();
+        db.get("groups").find({ id: req.body.id }).assign(req.body).write();
       } else {
         // make new entry
-        db.get("doors")
+        db.get("groups")
           .push({ id: uuid(), ...req.body })
           .write();
       }
       res.send(200);
     }
   );
-  app.delete("/door", authMiddleware, (req, res) => {
+  app.delete("/group", authMiddleware, (req, res) => {
     console.log(req.body, req.params);
   });
 }
