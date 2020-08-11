@@ -2,7 +2,7 @@
   <form v-if="group">
     <div class="body">
       <label>
-        nom de famille
+        nom
         <input
           :class="getClass('name')"
           type="text"
@@ -12,6 +12,27 @@
           required
         />
       </label>
+      <div>
+        <label>
+          Portes
+          <span>
+            <label v-for="(door,i) in doors" :key="i">
+              {{door}}
+              <input
+                :class="getClass(`door-${i}`)"
+                type="checkbox"
+                id="`door-${i}`"
+                name="`door-${i}`"
+                required
+              />
+            </label>
+          </span>
+        </label>
+        <label>
+          Horraires
+          <button>Definir</button>
+        </label>
+      </div>
     </div>
     <div class="footer">
       <input class="validate" type="submit" value="valider" @click="onSubmit" />
@@ -33,6 +54,7 @@ export default {
   data() {
     return {
       invalidFields: [],
+      doors: ["door 1", "door2"],
     };
   },
   watch: {

@@ -1,3 +1,3 @@
 export function getUrl(route) {
-  return `http://localhost:3000/${route}`;
+  return `http://localhost:5050/${route}`;
 }

@@ -2,7 +2,7 @@
   <transition name="fade">
     <div class="modal">
       <div class="modal-body">
-        <slot> </slot>
+        <slot></slot>
       </div>
     </div>
   </transition>
@@ -23,7 +23,6 @@ export default {
   display: flex;
   justify-content: space-around;
   align-items: center;
-
   flex-direction: column;
   background: rgba(127, 127, 127, 0.5);
   transform: translateX(-50%);
@@ -31,10 +30,11 @@ export default {
 .modal-body {
   min-width: calc(100% - 30px);
   max-width: calc(100% - 30px);
-
   opacity: 1;
   background: #fff;
-  height: 50%;
+  min-height: 50%;
+  height: min-content;
+  max-height: 100%;
   display: flex;
   justify-content: space-around;
   flex-direction: column;

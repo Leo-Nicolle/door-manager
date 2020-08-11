@@ -4,6 +4,7 @@ import Home from "../views/Home.vue";
 import Login from "../components/Login.vue";
 import Groups from "../components/Groups.vue";
 import Users from "../components/Users.vue";
+import Schedules from "../components/Schedules.vue";
 
 // import Users from "../components/Users.vue";
 
@@ -32,6 +33,14 @@ const routes = [
     path: "/group",
     name: "Group",
     component: Groups,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+  {
+    path: "/schedule",
+    name: "Schedule",
+    component: Schedules,
     meta: {
       requiresAuth: true,
     },
