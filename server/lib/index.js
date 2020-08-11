@@ -7,6 +7,8 @@ import { body, validationResult } from "express-validator";
 import bodyParser from "body-parser";
 import passport from "passport";
 import { v4 as uuid } from "uuid";
+import doorController from "./doorController";
+
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -74,6 +76,8 @@ app.get("/testAuth", authMiddleware, (req, res) => {
   res.send(200);
 });
 
+doorController({ authMiddleware, app, db });
+
 app.get("/user", authMiddleware, (req, res) => {
   console.log("/USER ! ");
   const users = db.get("users").value();
@@ -108,7 +112,9 @@ app.post(
         .write();
     } else {
       // make new entry
-      db.get("users").push(req.body).write();
+      db.get("users")
+        .push({ id: uuid(), ...req.body })
+        .write();
     }
     res.send(200);
   }
@@ -125,7 +131,7 @@ app.get("/group", authMiddleware, (req, res) => {
 
 // app.post("/user", (req, res) => {});
 
-let server = app.listen(3000, () => {
+let server = app.listen(5050, () => {
   console.log(
     `server running at port http://localhost/${server.address().port}`
   );

@@ -1,31 +1,25 @@
 {
   "users": [
     {
-      "id": 1,
-      "firstname": "john",
-      "lastname": "doe",
-      "email": "john.doe@mail.com",
+      "id": "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09",
+      "firstname": "Leo",
+      "lastname": "Nicolle",
+      "email": "leo_nicolle@yahoo.fr",
       "password": "password",
-      "groups": [
-        "adherent",
-        "admin"
-      ],
-      "token": "ac4875cc-7469-4d07-ae4b-ad0f4cd63e32"
-    },
-    {
-      "id": 2,
-      "firstname": "toi",
-      "lastname": "cooucou",
-      "email": "toi.coucou@mail.com",
-      "password": "password",
-      "groups": [
-        "admin"
-      ],
-      "tokens": [],
+      "groups": ["admin"],
       "token": "af15ece1-d153-4934-b00f-c37c71168eaf"
     }
   ],
-  "doors": [],
+  "doors": [
+    {
+      "id": "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09",
+      "name": "porte 1dsadsa"
+    },
+    {
+      "id": "9d1d68a3-83b0-469b-a33b-db0eba69cc59",
+      "name": "porte 2"
+    }
+  ],
   "groups": [
     {
       "name": "admin"
@@ -36,5 +30,6 @@
     {
       "name": "coworker"
     }
-  ]
+  ],
+  "schedules": []
 }

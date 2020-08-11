@@ -22,32 +22,34 @@
 <script>
 import Door from "./Door";
 import Modal from "./Modal";
-
+import axios from "axios";
+import { getUrl } from "../js/utils";
 export default {
   name: "Doors",
   data() {
     return {
       selectedDoor: null,
+      doors: [],
     };
   },
-  props: ["doors"],
   methods: {
     onDoorClick(door) {
       this.selectedDoor = door;
     },
     onAddDoor() {
       this.selectedDoor = {
-        firstname: "",
-        lastname: "",
-        doors: [],
+        name: "",
       };
     },
     onCancel() {
       this.selectedDoor = null;
     },
-    mounted() {
-      axios.get(getUrl("user")).then(({ data }) => (this.users = data));
-    },
+  },
+  mounted() {
+    axios.get(getUrl("door")).then(({ data }) => {
+      console.log("data", data);
+      this.doors = data;
+    });
   },
   components: {
     Door,

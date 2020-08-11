@@ -29,7 +29,7 @@
         </label>
         <span
           class="date-container"
-          v-if="!schedule[indexDay].allDay"
+          :visible="!schedule[indexDay].allDay"
           v-for="(interval, j) in schedule[indexDay]"
           :key="j"
         >
