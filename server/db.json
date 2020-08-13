@@ -24,79 +24,82 @@
   ],
   "groups": [
     {
-      "name": "admin"
-    },
-    {
-      "name": "adherent"
-    },
-    {
-      "name": "coworker"
-    },
-    {
-      "id": "2abfe54f-ecd3-4621-b3dd-ca749aca4971",
+      "id": "af2aaad1-6d25-4257-a243-445306a89244",
       "name": "admin",
-      "doorAccess": []
-    },
-    {
-      "id": "f0bbad10-7000-4998-8fcf-08d185175ec3",
-      "name": "dsad",
-      "doorAccess": []
+      "doorAccess": {
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "b3a97c78-f446-49ff-af88-1e936008527a",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "b3a97c78-f446-49ff-af88-1e936008527a"
+      }
     }
   ],
   "schedules": [
     {
-      "id": "a082136e-c712-413d-a1b0-6202cb950345",
-      "name": "tout tout le temps",
+      "id": "b3a97c78-f446-49ff-af88-1e936008527a",
+      "name": "tout le temps",
       "days": [
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ],
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ],
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ],
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ],
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ],
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ],
-        [
-          {
-            "start": null,
-            "end": null,
-            "allDay": false
-          }
-        ]
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        }
       ]
     }
   ]

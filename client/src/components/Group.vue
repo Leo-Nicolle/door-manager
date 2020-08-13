@@ -25,7 +25,7 @@
       <div>
         <label>
           Horraire
-          <select type="select" v-model="group.doorAccess[doors[indexDoor].id]">
+          <select type="select" v-model="currentDoorAcces">
             <option
               v-for="(schedule, j) in schedules"
               :key="j"
@@ -51,14 +51,24 @@ export default {
   name: "Group",
   props: {
     group: null,
+    doors: [],
   },
   data() {
     return {
       invalidFields: [],
-      doors: [],
       schedules: [],
       indexDoor: 0,
     };
+  },
+  computed: {
+    currentDoorAcces: {
+      get: function () {
+        return this.group.doorAccess[this.doors[this.indexDoor].id];
+      },
+      set: function (newValue) {
+        this.group.doorAccess[this.doors[this.indexDoor].id] = newValue;
+      },
+    },
   },
   methods: {
     getClass(fieldName) {
@@ -76,9 +86,6 @@ export default {
 
     fetchSchedules() {
       axios.get(getUrl("schedule")).then(({ data }) => (this.schedules = data));
-    },
-    fetchDoors() {
-      axios.get(getUrl("door")).then(({ data }) => (this.doors = data));
     },
     onSubmit(event) {
       axios
@@ -105,7 +112,6 @@ export default {
   },
   mounted() {
     this.fetchSchedules();
-    this.fetchDoors();
   },
 };
 </script>

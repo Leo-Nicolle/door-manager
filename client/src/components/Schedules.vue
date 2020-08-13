@@ -14,7 +14,7 @@
     </table>
     <button @click="onAddSchedule()">Ajouter Schedule</button>
     <Modal v-if="selectedSchedule">
-      <Schedule :schedule="selectedSchedule" @cancel="onCancel()" />
+      <Schedule :schedule="selectedSchedule" @cancel="onCancel()" @submit="onSubmit()" />
     </Modal>
   </div>
 </template>
@@ -47,6 +47,9 @@ export default {
       };
     },
     onCancel() {
+      this.selectedSchedule = null;
+    },
+    onSubmit() {
       this.selectedSchedule = null;
     },
   },

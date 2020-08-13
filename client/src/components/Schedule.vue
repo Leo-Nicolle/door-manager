@@ -122,7 +122,7 @@ export default {
       console.log("testBool", this.testBool);
       axios
         .post(getUrl("schedule"), JSON.parse(JSON.stringify(this.schedule)))
-        .then(({ data }) => console.log("validated", data))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           if (!e.response.data) return console.error(e);
           console.log("response error", e.response.data.errors);
