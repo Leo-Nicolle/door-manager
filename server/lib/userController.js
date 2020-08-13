@@ -22,23 +22,28 @@ export default function userController({ app, db, authMiddleware }) {
       body("email").isString().notEmpty(),
       body("password").isString().notEmpty(),
       body("groups").isArray(),
+      body("badges").isArray(),
     ],
     (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+        return res.status(400).json({ errors: errors.array() });
       }
       // modify entry
+      console.log("ICI", req.body);
       if (req.body.id) {
-        db.get("users")
-          .find({ id: +req.body.id })
-          .assign(req.body)
-          .write();
+        db.get("users").find({ id: req.body.id }).assign(req.body).write();
+        setTimeout(() => {
+          console.log("ICI", db.get("users").find({ id: req.body.id }).value());
+        });
       } else {
         // make new entry
         db.get("users")
           .push({ id: uuid(), ...req.body })
           .write();
+        setTimeout(() => {
+          console.log("LA", db.get("users").find({ lastname: "test" }).value());
+        }, 200);
       }
       res.send(200);
     }

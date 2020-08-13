@@ -6,8 +6,11 @@
       "lastname": "Nicolle",
       "email": "nicolle_leo@yahoo.fr",
       "password": "password",
+      "badges": [
+        "dsadsadsa"
+      ],
       "groups": [
-        "admin"
+        "af2aaad1-6d25-4257-a243-445306a89244"
       ],
       "token": "199d4747-86b5-4351-954d-a95c45ffac63"
     }
@@ -102,5 +105,6 @@
         }
       ]
     }
-  ]
+  ],
+  "badges": []
 }

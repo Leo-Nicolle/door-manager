@@ -14,13 +14,13 @@
           <td>{{ user.lastname }}</td>
           <td>{{ user.firstname }}</td>
           <td>TODO</td>
-          <td>{{ user.groups.join(" ") }}</td>
+          <td>{{ getGroups(user.groups) }}</td>
         </tr>
       </tbody>
     </table>
     <button @click="onAddUser()">Ajouter Utilisateur</button>
     <Modal v-if="selectedUser">
-      <User :user="selectedUser" @cancel="onCancel()" />
+      <User :user="selectedUser" @cancel="onCancel()" @submit="onSubmit()" />
     </Modal>
   </div>
 </template>
@@ -36,6 +36,7 @@ export default {
   data() {
     return {
       users: [],
+      groups: [],
       selectedUser: null,
     };
   },
@@ -47,11 +48,26 @@ export default {
       this.selectedUser = {
         firstname: "",
         lastname: "",
+        email: "",
+        password: "",
         groups: [],
+        badges: [],
       };
     },
     onCancel() {
       this.selectedUser = null;
+    },
+    onSubmit() {
+      this.selectedUser = null;
+    },
+    getGroups(ids) {
+      return ids
+        .map((id) => {
+          const group = this.groups.find((group) => group.id === id);
+          return group ? group.name : null;
+        })
+        .filter((e) => e)
+        .join(" ");
     },
   },
   components: {
@@ -60,6 +76,7 @@ export default {
   },
   mounted() {
     axios.get(getUrl("user")).then(({ data }) => (this.users = data));
+    axios.get(getUrl("group")).then(({ data }) => (this.groups = data));
   },
 };
 </script>

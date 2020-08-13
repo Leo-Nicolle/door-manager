@@ -6,6 +6,7 @@ import Groups from "../components/Groups.vue";
 import Users from "../components/Users.vue";
 import Schedules from "../components/Schedules.vue";
 import Doors from "../components/Doors.vue";
+import Badges from "../components/Badges.vue";
 
 // import Users from "../components/Users.vue";
 
@@ -46,6 +47,15 @@ const routes = [
       requiresAuth: true,
     },
   },
+  {
+    path: "/badge",
+    name: "Badge",
+    component: Badges,
+    meta: {
+      requiresAuth: true,
+    },
+  },
+
   {
     path: "/schedule",
     name: "Schedule",
