@@ -40,13 +40,10 @@ export default {
     onAddSchedule() {
       this.selectedSchedule = {
         name: "",
-        days: new Array(7).fill(0).map(() => [
-          {
-            start: null,
-            end: null,
-            allDay: false,
-          },
-        ]),
+        days: new Array(7).fill(0).map(() => ({
+          allDay: false,
+          intervals: [{ start: null, end: null }],
+        })),
       };
     },
     onCancel() {

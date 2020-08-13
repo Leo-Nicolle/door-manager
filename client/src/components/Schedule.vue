@@ -24,13 +24,13 @@
       </div>
       <div>
         <label>
-          <input type="checkbox" v-model="schedule.days[indexDay].allDay" />
+          <input type="checkbox" v-model="currentDay.allDay" />
           Toute la journee
         </label>
         <span
           class="date-container"
           :class="getDateContainerClass(indexDay)"
-          v-for="(interval, j) in schedule.days[indexDay]"
+          v-for="(interval, j) in currentDay.intervals"
           :key="j"
         >
           <p>de</p>
@@ -38,14 +38,14 @@
             format="hh:mm"
             v-model="interval['start']"
             close-on-complete
-            @change="onDatePicked(indexDay,j)"
+            @change="onDatePicked(j)"
           ></TimePicker>
           <p>a</p>
           <TimePicker
             format="hh:mm"
             v-model="interval['end']"
             close-on-complete
-            @change="onDatePicked(indexDay,j)"
+            @change="onDatePicked(j)"
           ></TimePicker>
         </span>
       </div>
@@ -70,6 +70,7 @@ export default {
     return {
       invalidFields: [],
       indexDay: 0,
+      testBool: false,
       days: [
         "lundi",
         "mardi",
@@ -81,6 +82,11 @@ export default {
       ],
     };
   },
+  computed: {
+    currentDay: function () {
+      return this.schedule.days[this.indexDay];
+    },
+  },
   methods: {
     getDayButtonClass(i) {
       return i === this.indexDay ? "validate" : "";
@@ -91,9 +97,9 @@ export default {
     getDateContainerClass(indexDay) {
       return this.schedule.days[indexDay].allDay ? "hidden" : "";
     },
-    onDatePicked(i, j) {
-      const intervals = this.schedule.days[i];
-      const { start, end } = intervals[j];
+    onDatePicked(j) {
+      const intervals = this.currentDay.intervals;
+      const { start, end } = intervals[intervals.length - 1];
       if (
         start &&
         end &&
@@ -103,17 +109,17 @@ export default {
         end.hh &&
         end.mm
       ) {
-        intervals.push({ start: null, end: null, allDay: false });
+        intervals.push({ start: null, end: null });
       }
     },
     onDayClick(i, evt) {
       this.indexDay = i;
-      console.log(evt);
       evt.stopPropagation();
       evt.preventDefault();
     },
 
     onSubmit(event) {
+      console.log("testBool", this.testBool);
       axios
         .post(getUrl("schedule"), JSON.parse(JSON.stringify(this.schedule)))
         .then(({ data }) => console.log("validated", data))
