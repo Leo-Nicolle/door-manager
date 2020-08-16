@@ -4,13 +4,7 @@
       <div class="body">
         <label>
           email
-          <input
-            type="text"
-            v-model="userData.email"
-            id="email"
-            name="email"
-            required
-          />
+          <input type="text" v-model="userData.email" id="email" name="email" required />
         </label>
         <label>
           Prenom
@@ -35,6 +29,7 @@
 <script>
 import { getUrl } from "../js/utils";
 import axios from "axios";
+import encrypt from "quick-encrypt";
 
 export default {
   name: "Login",
@@ -51,11 +46,17 @@ export default {
     onSubmit() {
       this.errorMessage = "";
       axios
-        .post(getUrl("login"), {
-          email: this.userData.email,
-          // TODO: use hash
-          password: this.userData.password,
+        .get(getUrl("encrypt"))
+        .then(({ data }) => {
+          const publicKey = data;
+          return encrypt.encrypt(this.userData.password, publicKey);
         })
+        .then((encryptedPassword) =>
+          axios.post(getUrl("login"), {
+            email: this.userData.email,
+            password: encryptedPassword,
+          })
+        )
         .then(({ data }) => {
           localStorage.setItem("token", data.token);
           this.$router.push("/user");

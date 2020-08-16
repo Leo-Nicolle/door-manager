@@ -1,11 +1,9 @@
 "use strict";
 import express from "express";
-import * as Utils from "./Utils";
 import db from "./database";
 import cors from "cors";
 import bodyParser from "body-parser";
 import passport from "passport";
-import { v4 as uuid } from "uuid";
 import doorController from "./doorController";
 import userController from "./userController";
 import scheduleController from "./scheduleController";
@@ -49,18 +47,6 @@ app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.send("text");
-});
-
-app.post("/login", (req, res, next) => {
-  const email = req.body.email;
-  const password = req.body.password;
-  const user = db.get("users").find({ email, password }).value();
-  if (!user) {
-    return res.status(401).send("Wrong email or password");
-  }
-  const token = uuid();
-  db.get("users").find({ email, password }).assign({ token }).write();
-  res.status(201).json({ user, token });
 });
 
 app.get("/api/logout", function (req, res) {

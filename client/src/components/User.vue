@@ -47,13 +47,23 @@
       </label>
       <label class="long-input">
         Groupes
-        <VoerroTagsInput v-model="selectedGroups" :existing-tags="groupTags" :typeahead="true" />
+        <VoerroTagsInput
+          v-model="selectedGroups"
+          :existing-tags="groupTags"
+          :typeahead="true"
+        />
       </label>
       <label class="long-input">
         Badges
         <button class="validate small-button">+</button>
 
-        <button class="delete small-button" v-for="(uuid, i) in user.badges" :key="i">{{uuid}}</button>
+        <button
+          class="delete small-button"
+          v-for="(uuid, i) in user.badges"
+          :key="i"
+        >
+          {{ uuid }}
+        </button>
       </label>
     </div>
     <div class="footer">
@@ -68,6 +78,7 @@
 import { getUrl } from "../js/utils";
 import axios from "axios";
 import VoerroTagsInput from "@voerro/vue-tagsinput";
+import encrypt from "quick-encrypt";
 
 export default {
   name: "User",
@@ -83,7 +94,7 @@ export default {
     };
   },
   watch: {
-    user: function () {
+    user: function() {
       this.fetchGroups().then(() => this.updateSelectedGroups());
     },
   },
@@ -114,7 +125,12 @@ export default {
         ({ value }) => this.groups.find((group) => group.name === value).id
       );
       axios
-        .post(getUrl("user"), this.user)
+        .get(getUrl("encrypt"))
+        .then(({ data }) => {
+          const publicKey = data;
+          this.user.password = encrypt.encrypt(this.user.password, publicKey);
+        })
+        .then(() => axios.post(getUrl("user"), this.user))
         .then(() => {
           this.$emit("submit");
         })
