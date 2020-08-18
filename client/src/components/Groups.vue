@@ -20,7 +20,7 @@
       <Group
         slot="form"
         :doors="doors"
-        :group="selectedElement"
+        :element="selectedElement"
         @cancel="onCancel()"
         @submit="onSubmit()"
       />

@@ -1,6 +1,7 @@
+
 <template>
-  <form v-if="group">
-    <div class="body">
+  <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
+    <div slot="body" class="body">
       <label>
         nom
         <input
@@ -35,31 +36,25 @@
         </label>
       </div>
     </div>
-    <div class="footer">
-      <input class="validate" type="submit" value="valider" @click="onSubmit" />
-      <button @click="onCancel">cancel</button>
-      <input class="delete" type="submit" value="suprimer" @click="onDelete" />
-    </div>
-  </form>
+  </Form>
 </template>
 
 <script>
 import { getUrl } from "../js/utils";
 import axios from "axios";
+import Form from "../mixins/Form";
+import FormMixin from "../mixins/FormMixin";
 
 export default {
   name: "Group",
-  props: {
-    group: null,
-    doors: [],
-  },
+  props: ["doors"],
   data() {
     return {
-      invalidFields: [],
       schedules: [],
       indexDoor: 0,
     };
   },
+  mixins: [FormMixin],
   computed: {
     currentDoorAcces: {
       get: function () {
@@ -69,11 +64,16 @@ export default {
         this.group.doorAccess[this.doors[this.indexDoor].id] = newValue;
       },
     },
+    group: {
+      get: function () {
+        return this.element;
+      },
+      set: function (group) {
+        this.element = group;
+      },
+    },
   },
   methods: {
-    getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
-    },
     getDoorButtonClass(i) {
       return i === this.indexDoor ? "validate" : "";
     },
@@ -84,7 +84,7 @@ export default {
       evt.preventDefault();
     },
 
-    fetchSchedules() {
+    fetch() {
       axios.get(getUrl("schedule")).then(({ data }) => (this.schedules = data));
     },
     onSubmit(event) {
@@ -98,9 +98,6 @@ export default {
           event.preventDefault();
         });
     },
-    onCancel() {
-      this.$emit("cancel");
-    },
     onDelete() {
       axios
         .delete(getUrl("group"), this.group)
@@ -110,8 +107,8 @@ export default {
         });
     },
   },
-  mounted() {
-    this.fetchSchedules();
+  components: {
+    Form,
   },
 };
 </script>
