@@ -5,6 +5,7 @@
       "firstname": "Leo",
       "lastname": "Nicolle",
       "email": "nicolle_leo@yahoo.fr",
+      "isAdmin": true,
       "password": "1bd48d30e71a4a6f7337f1ab25a77582a428696f24c3bbc8e005fd3ebc2f821846609eee52dc7009fb812983d4bfacf7c05a78a61dc6eae4929def19fd4cd2e821da28b866f62606d5d6defa6787165f2657a53e3daa3f645090e6927397a7d3f5546cdedd2f3c65338dc8a157565ce0c8b4d52dfcc55cc62c1ebe8df12a0abe",
       "badges": [
         "dsadsadsa"
@@ -18,8 +19,9 @@
       "id": "6d364970-7623-4988-949b-bfd6b283be7f",
       "firstname": "test",
       "lastname": "test",
-      "email": "nicolle@yahoo.fr",
-      "password": "adbe3bcff1ae8fc94b84e3ebcbfb820df5e5eaecf1a05dc394cc8f6f07e9632ccba341d8ec056494d9eb48f3b1e1becb449b1fdd814e1873da7c8ab89e327c547579b5c8aad67d196000335b37ce3e9fc811521fbcee9a4bd640486632f6b572159c69d4a95e2170f1e240ef300f4f28dbd6dec696ef116c240d5ee72c87f636",
+      "email": "",
+      "password": "",
+      "isAdmin": false,
       "groups": [
         "af2aaad1-6d25-4257-a243-445306a89244"
       ],
@@ -29,8 +31,9 @@
       "id": "2a4653cb-885a-4ecb-a281-6f78074888a5",
       "firstname": "test2",
       "lastname": "test2",
-      "email": "test2@test2.fr",
-      "password": "058179bd83ce7c915095e1a12c9d1cdbf7eea31ff4b60e75b79405de7d52375d0ce69c0fe212e63eb7bf504bcc2bfd923fff38ee189170fe31a37f264bde5ce88ab8bbef7eedb66fe5baab8f0887a2d02c1381a54457a43a693d8e856b57f7627b56518762583e43045d3c3baba37163d68a9f52365b87ab06188afa41896aef",
+      "isAdmin": false,
+      "email": "",
+      "password": "",
       "groups": [
         "3bd3c4fc-c6c1-4487-82be-27cee52fd481",
         "8d092416-16d8-4145-b472-d630f5ce1ca6"

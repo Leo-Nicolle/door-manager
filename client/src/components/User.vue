@@ -24,46 +24,49 @@
         />
       </label>
       <label>
-        email
+        admin
         <input
-          :class="getClass('email')"
-          type="text"
-          v-model="user.email"
-          id="email"
-          name="email"
+          :class="getClass('isAdmin')"
+          type="checkbox"
+          v-model="user.isAdmin"
+          id="isAdmin"
+          name="isAdmin"
           required
         />
       </label>
-      <label>
-        password
-        <input
-          :class="getClass('password')"
-          type="password"
-          v-model="user.password"
-          id="password"
-          name="password"
-          required
-        />
-      </label>
+      <div :class="user.isAdmin ?'' : 'hidden' ">
+        <label>
+          email
+          <input
+            :class="getClass('email')"
+            type="text"
+            v-model="user.email"
+            id="email"
+            name="email"
+            required
+          />
+        </label>
+        <label>
+          password
+          <input
+            :class="getClass('password')"
+            type="password"
+            v-model="user.password"
+            id="password"
+            name="password"
+            required
+          />
+        </label>
+      </div>
       <label class="long-input">
         Groupes
-        <VoerroTagsInput
-          v-model="selectedGroups"
-          :existing-tags="groupTags"
-          :typeahead="true"
-        />
+        <VoerroTagsInput v-model="selectedGroups" :existing-tags="groupTags" :typeahead="true" />
       </label>
       <label class="long-input">
         Badges
         <button class="validate small-button">+</button>
 
-        <button
-          class="delete small-button"
-          v-for="(uuid, i) in user.badges"
-          :key="i"
-        >
-          {{ uuid }}
-        </button>
+        <button class="delete small-button" v-for="(uuid, i) in user.badges" :key="i">{{ uuid }}</button>
       </label>
     </div>
     <div class="footer">
@@ -94,7 +97,7 @@ export default {
     };
   },
   watch: {
-    user: function() {
+    user: function () {
       this.fetchGroups().then(() => this.updateSelectedGroups());
     },
   },
@@ -128,9 +131,13 @@ export default {
         .get(getUrl("encrypt"))
         .then(({ data }) => {
           const publicKey = data;
-          this.user.password = encrypt.encrypt(this.user.password, publicKey);
+          return this.user.admin && this.user.password.length
+            ? encrypt.encrypt(this.user.password, publicKey)
+            : "";
         })
-        .then(() => axios.post(getUrl("user"), this.user))
+        .then((password) =>
+          axios.post(getUrl("user"), { ...this.user, password })
+        )
         .then(() => {
           this.$emit("submit");
         })
@@ -184,6 +191,9 @@ label {
   width: 100%;
   display: flex;
   justify-content: space-between;
+}
+label > input[type="checkbox"] {
+  margin-top: 4px;
 }
 .footer {
   min-width: calc(100% - 20px);

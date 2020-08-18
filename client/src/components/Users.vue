@@ -50,6 +50,7 @@ export default {
         lastname: "",
         email: "",
         password: "",
+        isAdmin: false,
         groups: [],
         badges: [],
       };

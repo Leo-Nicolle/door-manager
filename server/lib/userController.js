@@ -21,7 +21,7 @@ export default function userController({ app, db, authMiddleware }) {
     const email = req.body.email;
 
     const decryptedPassword = encrypt.decrypt(req.body.password, privateKey);
-    if (!decryptedPassword || !decryptedPassword.length) {
+    if (!emaeil.length || !decryptedPassword || !decryptedPassword.length) {
       return res.status(401).send("Wrong email or password");
     }
     const user = db.get("users").find({ email }).value();
@@ -47,6 +47,7 @@ export default function userController({ app, db, authMiddleware }) {
         groups: user.groups,
         badges: user.badges,
         email: user.email,
+        isAdmin: user.isAdmin,
       }))
     );
   });
@@ -59,6 +60,7 @@ export default function userController({ app, db, authMiddleware }) {
       groups: user.groups,
       badges: user.badges,
       email: user.email,
+      isAdmin: user.isAdmin,
     });
   });
   app.post(
@@ -67,18 +69,31 @@ export default function userController({ app, db, authMiddleware }) {
     [
       body("lastname").isString().notEmpty(),
       body("firstname").isString().notEmpty(),
-      body("email").isString().notEmpty(),
-      body("password").isString().notEmpty(),
+      body("email").isString(),
+      body("isAdmin").isBoolean(),
+      body("password").isString(),
       body("groups").isArray(),
       body("badges").isArray(),
     ],
     (req, res) => {
-      const errors = validationResult(req);
+      const errors = validationResult(req).array();
+
+      if (req.body.isAdmin) {
+        const { password, email } = req.body;
+        if (!password.length)
+          errors.push({
+            param: "password",
+            msg: "password should not be empty",
+          });
+        if (!email.length)
+          errors.push({ param: "email", msg: "email should not be empty" });
+      }
+
       if (!persitantKeys) {
         return res.status(400);
       }
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+      if (errors.length) {
+        return res.status(400).json({ errors });
       }
       if (req.body.password) {
         req.body.password = encrypt.encrypt(
