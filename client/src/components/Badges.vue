@@ -1,53 +1,52 @@
 <template>
   <div class="badges">
-    <table>
-      <thead>
-        <tr>
-          <th>uuid</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(badge, i) in badges" :key="i" @click="onBadgeClick(badge)">
-          <td>{{ badge }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <button @click="onAddBadge()">Ajouter Badge</button>
-    <Modal v-if="selectedBadge">
-      <Badge :badge="selectedBadge" :users="users" @cancel="onCancel()" />
-    </Modal>
+    <ElementsDisplay
+      :elements="elements"
+      :selectedElement="selectedElement"
+      @queryResult="onQueryResult"
+      @add="onAddElement"
+    >
+      <tr slot="headers">
+        <th>uuid</th>
+      </tr>
+      <tr
+        slot="body"
+        v-for="(badge, i) in filteredElements"
+        :key="i"
+        @click="onElementClick(badge)"
+      >
+        <td>{{ badge }}</td>
+      </tr>
+      <Badge slot="form" :badge="selectedElement" :users="users" @cancel="onCancel()" />
+    </ElementsDisplay>
   </div>
 </template>
 
 <script>
-import Badge from "./Badge";
-import Modal from "./Modal";
-import { getUrl } from "../js/utils";
 import axios from "axios";
+import { getUrl } from "../js/utils";
+import Badge from "./Badge";
+import ElementsDisplay from "../mixins/ElementsDisplay";
+import ElementsDisplayMixin from "../mixins/ElementsDisplayMixin.js";
 
 export default {
   name: "Badges",
   data() {
     return {
-      selectedBadge: null,
-      doors: [],
-      badges: [],
       users: [],
     };
   },
+  mixins: [ElementsDisplayMixin],
   methods: {
-    onBadgeClick(badge) {
-      this.selectedBadge = badge;
-    },
-    onAddBadge() {
-      this.selectedBadge = {
+    onAddElement() {
+      this.selectedElement = {
         uuid: "",
       };
     },
-    fetchUsers() {
+    fetch() {
       axios.get(getUrl("user")).then(({ data }) => {
         this.users = data;
-        this.badges = Object.keys(
+        this.elements = Object.keys(
           data.reduce((acc, { badges }) => {
             badges.forEach((badge) => (acc[badge] = 1));
             return acc;
@@ -55,17 +54,10 @@ export default {
         );
       });
     },
-
-    onCancel() {
-      this.selectedBadge = null;
-    },
-  },
-  mounted() {
-    this.fetchUsers();
   },
   components: {
     Badge,
-    Modal,
+    ElementsDisplay,
   },
 };
 </script>
