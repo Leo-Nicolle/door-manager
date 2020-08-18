@@ -1,44 +1,39 @@
 <template>
-  <div class="schedules">
-    <table>
-      <thead>
-        <tr>
-          <th>Nom</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(schedule, i) in schedules" :key="i" @click="onScheduleClick(schedule)">
-          <td>{{ schedule.name }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <button @click="onAddSchedule()">Ajouter Schedule</button>
-    <Modal v-if="selectedSchedule">
-      <Schedule :schedule="selectedSchedule" @cancel="onCancel()" @submit="onSubmit()" />
-    </Modal>
-  </div>
+  <ElementsDisplay
+    :elements="elements"
+    :selectedElement="selectedElement"
+    @queryResult="onQueryResult"
+    @add="onAddElement"
+    class="schedules"
+  >
+    <tr slot="headers">
+      <th>Nom</th>
+    </tr>
+    <tr
+      slot="body"
+      v-for="(schedule, i) in filteredElements"
+      :key="i"
+      @click="onElementClick(schedule)"
+    >
+      <td>{{ schedule.name }}</td>
+    </tr>
+    <Schedule slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
+  </ElementsDisplay>
 </template>
 
 <script>
-import Schedule from "./Schedule";
-import Modal from "./Modal";
-import axios from "axios";
 import { getUrl } from "../js/utils";
+import axios from "axios";
+import Schedule from "./Schedule";
+import ElementsDisplay from "../mixins/ElementsDisplay";
+import ElementsDisplayMixin from "../mixins/ElementsDisplayMixin.js";
 
 export default {
   name: "Schedules",
-  data() {
-    return {
-      selectedSchedule: null,
-      schedules: [],
-    };
-  },
+  mixins: [ElementsDisplayMixin],
   methods: {
-    onScheduleClick(schedule) {
-      this.selectedSchedule = schedule;
-    },
     onAddSchedule() {
-      this.selectedSchedule = {
+      this.selectedElement = {
         name: "",
         days: new Array(7).fill(0).map(() => ({
           allDay: false,
@@ -46,20 +41,13 @@ export default {
         })),
       };
     },
-    onCancel() {
-      this.selectedSchedule = null;
-    },
-    onSubmit() {
-      this.selectedSchedule = null;
+    fetch() {
+      axios.get(getUrl("schedule")).then(({ data }) => (this.elements = data));
     },
   },
-  mounted() {
-    axios.get(getUrl("schedule")).then(({ data }) => (this.schedules = data));
-  },
-
   components: {
     Schedule,
-    Modal,
+    ElementsDisplay,
   },
 };
 </script>

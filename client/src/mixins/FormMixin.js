@@ -26,6 +26,7 @@ export default {
     onDelete() {
       console.log("TODO");
     },
+    fetch() {},
   },
   mounted() {
     this.fetch();

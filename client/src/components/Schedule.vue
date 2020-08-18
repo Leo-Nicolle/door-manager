@@ -1,6 +1,6 @@
 <template>
-  <form v-if="schedule">
-    <div class="body large-body">
+  <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
+    <div slot="body" class="body large-body">
       <label>
         nom
         <input
@@ -50,25 +50,23 @@
         </span>
       </div>
     </div>
-    <div class="footer">
-      <input class="validate" type="submit" value="valider" @click="onSubmit" />
-      <button @click="onCancel">cancel</button>
-      <input class="delete" type="submit" value="suprimer" @click="onDelete" />
-    </div>
-  </form>
+  </Form>
 </template>
 
 <script>
+import Form from "../mixins/Form";
+import FormMixin from "../mixins/FormMixin";
 import { getUrl } from "../js/utils";
 import axios from "axios";
 import TimePicker from "vue2-timepicker";
 import "vue2-timepicker/dist/VueTimepicker.css";
+
 export default {
   name: "Schedule",
-  props: ["schedule"],
+  props: ["element"],
+  mixins: [FormMixin],
   data() {
     return {
-      invalidFields: [],
       indexDay: 0,
       testBool: false,
       days: [
@@ -86,13 +84,18 @@ export default {
     currentDay: function () {
       return this.schedule.days[this.indexDay];
     },
+    schedule: {
+      get: function () {
+        return this.element;
+      },
+      set: function (schedule) {
+        this.element = schedule;
+      },
+    },
   },
   methods: {
     getDayButtonClass(i) {
       return i === this.indexDay ? "validate" : "";
-    },
-    getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
     },
     getDateContainerClass(indexDay) {
       return this.schedule.days[indexDay].allDay ? "hidden" : "";
@@ -133,9 +136,6 @@ export default {
       event.preventDefault();
       event.stopPropagation();
     },
-    onCancel() {
-      this.$emit("cancel");
-    },
     onDelete() {
       axios
         .delete(getUrl("schedule"), this.schedule)
@@ -145,7 +145,7 @@ export default {
         });
     },
   },
-  components: { TimePicker },
+  components: { TimePicker, Form },
 };
 </script>
 <style>
