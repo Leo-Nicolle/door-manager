@@ -29,8 +29,8 @@
     },
     {
       "id": "2a4653cb-885a-4ecb-a281-6f78074888a5",
-      "firstname": "test2",
-      "lastname": "test2",
+      "firstname": "Vargas",
+      "lastname": "Fred",
       "isAdmin": false,
       "email": "",
       "password": "",
@@ -41,6 +41,30 @@
       "badges": [
         "badges1"
       ]
+    },
+    {
+      "id": "8a9b51c4-1aa7-422a-99f3-1197e0d49e14",
+      "firstname": "test",
+      "lastname": "test",
+      "email": "",
+      "password": "",
+      "isAdmin": false,
+      "groups": [
+        "8d092416-16d8-4145-b472-d630f5ce1ca6"
+      ],
+      "badges": []
+    },
+    {
+      "id": "ba8fc4d3-709c-4a86-8e94-66129eddaed2",
+      "firstname": "paulo",
+      "lastname": "paulo",
+      "email": "",
+      "password": "",
+      "isAdmin": false,
+      "groups": [
+        "3bd3c4fc-c6c1-4487-82be-27cee52fd481"
+      ],
+      "badges": []
     }
   ],
   "doors": [
@@ -162,8 +186,8 @@
                 "mm": "03"
               },
               "end": {
-                "hh": "03",
-                "mm": "03"
+                "hh": "05",
+                "mm": "05"
               }
             },
             {

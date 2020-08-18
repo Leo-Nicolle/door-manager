@@ -47,6 +47,9 @@ export default {
     query: function (newQuery) {
       this.update(newQuery);
     },
+    elements: function () {
+      this.update(this.query);
+    },
     filteredElements: function (newElements) {
       this.$emit("queryResult", newElements);
     },
