@@ -8,6 +8,7 @@ import doorController from "./doorController";
 import userController from "./userController";
 import scheduleController from "./scheduleController";
 import groupController from "./groupController";
+import accessController from "./accessController";
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -68,14 +69,7 @@ doorController({ authMiddleware, app, db });
 userController({ authMiddleware, app, db });
 scheduleController({ authMiddleware, app, db });
 groupController({ authMiddleware, app, db });
-
-app.get("/group", authMiddleware, (req, res) => {
-  console.log("request groups");
-  const groups = db.get("groups").value();
-  res.send(groups);
-});
-
-// app.post("/user", (req, res) => {});
+accessController({ authMiddleware, app, db });
 
 let server = app.listen(5050, () => {
   console.log(

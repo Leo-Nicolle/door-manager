@@ -47,9 +47,15 @@ export default {
   },
   mounted() {
     axios.get(getUrl("door")).then(({ data }) => {
-      console.log("data", data);
       this.doors = data;
     });
+
+    axios
+      .get(getUrl("access/7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09"))
+      .then(({ data }) => {
+        console.log("Ici", data);
+      })
+      .catch((e) => console.error(e));
   },
   components: {
     Door,

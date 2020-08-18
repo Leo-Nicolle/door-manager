@@ -51,10 +51,7 @@ export default function userController({ app, db, authMiddleware }) {
     );
   });
   app.get("/user/:id", authMiddleware, (req, res) => {
-    const user = db
-      .get("users")
-      .find({ id: +req.params.id })
-      .value();
+    const user = db.get("users").find({ id: req.params.id }).value();
     res.send({
       id: user.id,
       firstname: user.firstname,

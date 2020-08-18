@@ -7,10 +7,7 @@ export default function scheduleController({ app, db, authMiddleware }) {
     res.send(schedules);
   });
   app.get("/schedule/:id", authMiddleware, (req, res) => {
-    const schedule = db
-      .get("schedules")
-      .find({ id: +req.params.id })
-      .value();
+    const schedule = db.get("schedules").find({ id: req.params.id }).value();
     res.send(schedule);
   });
   app.post(
