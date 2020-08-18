@@ -50,10 +50,17 @@ export default {
       this.doors = data;
     });
 
+    // axios
+    //   .get(getUrl("access/7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09"))
+    //   .then(({ data }) => {
+    //     console.log("Ici", data);
+    //   })
+    //   .catch((e) => console.error(e));
+
     axios
-      .get(getUrl("access/7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09"))
+      .get(getUrl("access/9d1d68a3-83b0-469b-a33b-db0eba69cc59"))
       .then(({ data }) => {
-        console.log("Ici", data);
+        console.log("Ici2", data);
       })
       .catch((e) => console.error(e));
   },

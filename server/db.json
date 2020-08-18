@@ -24,6 +24,20 @@
         "af2aaad1-6d25-4257-a243-445306a89244"
       ],
       "badges": []
+    },
+    {
+      "id": "2a4653cb-885a-4ecb-a281-6f78074888a5",
+      "firstname": "test2",
+      "lastname": "test2",
+      "email": "test2@test2.fr",
+      "password": "058179bd83ce7c915095e1a12c9d1cdbf7eea31ff4b60e75b79405de7d52375d0ce69c0fe212e63eb7bf504bcc2bfd923fff38ee189170fe31a37f264bde5ce88ab8bbef7eedb66fe5baab8f0887a2d02c1381a54457a43a693d8e856b57f7627b56518762583e43045d3c3baba37163d68a9f52365b87ab06188afa41896aef",
+      "groups": [
+        "3bd3c4fc-c6c1-4487-82be-27cee52fd481",
+        "8d092416-16d8-4145-b472-d630f5ce1ca6"
+      ],
+      "badges": [
+        "badges1"
+      ]
     }
   ],
   "doors": [
@@ -43,6 +57,22 @@
       "doorAccess": {
         "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "b3a97c78-f446-49ff-af88-1e936008527a",
         "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "b3a97c78-f446-49ff-af88-1e936008527a"
+      }
+    },
+    {
+      "id": "3bd3c4fc-c6c1-4487-82be-27cee52fd481",
+      "name": "test2",
+      "doorAccess": {
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "2cd90a3c-406d-4a29-aa19-cb6c29bacf88",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "2cd90a3c-406d-4a29-aa19-cb6c29bacf88"
+      }
+    },
+    {
+      "id": "8d092416-16d8-4145-b472-d630f5ce1ca6",
+      "name": "test1",
+      "doorAccess": {
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406"
       }
     }
   ],
@@ -107,6 +137,253 @@
         },
         {
           "allDay": true,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406",
+      "name": "test 1",
+      "days": [
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": {
+                "hh": "01",
+                "mm": "03"
+              },
+              "end": {
+                "hh": "03",
+                "mm": "03"
+              }
+            },
+            {
+              "start": {
+                "hh": "04",
+                "mm": "04"
+              },
+              "end": {
+                "hh": "05",
+                "mm": "05"
+              }
+            },
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2cd90a3c-406d-4a29-aa19-cb6c29bacf88",
+      "name": "test2",
+      "days": [
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": {
+                "hh": "03",
+                "mm": "03"
+              },
+              "end": {
+                "hh": "04",
+                "mm": "04"
+              }
+            },
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b5c8c28b-119e-4a1d-8547-3f0f9ca1b80f",
+      "name": "test2",
+      "days": [
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": {
+                "hh": "03",
+                "mm": "03"
+              },
+              "end": {
+                "hh": "04",
+                "mm": "04"
+              }
+            },
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
           "intervals": [
             {
               "start": null,
