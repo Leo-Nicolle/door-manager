@@ -18,7 +18,7 @@
         <td>TODO</td>
         <td>{{ getGroups(user.groups) }}</td>
       </tr>
-      <User slot="form" :user="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
+      <User slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
     </ElementsDisplay>
   </div>
 </template>

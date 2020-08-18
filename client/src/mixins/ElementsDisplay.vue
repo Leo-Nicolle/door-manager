@@ -19,7 +19,6 @@
 <script>
 import Modal from "../components/Modal";
 import SearchBar from "../components/SearchBar";
-// import ElementsDisplayMixin from "./ElementsDisplayMixin";
 
 export default {
   name: "ElementsDisplay",

@@ -1,6 +1,6 @@
 <template>
-  <form v-if="user">
-    <div class="body">
+  <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
+    <div slot="body">
       <label>
         nom de famille
         <input
@@ -65,16 +65,10 @@
       <label class="long-input">
         Badges
         <button class="validate small-button">+</button>
-
         <button class="delete small-button" v-for="(uuid, i) in user.badges" :key="i">{{ uuid }}</button>
       </label>
     </div>
-    <div class="footer">
-      <input class="validate" type="submit" value="valider" @click="onSubmit" />
-      <button @click="onCancel">cancel</button>
-      <input class="delete" type="submit" value="suprimer" @click="onDelete" />
-    </div>
-  </form>
+  </Form>
 </template>
 
 <script>
@@ -82,23 +76,27 @@ import { getUrl } from "../js/utils";
 import axios from "axios";
 import VoerroTagsInput from "@voerro/vue-tagsinput";
 import encrypt from "quick-encrypt";
+import Form from "../mixins/Form";
+import FormMixin from "../mixins/FormMixin";
 
 export default {
   name: "User",
-  props: {
-    user: null,
-  },
   data() {
     return {
-      invalidFields: [],
       groups: [],
       groupTags: [],
       selectedGroups: [],
     };
   },
-  watch: {
-    user: function () {
-      this.fetchGroups().then(() => this.updateSelectedGroups());
+  mixins: [FormMixin],
+  computed: {
+    user: {
+      get: function () {
+        return this.element;
+      },
+      set: function (user) {
+        this.element = user;
+      },
     },
   },
   methods: {
@@ -107,14 +105,14 @@ export default {
       this.selectedGroups = this.getGroups(this.user.groups);
       this.groupTags = this.groups.map((group) => ({ value: group.name }));
     },
-    getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
-    },
-    fetchGroups() {
-      return axios.get(getUrl("group")).then(({ data }) => {
-        this.groupTags = data.map(({ name }) => ({ value: name }));
-        this.groups = data;
-      });
+    fetch() {
+      return axios
+        .get(getUrl("group"))
+        .then(({ data }) => {
+          this.groupTags = data.map(({ name }) => ({ value: name }));
+          this.groups = data;
+        })
+        .then(() => this.updateSelectedGroups());
     },
     getGroups(ids) {
       return ids.map((id) => ({
@@ -147,9 +145,6 @@ export default {
           this.invalidFields = e.response.data.errors.map(({ param }) => param);
         });
     },
-    onCancel() {
-      this.$emit("cancel");
-    },
     onDelete() {
       axios
         .delete(getUrl("user"), this.user)
@@ -159,54 +154,11 @@ export default {
         });
     },
   },
-  mounted() {
-    this.fetchGroups().then(() => this.updateSelectedGroups());
-  },
   components: {
     VoerroTagsInput,
+    Form,
   },
 };
 </script>
 <style>
-.invalid {
-  background: #f00;
-}
-form {
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-  margin: 20px;
-  width: 100%;
-}
-.body {
-  min-width: 310px;
-  max-width: 500px;
-  align: center;
-}
-
-label {
-  margin: 12px 0;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-}
-label > input[type="checkbox"] {
-  margin-top: 4px;
-}
-.footer {
-  min-width: calc(100% - 20px);
-  max-width: calc(100% - 20px);
-  display: flex;
-  justify-content: space-between;
-}
-.long-input {
-}
-.small-button {
-  max-height: 1em;
-  line-height: 0;
-  padding: 1em 0.5em;
-  max-width: fit-content;
-}
 </style>
