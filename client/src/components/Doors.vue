@@ -1,72 +1,55 @@
 <template>
   <div class="doors">
-    <table>
-      <thead>
-        <tr>
-          <th>Nom</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(door, i) in doors" :key="i" @click="onDoorClick(door)">
-          <td>{{ door.name }}</td>
-        </tr>
-      </tbody>
-    </table>
-    <button @click="onAddDoor()">Ajouter Door</button>
-    <Modal v-if="selectedDoor">
-      <Door :door="selectedDoor" @cancel="onCancel()" />
-    </Modal>
+    <ElementsDisplay
+      :elements="elements"
+      :selectedElement="selectedElement"
+      @queryResult="onQueryResult"
+      @add="onAddElement"
+    >
+      <tr slot="headers">
+        <th>Nom</th>
+      </tr>
+      <tr slot="body" v-for="(door, i) in filteredElements" :key="i" @click="onElementClick(door)">
+        <td>{{ door.name }}</td>
+      </tr>
+      <Door slot="form" :door="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
+    </ElementsDisplay>
   </div>
 </template>
 
 <script>
 import Door from "./Door";
-import Modal from "./Modal";
-import axios from "axios";
 import { getUrl } from "../js/utils";
+import axios from "axios";
+import ElementsDisplay from "../mixins/ElementsDisplay";
+import ElementsDisplayMixin from "../mixins/ElementsDisplayMixin.js";
+
 export default {
   name: "Doors",
-  data() {
-    return {
-      selectedDoor: null,
-      doors: [],
-    };
-  },
+  mixins: [ElementsDisplayMixin],
   methods: {
-    onDoorClick(door) {
-      this.selectedDoor = door;
-    },
     onAddDoor() {
       this.selectedDoor = {
         name: "",
+        id: "",
       };
     },
-    onCancel() {
-      this.selectedDoor = null;
+    fetch() {
+      axios.get(getUrl("door")).then(({ data }) => {
+        this.elements = data;
+      });
+
+      axios
+        .get(getUrl("access/9d1d68a3-83b0-469b-a33b-db0eba69cc59"))
+        .then(({ data }) => {
+          console.log("Ici2", data);
+        })
+        .catch((e) => console.error(e));
     },
-  },
-  mounted() {
-    axios.get(getUrl("door")).then(({ data }) => {
-      this.doors = data;
-    });
-
-    // axios
-    //   .get(getUrl("access/7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09"))
-    //   .then(({ data }) => {
-    //     console.log("Ici", data);
-    //   })
-    //   .catch((e) => console.error(e));
-
-    axios
-      .get(getUrl("access/9d1d68a3-83b0-469b-a33b-db0eba69cc59"))
-      .then(({ data }) => {
-        console.log("Ici2", data);
-      })
-      .catch((e) => console.error(e));
   },
   components: {
     Door,
-    Modal,
+    ElementsDisplay,
   },
 };
 </script>
