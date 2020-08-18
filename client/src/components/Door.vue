@@ -1,6 +1,6 @@
 <template>
-  <form v-if="door">
-    <div class="body">
+  <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
+    <div slot="body" class="body">
       <label>
         nom
         <input
@@ -13,37 +13,29 @@
         />
       </label>
     </div>
-    <div class="footer">
-      <input class="validate" type="submit" value="valider" @click="onSubmit" />
-      <button @click="onCancel">cancel</button>
-      <input class="delete" type="submit" value="suprimer" @click="onDelete" />
-    </div>
-  </form>
+  </Form>
 </template>
 
 <script>
 import { getUrl } from "../js/utils";
 import axios from "axios";
+import Form from "../mixins/Form";
+import FormMixin from "../mixins/FormMixin";
 
 export default {
   name: "Door",
-  props: {
-    door: null,
-  },
-  data() {
-    return {
-      invalidFields: [],
-    };
-  },
-  watch: {
-    door: function () {
-      this.fetchDoors();
+  mixins: [FormMixin],
+  computed: {
+    door: {
+      get: function () {
+        return this.element;
+      },
+      set: function (door) {
+        this.element = door;
+      },
     },
   },
   methods: {
-    getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
-    },
     onSubmit(event) {
       axios
         .post(getUrl("door"), this.door)
@@ -55,9 +47,6 @@ export default {
           event.preventDefault();
         });
     },
-    onCancel() {
-      this.$emit("cancel");
-    },
     onDelete() {
       axios
         .delete(getUrl("door"), this.door)
@@ -66,6 +55,9 @@ export default {
           console.error(e);
         });
     },
+  },
+  components: {
+    Form,
   },
 };
 </script>

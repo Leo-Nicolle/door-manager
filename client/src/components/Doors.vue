@@ -12,7 +12,7 @@
       <tr slot="body" v-for="(door, i) in filteredElements" :key="i" @click="onElementClick(door)">
         <td>{{ door.name }}</td>
       </tr>
-      <Door slot="form" :door="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
+      <Door slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
     </ElementsDisplay>
   </div>
 </template>
