@@ -1,6 +1,6 @@
 <template>
-  <form v-if="badge">
-    <div class="body">
+  <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
+    <div slot="body" class="body">
       <label>
         uuid
         <input
@@ -31,28 +31,22 @@
         </div>
       </div>
     </div>
-    <div class="footer">
-      <input class="validate" type="submit" value="valider" @click="onSubmit" />
-      <button @click="onCancel">cancel</button>
-      <input class="delete" type="submit" value="suprimer" @click="onDelete" />
-    </div>
-  </form>
+  </Form>
 </template>
 
 <script>
 import { getUrl } from "../js/utils";
 import axios from "axios";
+import Form from "../mixins/Form";
+import FormMixin from "../mixins/FormMixin";
 
 export default {
   name: "Badge",
-  props: {
-    badge: null,
-    users: [],
-  },
+  props: ["users"],
+  mixins: [FormMixin],
   data() {
     return {
       search: "",
-      invalidFields: [],
       selectedUser: null,
     };
   },
@@ -66,11 +60,16 @@ export default {
       );
       return new Array(20).fill(0).map(() => f[0]);
     },
+    badge: {
+      get: function () {
+        return this.element;
+      },
+      set: function (badge) {
+        this.element = badge;
+      },
+    },
   },
   methods: {
-    getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
-    },
     getUsersClass() {
       return this.selectedUser ? "hidden" : "";
     },
@@ -97,9 +96,6 @@ export default {
           event.preventDefault();
         });
     },
-    onCancel() {
-      this.$emit("cancel");
-    },
     onDelete() {
       axios
         .delete(getUrl("badge"), this.badge)
@@ -109,7 +105,9 @@ export default {
         });
     },
   },
-  mounted() {},
+  components: {
+    Form,
+  },
 };
 </script>
 <style>

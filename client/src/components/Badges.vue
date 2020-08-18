@@ -17,7 +17,7 @@
       >
         <td>{{ badge }}</td>
       </tr>
-      <Badge slot="form" :badge="selectedElement" :users="users" @cancel="onCancel()" />
+      <Badge slot="form" :element="selectedElement" :users="users" @cancel="onCancel()" />
     </ElementsDisplay>
   </div>
 </template>
