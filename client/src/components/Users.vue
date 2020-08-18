@@ -1,5 +1,6 @@
 <template>
   <div class="users">
+    <SearchBar :elements="users" @queryResult="onQueryResult" />
     <table>
       <thead>
         <tr>
@@ -10,7 +11,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(user, i) in users" :key="i" @click="onUserClick(user)">
+        <tr v-for="(user, i) in filteredUsers" :key="i" @click="onUserClick(user)">
           <td>{{ user.lastname }}</td>
           <td>{{ user.firstname }}</td>
           <td>TODO</td>
@@ -30,12 +31,14 @@ import User from "./User";
 import Modal from "./Modal";
 import axios from "axios";
 import { getUrl } from "../js/utils";
+import SearchBar from "./SearchBar";
 
 export default {
   name: "Users",
   data() {
     return {
       users: [],
+      filteredUsers: [],
       groups: [],
       selectedUser: null,
     };
@@ -43,6 +46,9 @@ export default {
   methods: {
     onUserClick(user) {
       this.selectedUser = user;
+    },
+    onQueryResult(results) {
+      this.filteredUsers = results;
     },
     onAddUser() {
       this.selectedUser = {
@@ -74,6 +80,7 @@ export default {
   components: {
     User,
     Modal,
+    SearchBar,
   },
   mounted() {
     axios.get(getUrl("user")).then(({ data }) => (this.users = data));
