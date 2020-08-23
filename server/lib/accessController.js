@@ -1,5 +1,5 @@
 function compareHours(a, b) {
-  const compHours = +a.hh - +b.hh;
+  const compHours = +a.HH - +b.HH;
   const compMins = +a.mm - +b.mm;
   return compHours === 0 ? compMins : compHours;
 }

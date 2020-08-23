@@ -11,7 +11,6 @@ db.defaults({
   groups: [],
   doors: [],
   schedules: [],
-  badges: [],
 }).write();
 
 export default db;

@@ -35,17 +35,17 @@
         >
           <p>de</p>
           <TimePicker
-            format="hh:mm"
             v-model="interval['start']"
             close-on-complete
             @change="onDatePicked(j)"
+            :minute-interval="5"
           ></TimePicker>
           <p>a</p>
           <TimePicker
-            format="hh:mm"
             v-model="interval['end']"
             close-on-complete
             @change="onDatePicked(j)"
+            :minute-interval="5"
           ></TimePicker>
         </span>
       </div>
@@ -107,9 +107,9 @@ export default {
         start &&
         end &&
         intervals.length === j + 1 &&
-        start.hh &&
+        start.HH &&
         start.mm &&
-        end.hh &&
+        end.HH &&
         end.mm
       ) {
         intervals.push({ start: null, end: null });
