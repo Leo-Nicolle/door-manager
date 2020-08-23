@@ -11,7 +11,7 @@ let persitantKeys = null;
 fs.readFile("db/keys.json", (err, data) => {
   if (err) {
     if (err.code === "ENOENT") {
-      persistantKeys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
+      persitantKeys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
       fs.writeFile("db/keys.json", JSON.stringify(persitantKeys));
       return;
     } else throw err;
