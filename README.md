@@ -23,9 +23,9 @@ npm run serve
 - [x] provide API for user, door, group, accessRights, schedule,login
 - [x] store things in a database
 - [x] handle basic data validation
-- [ ] better data validation (check joints are valid ...)
-- [ ] add DELETE API
-- [ ] handle DELETE API
+- [x] better data validation (check joints are valid ...)
+- [x] add DELETE API
+- [x] handle DELETE API
 - [ ] add door ESP32 API
 
 ### client
