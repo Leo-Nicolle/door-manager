@@ -13,13 +13,68 @@
       "groups": [
         "af2aaad1-6d25-4257-a243-445306a89244"
       ],
-      "token": "b1b66992-d8a9-4f11-b95e-d3048f5f536a"
+      "token": "f4e6aac1-5cbb-4c0a-b8b0-f5638b19e707"
+    },
+    {
+      "id": "6d364970-7623-4988-949b-bfd6b283be7f",
+      "firstname": "test",
+      "lastname": "test",
+      "email": "",
+      "password": "",
+      "isAdmin": false,
+      "groups": [
+        "af2aaad1-6d25-4257-a243-445306a89244"
+      ],
+      "badges": []
+    },
+    {
+      "id": "2a4653cb-885a-4ecb-a281-6f78074888a5",
+      "firstname": "Vargas",
+      "lastname": "Fred",
+      "isAdmin": false,
+      "email": "",
+      "password": "",
+      "groups": [
+        "3bd3c4fc-c6c1-4487-82be-27cee52fd481",
+        "8d092416-16d8-4145-b472-d630f5ce1ca6"
+      ],
+      "badges": [
+        "badges1"
+      ]
+    },
+    {
+      "id": "8a9b51c4-1aa7-422a-99f3-1197e0d49e14",
+      "firstname": "Sezanne",
+      "lastname": "Paul",
+      "email": "",
+      "password": "",
+      "isAdmin": false,
+      "groups": [
+        "8d092416-16d8-4145-b472-d630f5ce1ca6"
+      ],
+      "badges": []
+    },
+    {
+      "id": "ba8fc4d3-709c-4a86-8e94-66129eddaed2",
+      "firstname": "paulo",
+      "lastname": "paulo",
+      "email": "",
+      "password": "",
+      "isAdmin": false,
+      "groups": [
+        "3bd3c4fc-c6c1-4487-82be-27cee52fd481"
+      ],
+      "badges": []
     }
   ],
   "doors": [
     {
-      "id": "51780296-8fe6-4829-9c3e-a44fa18a52e7",
-      "name": "porte principale"
+      "id": "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09",
+      "name": "porte 1"
+    },
+    {
+      "id": "9d1d68a3-83b0-469b-a33b-db0eba69cc59",
+      "name": "porte 41"
     }
   ],
   "groups": [
@@ -27,110 +82,344 @@
       "id": "af2aaad1-6d25-4257-a243-445306a89244",
       "name": "admin",
       "doorAccess": {
-        "51780296-8fe6-4829-9c3e-a44fa18a52e7": "0e933099-8c0d-478b-8af3-59c9f24cec95"
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "b3a97c78-f446-49ff-af88-1e936008527a"
+      }
+    },
+    {
+      "id": "3bd3c4fc-c6c1-4487-82be-27cee52fd481",
+      "name": "testdsad",
+      "doorAccess": {
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "b3a97c78-f446-49ff-af88-1e936008527a",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406"
+      }
+    },
+    {
+      "id": "8d092416-16d8-4145-b472-d630f5ce1ca6",
+      "name": "test1",
+      "doorAccess": {
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406"
       }
     }
   ],
   "schedules": [
     {
-      "id": "0e933099-8c0d-478b-8af3-59c9f24cec95",
+      "id": "b3a97c78-f446-49ff-af88-1e936008527a",
       "name": "tout le temps",
       "days": [
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": true,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         }
       ]
     },
     {
-      "id": "dd7e3e44-d710-4fe6-a8ef-699ca67ce9dd",
-      "name": "membre fablab",
+      "id": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406",
+      "name": "test 1",
       "days": [
         {
           "allDay": false,
           "intervals": [
             {
               "start": {
-                "HH": "13",
-                "mm": "00"
+                "hh": "01",
+                "mm": "03"
               },
               "end": {
-                "HH": "14",
-                "mm": "00"
+                "hh": "05",
+                "mm": "05"
               }
             },
             {
               "start": {
-                "HH": "15",
-                "mm": "30"
+                "hh": "04",
+                "mm": "04"
               },
               "end": {
-                "HH": "16",
-                "mm": "00"
+                "hh": "05",
+                "mm": "05"
               }
+            },
+            {
+              "start": null,
+              "end": null
             }
           ]
-        },
-        {
-          "allDay": false,
-          "intervals": []
-        },
-        {
-          "allDay": false,
-          "intervals": []
         },
         {
           "allDay": false,
           "intervals": [
             {
-              "start": {
-                "HH": "02",
-                "mm": "10"
-              },
-              "end": {
-                "HH": "03",
-                "mm": "10"
-              }
+              "start": null,
+              "end": null
             }
           ]
         },
         {
           "allDay": false,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": false,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         },
         {
           "allDay": false,
-          "intervals": []
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "2cd90a3c-406d-4a29-aa19-cb6c29bacf88",
+      "name": "test23",
+      "days": [
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": {
+                "hh": "03",
+                "mm": "03"
+              },
+              "end": {
+                "hh": "04",
+                "mm": "04"
+              }
+            },
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "b5c8c28b-119e-4a1d-8547-3f0f9ca1b80f",
+      "name": "test2",
+      "days": [
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": {
+                "hh": "03",
+                "mm": "03"
+              },
+              "end": {
+                "hh": "04",
+                "mm": "04"
+              }
+            },
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
+        },
+        {
+          "allDay": false,
+          "intervals": [
+            {
+              "start": null,
+              "end": null
+            }
+          ]
         }
       ]
     }
-  ]
+  ],
+  "badges": []
 }
