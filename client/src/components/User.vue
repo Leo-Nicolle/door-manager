@@ -147,8 +147,8 @@ export default {
     },
     onDelete() {
       axios
-        .delete(getUrl("user"), this.user)
-        .then(({ data }) => console.log("deleted", data))
+        .delete(getUrl(`user/${this.user.id}`))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           console.error(e);
         });

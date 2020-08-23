@@ -9,7 +9,13 @@ const privateKey = keys.private;
 
 let persitantKeys = null;
 fs.readFile("db/keys.json", (err, data) => {
-  if (err) return;
+  if (err) {
+    if (err.code === "ENOENT") {
+      persistantKeys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
+      fs.writeFile("db/keys.json", JSON.stringify(persitantKeys));
+      return;
+    } else throw err;
+  }
   persitantKeys = JSON.parse(data);
 });
 
@@ -126,7 +132,14 @@ export default function userController({ app, db, authMiddleware }) {
       res.send(200);
     }
   );
-  app.delete("/user", authMiddleware, (req, res) => {
-    console.log(req.body, req.params);
+  app.delete("/user/:id", authMiddleware, (req, res) => {
+    db.set(
+      "users",
+      db
+        .get("users")
+        .filter(({ id }) => id !== req.params.id)
+        .value()
+    ).write();
+    res.send(200);
   });
 }
