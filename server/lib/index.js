@@ -9,7 +9,7 @@ import userController from "./userController";
 import scheduleController from "./scheduleController";
 import groupController from "./groupController";
 import accessController from "./accessController";
-
+import { existsSync } from "fs";
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -46,10 +46,6 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/", (req, res) => {
-  res.send("text");
-});
-
 app.get("/api/logout", function (req, res) {
   const token = db
     .get("users")
@@ -64,6 +60,11 @@ app.get("/testAuth", authMiddleware, (req, res) => {
   console.log("test auth");
   res.send(200);
 });
+
+if (existsSync("public")) {
+  console.log("server static");
+  app.use(express.static("public"));
+}
 
 doorController({ authMiddleware, app, db });
 userController({ authMiddleware, app, db });

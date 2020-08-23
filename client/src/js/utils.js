@@ -1,3 +1,5 @@
 export function getUrl(route) {
-  return `http://localhost:5050/${route}`;
+  const url = `http://${process.env.VUE_APP_SERVER_IP}:${process.env.VUE_APP_SERVER_PORT}/${route}`;
+  console.log(url);
+  return url;
 }

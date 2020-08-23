@@ -8,10 +8,22 @@ const publicKey = keys.public;
 const privateKey = keys.private;
 
 let persitantKeys = null;
-fs.readFile("./keys.json", (err, data) => {
+fs.readFile("db/keys.json", (err, data) => {
   if (err) return;
   persitantKeys = JSON.parse(data);
 });
+
+function validateGroupsIds(db, groupIds) {
+  return groupIds
+    .map((groupId) => {
+      if (!db.get("groups").find({ id: groupId }).value())
+        return {
+          param: "groups",
+          msg: "group does not exist",
+        };
+    })
+    .filter((e) => e);
+}
 
 export default function userController({ app, db, authMiddleware }) {
   app.get("/encrypt", (req, res) => {
@@ -21,7 +33,7 @@ export default function userController({ app, db, authMiddleware }) {
     const email = req.body.email;
 
     const decryptedPassword = encrypt.decrypt(req.body.password, privateKey);
-    if (!emaeil.length || !decryptedPassword || !decryptedPassword.length) {
+    if (!email.length || !decryptedPassword || !decryptedPassword.length) {
       return res.status(401).send("Wrong email or password");
     }
     const user = db.get("users").find({ email }).value();
@@ -88,6 +100,7 @@ export default function userController({ app, db, authMiddleware }) {
         if (!email.length)
           errors.push({ param: "email", msg: "email should not be empty" });
       }
+      errors.push(...validateGroupsIds(db, req.body.groups));
 
       if (!persitantKeys) {
         return res.status(400);

@@ -13,7 +13,7 @@
       "groups": [
         "af2aaad1-6d25-4257-a243-445306a89244"
       ],
-      "token": "1fc30a51-53ca-43c7-871f-eef054a1db9f"
+      "token": "f4e6aac1-5cbb-4c0a-b8b0-f5638b19e707"
     },
     {
       "id": "6d364970-7623-4988-949b-bfd6b283be7f",
@@ -82,7 +82,7 @@
       "id": "af2aaad1-6d25-4257-a243-445306a89244",
       "name": "admin",
       "doorAccess": {
-        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "b3a97c78-f446-49ff-af88-1e936008527a",
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "",
         "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "b3a97c78-f446-49ff-af88-1e936008527a"
       }
     },
@@ -90,8 +90,8 @@
       "id": "3bd3c4fc-c6c1-4487-82be-27cee52fd481",
       "name": "testdsad",
       "doorAccess": {
-        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "2cd90a3c-406d-4a29-aa19-cb6c29bacf88",
-        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "2cd90a3c-406d-4a29-aa19-cb6c29bacf88"
+        "7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09": "b3a97c78-f446-49ff-af88-1e936008527a",
+        "9d1d68a3-83b0-469b-a33b-db0eba69cc59": "2b6dd747-d9a7-458d-8ba4-cf42a60ac406"
       }
     },
     {

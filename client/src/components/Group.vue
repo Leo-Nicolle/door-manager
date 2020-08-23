@@ -26,7 +26,11 @@
       <div>
         <label>
           Horraire
-          <select type="select" v-model="currentDoorAcces">
+          <select
+            :class="getClass('currentDoorAcces')"
+            type="select"
+            v-model="currentDoorAcces"
+          >
             <option
               v-for="(schedule, j) in schedules"
               :key="j"
@@ -51,6 +55,7 @@ export default {
   data() {
     return {
       schedules: [],
+      errorResponses: [],
       indexDoor: 0,
     };
   },
@@ -73,6 +78,15 @@ export default {
       },
     },
   },
+  watch: {
+    errorResponses: function (newValue) {
+      if (!newValue) return;
+      newValue.forEach((msg) => {
+        if (msg.includes("schedule"))
+          this.invalidFields = this.invalidFields.concat("currentDoorAcces");
+      });
+    },
+  },
   methods: {
     getDoorButtonClass(i) {
       return i === this.indexDoor ? "validate" : "";
@@ -88,13 +102,16 @@ export default {
       axios.get(getUrl("schedule")).then(({ data }) => (this.schedules = data));
     },
     onSubmit(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      this.group.doorAccess["7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09"] = "";
       axios
         .post(getUrl("group"), this.group)
-        .then(({ data }) => console.log("validated", data))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           if (!e.response.data) return console.error(e);
           console.log("response error", e.response.data.errors);
-          this.invalidFields = e.response.data.errors.map(({ param }) => param);
+          this.errorResponses = e.response.data.errors.map(({ msg }) => msg);
           event.preventDefault();
         });
     },
