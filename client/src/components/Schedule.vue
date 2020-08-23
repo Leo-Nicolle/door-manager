@@ -112,11 +112,17 @@ export default {
         end.HH &&
         end.mm
       ) {
-        intervals.push({ start: null, end: null });
+        intervals.push({ start: { HH: "", mm: "" }, end: { HH: "", mm: "" } });
       }
     },
     onDayClick(i, evt) {
       this.indexDay = i;
+      if (!this.currentDay.intervals.length) {
+        this.currentDay.intervals = this.currentDay.intervals.concat({
+          start: { HH: "", mm: "" },
+          end: { HH: "", mm: "" },
+        });
+      }
       evt.stopPropagation();
       evt.preventDefault();
     },

@@ -26,7 +26,17 @@ export default function scheduleController({ app, db, authMiddleware }) {
       req.body.days.forEach(
         (day) =>
           (day.intervals = day.intervals.filter(
-            ({ start, end }) => start.HH && start.mm && end.HH && end.mm
+            ({ start, end }) =>
+              start &&
+              end &&
+              start.HH &&
+              start.mm &&
+              end.HH &&
+              end.mm &&
+              start.HH.length &&
+              start.mm.length &&
+              end.HH.length &&
+              end.mm.length
           ))
       );
       // modify entry
