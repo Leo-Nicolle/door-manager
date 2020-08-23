@@ -1,6 +1,6 @@
-# labaux - RFID door manager
+# Door manager
 
-labaux is an opensource door manager system. It handles RFID door locks, users, schedules, groups....
+Door Manager is an opensource system to handle RFID door locks, users, schedules, groups....
 
 ### Getting started
 
@@ -42,6 +42,7 @@ npm run serve
 - [ ] assign doorId to ESP
 - [ ] read RFID and lookup in the DB
 - [ ] store access locally
+- [ ] remote update ?
 
 ### MISC
 
