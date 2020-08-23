@@ -67,9 +67,8 @@ form {
   width: 100%;
 }
 .body {
-  min-width: 310px;
-  max-width: 500px;
   align: center;
+  margin: 0 6px;
 }
 
 label {
@@ -86,7 +85,12 @@ label > input[type="checkbox"] {
   max-width: calc(100% - 20px);
   display: flex;
   justify-content: space-between;
+  margin: 0 6px;
+  margin-top: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #ccc;
 }
+
 .long-input {
 }
 .small-button {
