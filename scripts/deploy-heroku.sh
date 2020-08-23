@@ -19,13 +19,18 @@ cp -R server/db dist/db*
 cp -R client/dist/* dist/public
 
 # echo "web: node server.js" > Procfile
-# git checkout heroku
-# cp -R dist/* .
-# rm -rf dist
-# git add .
-# git commit -m 'deploy'
-# git push
-# git checkout -
+git checkout heroku
+rm -rf client
+rm -rf server
+rm -rf scripts
+rm -rf door-lock
+
+cp -R dist/* .
+rm -rf dist
+git add .
+git commit -m 'deploy'
+git push
+git checkout -
 
 
 
