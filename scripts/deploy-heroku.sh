@@ -1,9 +1,8 @@
 !#/bin/sh
 
-git checkout heroku
 cd client
 # npm i
-# npm run build
+npm run build
 
 cd ../server
 # npm i
@@ -19,13 +18,14 @@ cp -R server/dist/* dist
 cp -R server/db dist/db*
 cp -R client/dist/* dist/public
 
-echo "web: node dist/server.js" > Procfile
-git add dist
-git add Procfile
-
-git commit -m 'deploy'
-git push
-git checkout -
+# echo "web: node server.js" > Procfile
+# git checkout heroku
+# cp -R dist/* .
+# rm -rf dist
+# git add .
+# git commit -m 'deploy'
+# git push
+# git checkout -
 
 
 
