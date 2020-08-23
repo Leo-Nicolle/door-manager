@@ -31,7 +31,29 @@ export default function doorController({ app, db, authMiddleware }) {
       res.send(200);
     }
   );
-  app.delete("/door", authMiddleware, (req, res) => {
-    console.log(req.body, req.params);
+  app.delete("/door/:id", authMiddleware, (req, res) => {
+    console.log("ICI DOOR DELETE");
+    db.set(
+      "doors",
+      db
+        .get("doors")
+        .filter(({ id }) => id !== req.params.id)
+        .value()
+    ).write();
+
+    db.set(
+      "groups",
+      db
+        .get("groups")
+        .value()
+        .map((group) => {
+          const doorAccess = group.doorAccess;
+          delete doorAccess[req.params.id];
+          group.doorAccess = doorAccess;
+          return group;
+        })
+    ).write();
+
+    res.send(200);
   });
 }

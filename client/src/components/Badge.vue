@@ -98,8 +98,8 @@ export default {
     },
     onDelete() {
       axios
-        .delete(getUrl("badge"), this.badge)
-        .then(({ data }) => console.log("deleted", data))
+        .delete(getUrl(`badge/${this.badge.id}`))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           console.error(e);
         });

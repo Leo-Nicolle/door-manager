@@ -32,7 +32,7 @@ export default {
   name: "Schedules",
   mixins: [ElementsDisplayMixin],
   methods: {
-    onAddSchedule() {
+    onAddElement() {
       this.selectedElement = {
         name: "",
         days: new Array(7).fill(0).map(() => ({

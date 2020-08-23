@@ -34,7 +34,30 @@ export default function scheduleController({ app, db, authMiddleware }) {
       res.send(200);
     }
   );
-  app.delete("/schedule", authMiddleware, (req, res) => {
-    console.log(req.body, req.params);
+  app.delete("/schedule/:id", authMiddleware, (req, res) => {
+    db.set(
+      "schedules",
+      db
+        .get("schedules")
+        .filter(({ id }) => id !== req.params.id)
+        .value()
+    ).write();
+
+    db.set(
+      "groups",
+      db
+        .get("groups")
+        .value()
+        .map((group) => {
+          const doorAccess = group.doorAccess;
+          Object.entries(group.doorAccess).forEach(([key, value]) => {
+            if (value !== req.params.id) return;
+            delete doorAccess[key];
+          });
+          group.doorAccess = doorAccess;
+          return group;
+        })
+    ).write();
+    res.send(200);
   });
 }

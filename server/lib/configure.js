@@ -3,6 +3,12 @@ var encrypt = require("quick-encrypt");
 
 var fs = require("fs");
 
+fs.readFile("teststss.json", (err, data) => {
+  console.log("error", err);
+  if (err.code) return;
+  persitantKeys = JSON.parse(data);
+});
+
 // inquirer
 //   .prompt([
 //     {

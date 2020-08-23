@@ -48,9 +48,10 @@ export default {
         });
     },
     onDelete() {
+      console.log("ICI delete", getUrl(`door/${this.door.id}`));
       axios
-        .delete(getUrl("door"), this.door)
-        .then(({ data }) => console.log("deleted", data))
+        .delete(getUrl(`door/${this.door.id}`))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           console.error(e);
         });

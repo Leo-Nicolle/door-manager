@@ -8,6 +8,7 @@ function validateDoorAcces(db, doorAccess) {
       msg: "wrong door access",
     };
   }
+  console.log("doorAccess", doorAccess);
   return Object.entries(doorAccess)
     .map(([doorId, scheduleId]) => {
       if (!db.get("doors").find({ id: doorId }).value())

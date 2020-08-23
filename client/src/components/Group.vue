@@ -104,7 +104,6 @@ export default {
     onSubmit(event) {
       event.preventDefault();
       event.stopPropagation();
-      this.group.doorAccess["7e1cd421-27dd-4b6c-99e4-cbeb1f7e2d09"] = "";
       axios
         .post(getUrl("group"), this.group)
         .then(() => this.$emit("submit"))
@@ -117,8 +116,8 @@ export default {
     },
     onDelete() {
       axios
-        .delete(getUrl("group"), this.group)
-        .then(({ data }) => console.log("deleted", data))
+        .delete(getUrl(`group/${this.group.id}`))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           console.error(e);
         });

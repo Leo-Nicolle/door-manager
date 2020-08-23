@@ -28,23 +28,15 @@ export default {
   name: "Doors",
   mixins: [ElementsDisplayMixin],
   methods: {
-    onAddDoor() {
-      this.selectedDoor = {
+    onAddElement() {
+      this.selectedElement = {
         name: "",
-        id: "",
       };
     },
     fetch() {
       axios.get(getUrl("door")).then(({ data }) => {
         this.elements = data;
       });
-
-      axios
-        .get(getUrl("access/9d1d68a3-83b0-469b-a33b-db0eba69cc59"))
-        .then(({ data }) => {
-          console.log("Ici2", data);
-        })
-        .catch((e) => console.error(e));
     },
   },
   components: {

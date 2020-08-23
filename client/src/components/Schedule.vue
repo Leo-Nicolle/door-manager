@@ -138,8 +138,8 @@ export default {
     },
     onDelete() {
       axios
-        .delete(getUrl("schedule"), this.schedule)
-        .then(({ data }) => console.log("deleted", data))
+        .delete(getUrl(`schedule/${this.schedule.id}`))
+        .then(() => this.$emit("submit"))
         .catch((e) => {
           console.error(e);
         });
