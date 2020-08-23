@@ -29,7 +29,6 @@ const authMiddleware = (req, res, next) => {
       console.log("auth failed");
       throw new Error("Authtentication failed");
     }
-    console.log("logged in");
     next();
   } catch (err) {
     return res.status(401).json({
