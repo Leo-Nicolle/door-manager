@@ -3,11 +3,13 @@
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
 
-const char *ssid = "frebaux";
-const char *password = "labaux0r";
-const char *baseUrl = "http://192.168.1.106:5050/";
-
+const char *ssid = "";
+const char *password = "";
+const char *baseUrl = "http://192.168.43.129:5050/";
+char *doorId = "9d1d68a3-83b0-469b-a33b-db0eba69cc59";
 char url[512];
+char rfid[512];
+
 
 HTTPClient http;
 
@@ -20,28 +22,19 @@ bool requestAccess(char *doorId, char *rfid)
 {
 
   strcpy(url, baseUrl);
-  strcat(url, 'access');
+  strcat(url, "access/");
   strcat(url, doorId);
   strcat(url, "/");
   strcat(url, rfid);
-  strcat(url, "/");
 
-  Serial.prinln(url);
   http.begin(url);
 
   int httpResponseCode = http.GET();
   bool access = false;
-  if (httpResponseCode > 0)
+  if (httpResponseCode == 200)
   {
-    Serial.print("HTTP Response code: ");
-    Serial.println(httpResponseCode);
-    String payload = http.getString();
-    Serial.println(payload);
-  }
-  else
-  {
-    Serial.print("Error code: ");
-    Serial.println(httpResponseCode);
+    // success
+    access = true;
   }
   // Free resources
   http.end();
@@ -55,9 +48,8 @@ void setup()
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.println("Connecting to WiFi..");
   }
-  Serial.println("Connected to the WiFi network");
+  requestAccess(doorId, "badges1");
 }
 
 void loop()
