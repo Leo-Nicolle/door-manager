@@ -9,7 +9,6 @@ function getMergedIntervals(intervals) {
   const sortedIntervals = intervals
     .filter(({ start, end }) => start && end)
     .sort((a, b) => compareHours(a.start, b.start));
-
   return sortedIntervals.slice(1).reduce(
     (mergedIntervals, { start, end }) => {
       // intervals cross each other:
@@ -29,16 +28,60 @@ function getMergedIntervals(intervals) {
 function getLargestSchedule(schedules) {
   return {
     id: schedules.map(({ id }) => id).join("-"),
-    days: schedules
-      .slice(1)
-      .reduce(
-        (allDays, { days }) =>
-          days.map((day, i) =>
-            getMergedIntervals([...allDays[i].intervals, ...day.intervals])
-          ),
-        schedules[0].days
-      ),
+    days: schedules.slice(1).reduce(
+      (allDays, { days }) =>
+        days.map((day, i) => ({
+          allDay: day.allDay || allDays[i].allDay,
+          intervals: getMergedIntervals([
+            ...allDays[i].intervals,
+            ...day.intervals,
+          ]),
+        })),
+      schedules[0].days
+    ),
   };
+}
+
+function authorizeAccess(doorId, badgeId, db) {
+  const schedulePerGroupId = db
+    .get("groups")
+    .value()
+    .filter(({ doorAccess }) => doorAccess[doorId])
+    .reduce((acc, { id, doorAccess }) => {
+      const schedule = db
+        .get("schedules")
+        .find({ id: doorAccess[doorId] })
+        .value();
+      acc[id] = schedule;
+      return acc;
+    }, {});
+
+  const user = db
+    .get("users")
+    .find(({ badges }) => badges.some((badge) => badge === badgeId))
+    .value();
+  if (!user) return false;
+  const allowedGroups = user.groups.filter((id) => schedulePerGroupId[id]);
+  if (!allowedGroups.length) return false;
+
+  const schedule = getLargestSchedule(
+    allowedGroups.map((groupId) => schedulePerGroupId[groupId])
+  );
+
+  const date = new Date();
+  const time = {HH: date.getHours().toString(), mm: date.getMinutes().toString()}
+  const dayIndex = (date.getDay()+6)%7;
+  const scheduleDay = schedule.days[dayIndex];
+
+  if (scheduleDay.allDay === true) return true;
+
+  return scheduleDay.intervals.some(
+    ({ start, end }) =>
+      start &&
+      end &&
+      compareHours(start, time) <= 0 &&
+      compareHours(time, end) <= 0 
+  );
 }
 
 export default function accessController({ app, db }) {
@@ -76,7 +119,16 @@ export default function accessController({ app, db }) {
       },
       {}
     );
-
+    console.log("request DoorId", doorId);
     res.send({ schedulePerBadge, generatedSchedules });
+  });
+
+  app.get("/access/:doorid/:badgeId", (req, res) => {
+    const doorId = req.params.doorid;
+    const badgeId = req.params.badgeId;
+
+    console.log("request DoorId", doorId, "badgeId", badgeId);
+
+    res.send( authorizeAccess(doorId, badgeId, db) ? 200 : 400);
   });
 }
