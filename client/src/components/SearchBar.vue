@@ -26,18 +26,21 @@ export default {
         .reduce((score, query) => score + +string.includes(query), 0);
     },
     match(object, query) {
-      return Object.values(object).reduce((score, field) => {
-        if (typeof field === "object") {
-          return score + this.match(field, query);
-        }
-        if (typeof field === "string") {
-          return score + this.matchQuery(query, field);
-        }
-        if (typeof field === "number") {
-          return score + this.matchQuery(query, Number(field).toString(10));
-        }
-        return score;
-      }, 0);
+      return (
+        object &&
+        Object.values(object).reduce((score, field) => {
+          if (typeof field === "object") {
+            return score + this.match(field, query);
+          }
+          if (typeof field === "string") {
+            return score + this.matchQuery(query, field);
+          }
+          if (typeof field === "number") {
+            return score + this.matchQuery(query, Number(field).toString(10));
+          }
+          return score;
+        }, 0)
+      );
     },
     update(query) {
       if (!query.length) {

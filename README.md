@@ -26,9 +26,9 @@ npm run serve
 - [x] better data validation (check joints are valid ...)
 - [x] add DELETE API
 - [x] handle DELETE API
+- [x] add log door open
+- [x] add proper logout
 - [ ] add door ESP32 API
-- [ ] add log door open
-- [ ] add proper logout
 
 ### client
 
@@ -36,13 +36,15 @@ npm run serve
 - [x] provide forms
 - [x] searchbar
 - [x] add RFID
-- [ ] add log
-- [ ] add proper logout
+- [x] add log
+- [x] add proper logout
+- [ ] sort entries by column
+
 - [ ] add door ESP32 UI
 
 ### ESP32
 
-- [ ] connect to server and request access
+- [x] connect to server and request access
 - [ ] assign doorId to ESP
 - [ ] read RFID and lookup in the DB
 - [ ] store access locally
