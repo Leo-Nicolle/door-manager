@@ -55,7 +55,8 @@ export default {
 </script>
 <style>
 .invalid {
-  background: #f00;
+  border-color: #c03;
+  outline-color: #c03;
 }
 form {
   display: flex;

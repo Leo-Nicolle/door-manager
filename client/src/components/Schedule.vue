@@ -3,14 +3,7 @@
     <div slot="body" class="body large-body">
       <label>
         nom
-        <input
-          :class="getClass('name')"
-          type="text"
-          v-model="schedule.name"
-          id="name"
-          name="name"
-          required
-        />
+        <input type="text" v-model="schedule.name" id="name" name="name" required />
       </label>
       <div class="large-form-container">
         <span class="date-container">
@@ -39,6 +32,7 @@
             close-on-complete
             @change="onDatePicked(j)"
             :minute-interval="5"
+            :class="getTimePickerClass(0, j)"
           ></TimePicker>
           <p>a</p>
           <TimePicker
@@ -46,6 +40,7 @@
             close-on-complete
             @change="onDatePicked(j)"
             :minute-interval="5"
+            :class="getTimePickerClass(1, j)"
           ></TimePicker>
         </span>
       </div>
@@ -67,6 +62,7 @@ export default {
   mixins: [FormMixin],
   data() {
     return {
+      errors: [],
       indexDay: 0,
       testBool: false,
       days: [
@@ -100,6 +96,16 @@ export default {
     getDateContainerClass(indexDay) {
       return this.schedule.days[indexDay].allDay ? "hidden" : "";
     },
+    getTimePickerClass(position, j) {
+      return this.errors.find(
+        ({ indexDay, indexInterval, indexStartEnd }) =>
+          indexDay === this.indexDay &&
+          indexInterval === j &&
+          position === indexStartEnd
+      )
+        ? "invalid"
+        : "";
+    },
     onDatePicked(j) {
       const intervals = this.currentDay.intervals;
       const { start, end } = intervals[intervals.length - 1];
@@ -128,17 +134,17 @@ export default {
     },
 
     onSubmit(event) {
-      console.log("testBool", this.testBool);
+      this.errors = [];
       axios
         .post(getUrl("schedule"), JSON.parse(JSON.stringify(this.schedule)))
         .then(() => this.$emit("submit"))
         .catch((e) => {
           if (!e.response.data) return console.error(e);
           console.log("response error", e.response.data.errors);
-          this.invalidFields = e.response.data.errors.map(({ param }) => param);
+          this.errors = e.response.data.errors;
+
           event.preventDefault();
         });
-      console.log(event);
       event.preventDefault();
       event.stopPropagation();
     },
@@ -180,5 +186,9 @@ label {
 }
 label > input {
   margin: 0 10px;
+}
+.invalid > input.display-time {
+  border-color: #c03;
+  outline-color: #c03;
 }
 </style>

@@ -1,6 +1,46 @@
 import { body, validationResult } from "express-validator";
 import { v4 as uuid } from "uuid";
 
+function validateTime(time) {
+  const validate1 =
+    time && typeof time.HH === "string" && typeof time.mm === "string";
+
+  if (!validate1) return false;
+
+  return (time.HH && time.mm) || (!time.HH && !time.mm);
+}
+function validateSchedule(schedule) {
+  console.log(schedule.days, schedule.days.length);
+  if (!schedule.days || schedule.days.length !== 7)
+    return [
+      {
+        param: "doorAccess",
+        msg: "wrong door access",
+      },
+    ];
+
+  return schedule.days.reduce((acc, { intervals }, i) => {
+    intervals.forEach(({ start, end }, j) => {
+      if (!validateTime(start))
+        acc.push({
+          indexDay: i,
+          indexInterval: j,
+          indexStartEnd: 0,
+          msg: "wrong ",
+        });
+
+      if (!validateTime(end))
+        acc.push({
+          indexDay: i,
+          indexInterval: j,
+          indexStartEnd: 1,
+          msg: "wrong ",
+        });
+    });
+    return acc;
+  }, []);
+}
+
 export default function scheduleController({ app, db, authMiddleware }) {
   app.get("/schedule", authMiddleware, (req, res) => {
     const schedules = db.get("schedules").value();
@@ -15,11 +55,11 @@ export default function scheduleController({ app, db, authMiddleware }) {
     authMiddleware,
     [body("name").isString().notEmpty(), body("days").isArray().notEmpty()],
     (req, res) => {
-      let errors = validationResult(req);
+      let errors = validationResult(req).array();
       // validate times:
-      // TODO!!
-      if (!errors.isEmpty()) {
-        return res.status(422).json({ errors: errors.array() });
+      errors.push(...validateSchedule(req.body));
+      if (errors.length) {
+        return res.status(422).json({ errors });
       }
       console.log("post schedules", req.body.days[0]);
       // clean data
