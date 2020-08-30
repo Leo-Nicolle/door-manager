@@ -173,7 +173,7 @@ export default {
 .date-container > button {
   margin: 0 5px;
   margin-bottom: 10px;
-  max-width: 90px;
+  min-width: max-content;
 }
 label {
   max-width: fit-content;
