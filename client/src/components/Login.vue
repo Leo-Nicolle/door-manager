@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { getUrl } from "../js/utils";
+import { getUrl, loggedIn, logOut } from "../js/utils";
 import axios from "axios";
 import encrypt from "quick-encrypt";
 
@@ -59,6 +59,7 @@ export default {
         )
         .then(({ data }) => {
           localStorage.setItem("token", data.token);
+          this.$emit("login");
           this.$router.push("/user");
         })
         .catch((e) => {
@@ -67,7 +68,14 @@ export default {
         });
     },
   },
-  mounted() {},
+  mounted() {
+    loggedIn().then((isLoggedIn) => {
+      if (isLoggedIn) {
+        logOut();
+        this.$emit("logout");
+      }
+    });
+  },
   components: {},
 };
 </script>

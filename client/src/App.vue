@@ -7,12 +7,40 @@
       <router-link to="/door">Portes</router-link>|
       <router-link to="/badge">Badges</router-link>|
       <router-link to="/log">Logs</router-link>|
-      <router-link to="/login">login</router-link>
+      <router-link to="/login">{{logginText}}</router-link>
     </div>
-    <router-view />
+    <router-view @login="onLogIn" @logout="onLogOut" />
   </div>
 </template>
 
+<script>
+import { loggedIn } from "./js/utils";
+export default {
+  name: "App",
+  data() {
+    return {
+      loggedIn: false,
+    };
+  },
+  computed: {
+    logginText: function () {
+      return this.loggedIn ? "Log out" : "Log in";
+    },
+  },
+
+  methods: {
+    onLogIn() {
+      this.loggedIn = true;
+    },
+    onLogOut() {
+      this.loggedIn = false;
+    },
+  },
+  mounted() {
+    loggedIn().then((isLoggedIn) => (this.loggedIn = isLoggedIn));
+  },
+};
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

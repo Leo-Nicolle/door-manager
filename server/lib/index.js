@@ -1,9 +1,10 @@
 "use strict";
 import express from "express";
-import db from "./database";
 import cors from "cors";
 import bodyParser from "body-parser";
 import passport from "passport";
+import { v4 as uuid } from "uuid";
+import db from "./database";
 import doorController from "./doorController";
 import userController from "./userController";
 import scheduleController from "./scheduleController";
@@ -47,18 +48,13 @@ app.use(bodyParser.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.get("/api/logout", function (req, res) {
-  const token = db
-    .get("users")
-    .find({ email, password })
-    .assign({ token })
-    .write()
-    .then(() => res.status(201).json({ user, token }));
-  return res.send();
+app.get("/api/logout/:token", function (req, res) {
+  const token = req.params.token;
+  db.get("users").find({ token }).assign({ token: uuid() }).write();
+  return res.send(200);
 });
 
-app.get("/testAuth", authMiddleware, (req, res) => {
-  console.log("test auth");
+app.get("/api/loggedin", authMiddleware, (req, res) => {
   res.send(200);
 });
 
