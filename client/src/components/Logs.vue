@@ -4,8 +4,9 @@
       :elements="elements"
       :elementsToFilter="elementsToFilter"
       :selectedElement="selectedElement"
+      :buttonText="`Supprimer`"
       @queryResult="onQueryResult"
-      @add="onAddElement"
+      @add="onDeleteLogs"
     >
       <tr slot="headers">
         <th>Prenom</th>
@@ -19,7 +20,7 @@
         <td>{{ log.lastname }}</td>
         <td>{{ log.doorName }}</td>
         <td>{{ new Date(log.date).format('DD/MM/YY--HH:mm') }}</td>
-        <td>{{ +log.authorized === 200 }}</td>
+        <td :class="+log.authorized === 200? 'open':'closed'"></td>
       </tr>
       <!-- <Log slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" /> -->
     </ElementsDisplay>
@@ -42,7 +43,9 @@ export default {
     };
   },
   methods: {
-    onAddElement() {},
+    onDeleteLogs() {
+      axios.delete(getUrl("log")).then(() => this.fetch());
+    },
     onElementClick() {},
     getElementsToFilter(elements) {
       return elements.map((log) => {
@@ -60,8 +63,6 @@ export default {
       });
     },
     fetch() {
-      console.log("la");
-
       axios
         .get(getUrl("user"))
         .then(({ data }) => {

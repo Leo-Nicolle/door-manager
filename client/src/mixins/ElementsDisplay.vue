@@ -9,7 +9,7 @@
         <slot name="body"></slot>
       </tbody>
     </table>
-    <button @click="$emit('add')">Ajouter</button>
+    <button @click="$emit('add')">{{buttonText}}</button>
     <Modal v-if="selectedElement">
       <slot name="form"></slot>
     </Modal>
@@ -22,7 +22,12 @@ import SearchBar from "../components/SearchBar";
 
 export default {
   name: "ElementsDisplay",
-  props: ["elements", "elementsToFilter", "selectedElement"],
+  props: {
+    elements: { type: Array, default: () => [] },
+    elementsToFilter: { type: Array, default: () => [] },
+    selectedElement: { type: Object, default: () => null },
+    buttonText: { type: String, default: () => "Ajouter" },
+  },
   methods: {
     onAddElement() {
       console.log("todo");

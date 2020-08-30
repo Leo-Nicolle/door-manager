@@ -33,6 +33,9 @@ export default {
         if (typeof field === "string") {
           return score + this.matchQuery(query, field);
         }
+        if (typeof field === "number") {
+          return score + this.matchQuery(query, Number(field).toString(10));
+        }
         return score;
       }, 0);
     },
