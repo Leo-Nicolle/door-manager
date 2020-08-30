@@ -7,6 +7,7 @@ import Users from "../components/Users.vue";
 import Schedules from "../components/Schedules.vue";
 import Doors from "../components/Doors.vue";
 import Badges from "../components/Badges.vue";
+import Logs from "../components/Logs.vue";
 
 // import Users from "../components/Users.vue";
 
@@ -55,7 +56,14 @@ const routes = [
       requiresAuth: true,
     },
   },
-
+  {
+    path: "/log",
+    name: "Logs",
+    component: Logs,
+    meta: {
+      requiresAuth: true,
+    },
+  },
   {
     path: "/schedule",
     name: "Schedule",

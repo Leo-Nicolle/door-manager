@@ -1,3 +1,5 @@
+import { v4 as uuid } from "uuid";
+
 function compareHours(a, b) {
   const compHours = +a.HH - +b.HH;
   const compMins = +a.mm - +b.mm;
@@ -69,8 +71,11 @@ function authorizeAccess(doorId, badgeId, db) {
   );
 
   const date = new Date();
-  const time = {HH: date.getHours().toString(), mm: date.getMinutes().toString()}
-  const dayIndex = (date.getDay()+6)%7;
+  const time = {
+    HH: date.getHours().toString(),
+    mm: date.getMinutes().toString(),
+  };
+  const dayIndex = (date.getDay() + 6) % 7;
   const scheduleDay = schedule.days[dayIndex];
 
   if (scheduleDay.allDay === true) return true;
@@ -80,7 +85,7 @@ function authorizeAccess(doorId, badgeId, db) {
       start &&
       end &&
       compareHours(start, time) <= 0 &&
-      compareHours(time, end) <= 0 
+      compareHours(time, end) <= 0
   );
 }
 
@@ -129,6 +134,17 @@ export default function accessController({ app, db }) {
 
     console.log("request DoorId", doorId, "badgeId", badgeId);
 
-    res.send( authorizeAccess(doorId, badgeId, db) ? 200 : 400);
+    const authorized = authorizeAccess(doorId, badgeId, db) ? 200 : 400;
+    db.get("logs")
+      .push({
+        id: uuid(),
+        date: Date.now(),
+        door: doorId,
+        badge: badgeId,
+        authorized,
+      })
+      .write();
+
+    res.send(authorized);
   });
 }

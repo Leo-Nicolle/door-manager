@@ -27,13 +27,17 @@ npm run serve
 - [x] add DELETE API
 - [x] handle DELETE API
 - [ ] add door ESP32 API
+- [ ] add log door open
+- [ ] add proper logout
 
 ### client
 
 - [x] provide ui to display user, door, group, accessRights, schedule
 - [x] provide forms
 - [x] searchbar
-- [ ] add RFID
+- [x] add RFID
+- [ ] add log
+- [ ] add proper logout
 - [ ] add door ESP32 UI
 
 ### ESP32

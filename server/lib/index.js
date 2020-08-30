@@ -9,6 +9,8 @@ import userController from "./userController";
 import scheduleController from "./scheduleController";
 import groupController from "./groupController";
 import accessController from "./accessController";
+import logController from "./logController";
+
 import { existsSync } from "fs";
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -70,6 +72,7 @@ userController({ authMiddleware, app, db });
 scheduleController({ authMiddleware, app, db });
 groupController({ authMiddleware, app, db });
 accessController({ authMiddleware, app, db });
+logController({ authMiddleware, app, db });
 
 let server = app.listen(5050, () => {
   console.log(

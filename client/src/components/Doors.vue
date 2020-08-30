@@ -50,9 +50,11 @@ export default {
               console.log("should succeed", data);
             });
 
-          // axios.get(getUrl(`access/${this.elements[1].id}/badge2`)).then(({ data }) => {
-          //     console.log('should fail',data)
-          // });
+          axios
+            .get(getUrl(`access/${this.elements[1].id}/badge2`))
+            .then(({ data }) => {
+              console.log("should fail", data);
+            });
           // axios.get(getUrl(`access/${this.elements[1].id}/badge not exits`)).then(({ data }) => {
           //     console.log('should fail',data)
           // });
