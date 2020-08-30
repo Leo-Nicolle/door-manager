@@ -34,9 +34,33 @@ export default {
       };
     },
     fetch() {
-      axios.get(getUrl("door")).then(({ data }) => {
-        this.elements = data;
-      });
+      axios
+        .get(getUrl("door"))
+        .then(({ data }) => {
+          this.elements = data;
+        })
+        .then(() => {
+          //   axios.get(getUrl(`access/${this.elements[1].id}/dsadsadsa`)).then(({ data }) => {
+          //     console.log('should succeed',data)
+          // });
+
+          axios
+            .get(getUrl(`access/${this.elements[1].id}/badges1`))
+            .then(({ data }) => {
+              console.log("should succeed", data);
+            });
+
+          // axios.get(getUrl(`access/${this.elements[1].id}/badge2`)).then(({ data }) => {
+          //     console.log('should fail',data)
+          // });
+          // axios.get(getUrl(`access/${this.elements[1].id}/badge not exits`)).then(({ data }) => {
+          //     console.log('should fail',data)
+          // });
+
+          //  axios.get(getUrl(`access/door not exist/hdisfidsfhdsi`)).then(({ data }) => {
+          //     console.log('should fail',data)
+          // });
+        });
     },
   },
   components: {

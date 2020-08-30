@@ -56,4 +56,8 @@ export default function doorController({ app, db, authMiddleware }) {
 
     res.send(200);
   });
+
+  app.get("/newbadge", authMiddleware, (req, res) => {
+    res.send(uuid());
+  });
 }

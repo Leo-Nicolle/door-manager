@@ -64,9 +64,20 @@
       </label>
       <label class="long-input">
         Badges
-        <button class="validate small-button">+</button>
-        <button class="delete small-button" v-for="(uuid, i) in user.badges" :key="i">{{ uuid }}</button>
+        <button class="validate small-button" @click="onStartAddBadge()">+</button>
+        <button
+          class="delete small-button"
+          v-for="(uuid, i) in user.badges"
+          :key="i"
+          @click="onDeleteBadge($event, uuid)"
+        >{{ uuid.slice(0,6) }}</button>
       </label>
+      <Confirm
+        :visible="isAddingBadge"
+        :message="addingBadgeMessage"
+        @confirm="onConfirmAddBadge"
+        @cancel="onCancelAddBadge"
+      />
     </div>
   </Form>
 </template>
@@ -78,6 +89,7 @@ import VoerroTagsInput from "@voerro/vue-tagsinput";
 import encrypt from "quick-encrypt";
 import Form from "../mixins/Form";
 import FormMixin from "../mixins/FormMixin";
+import Confirm from "./Confirm";
 
 export default {
   name: "User",
@@ -86,6 +98,10 @@ export default {
       groups: [],
       groupTags: [],
       selectedGroups: [],
+      isAddingBadge: false,
+      addingBadgeMessage: "",
+      requestNewBadgeTimeout: null,
+      newBadgeUuid: null,
     };
   },
   mixins: [FormMixin],
@@ -100,6 +116,32 @@ export default {
     },
   },
   methods: {
+    onConfirmAddBadge() {
+      if (this.newBadgeUuid) {
+        this.user.badges = this.user.badges.concat(this.newBadgeUuid);
+      }
+      this.onCancelAddBadge();
+    },
+    onCancelAddBadge() {
+      clearInterval(this.requestNewBadgeTimeout);
+      this.newBadgeUuid = null;
+      this.isAddingBadge = false;
+    },
+    onStartAddBadge() {
+      this.addingBadgeMessage = "En attente de scan du badge";
+      this.isAddingBadge = true;
+      this.requestNewBadgeTimeout = setInterval(() => {
+        axios
+          .get(getUrl("newbadge"))
+          .then(({ data }) => {
+            if (!data) return;
+            this.newBadgeUuid = data;
+            this.addingBadgeMessage = `UUID: ${data}`;
+            clearInterval(this.requestNewBadgeTimeout);
+          })
+          .catch((e) => console.error(e));
+      }, 500);
+    },
     updateSelectedGroups() {
       if (!this.user) return;
       this.selectedGroups = this.getGroups(this.user.groups);
@@ -153,9 +195,15 @@ export default {
           console.error(e);
         });
     },
+    onDeleteBadge(event, uuid) {
+      event.stopPropagation();
+      event.preventDefault();
+      this.user.badges = this.user.badges.filter((badge) => badge !== uuid);
+    },
   },
   components: {
     VoerroTagsInput,
+    Confirm,
     Form,
   },
 };
