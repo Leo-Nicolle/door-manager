@@ -3,10 +3,13 @@
     <ElementsDisplay
       :elements="elements"
       :selectedElement="selectedElement"
+      :elementsToFilter="elementsToFilter"
       @queryResult="onQueryResult"
       @add="onAddElement"
     >
       <tr slot="headers">
+        <th>firstname</th>
+        <th>lastname</th>
         <th>uuid</th>
       </tr>
       <tr
@@ -15,7 +18,9 @@
         :key="i"
         @click="onElementClick(badge)"
       >
-        <td>{{ badge }}</td>
+        <td>{{ badge.firstname }}</td>
+        <td>{{ badge.lastname }}</td>
+        <td>{{ badge.badge }}</td>
       </tr>
       <Badge slot="form" :element="selectedElement" :users="users" @cancel="onCancel()" />
     </ElementsDisplay>
@@ -46,12 +51,16 @@ export default {
     fetch() {
       axios.get(getUrl("user")).then(({ data }) => {
         this.users = data;
-        this.elements = Object.keys(
-          data.reduce((acc, { badges }) => {
-            badges.forEach((badge) => (acc[badge] = 1));
-            return acc;
-          }, {})
-        );
+        this.elements = this.users.reduce((acc, user) => {
+          user.badges.forEach((badge) => {
+            acc.push({
+              ...user,
+              badge,
+            });
+          });
+          return acc;
+        }, []);
+        console.log("elements", this.elements);
       });
     },
   },

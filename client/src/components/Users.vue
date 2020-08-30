@@ -3,6 +3,7 @@
     <ElementsDisplay
       :elements="elements"
       :selectedElement="selectedElement"
+      :elementsToFilter="elementsToFilter"
       @queryResult="onQueryResult"
       @add="onAddElement"
     >
@@ -16,7 +17,7 @@
         <td>{{ user.lastname }}</td>
         <td>{{ user.firstname }}</td>
         <td>TODO</td>
-        <td>{{ getGroups(user.groups) }}</td>
+        <td>{{ user.groupNames.join(' ') }}</td>
       </tr>
       <User slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
     </ElementsDisplay>
@@ -39,6 +40,17 @@ export default {
   },
   mixins: [ElementsDisplayMixin],
   methods: {
+    getElementsToFilter(elements) {
+      return elements.map((user) => {
+        const groupNames = user.groups.map(
+          (groupId) => this.groups.find(({ id }) => id === groupId).name
+        );
+        return {
+          ...user,
+          groupNames,
+        };
+      });
+    },
     onAddElement() {
       this.selectedElement = {
         firstname: "",
@@ -50,20 +62,14 @@ export default {
         badges: [],
       };
     },
-    getGroups(ids) {
-      return ids
-        .map((id) => {
-          const group = this.groups.find((group) => group.id === id);
-          return group ? group.name : null;
-        })
-        .filter((e) => e)
-        .join(" ");
-    },
     fetch() {
-      axios.get(getUrl("user")).then(({ data }) => {
-        this.elements = data;
-      });
-      axios.get(getUrl("group")).then(({ data }) => (this.groups = data));
+      axios
+        .get(getUrl("group"))
+        .then(({ data }) => (this.groups = data))
+        .then(() => axios.get(getUrl("user")))
+        .then(({ data }) => {
+          this.elements = data;
+        });
     },
   },
   components: {

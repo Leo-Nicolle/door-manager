@@ -1,6 +1,6 @@
 <template>
   <div class="elements">
-    <SearchBar :elements="elements" @queryResult="onQueryResult" />
+    <SearchBar :elements="elementsToFilter" @queryResult="onQueryResult" />
     <table>
       <thead>
         <slot name="headers"></slot>
@@ -22,7 +22,7 @@ import SearchBar from "../components/SearchBar";
 
 export default {
   name: "ElementsDisplay",
-  props: ["elements", "selectedElement"],
+  props: ["elements", "elementsToFilter", "selectedElement"],
   methods: {
     onAddElement() {
       console.log("todo");

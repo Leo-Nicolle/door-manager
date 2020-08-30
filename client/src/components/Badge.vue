@@ -6,7 +6,7 @@
         <input
           :class="getClass('name')"
           type="text"
-          v-model="badge"
+          v-model="badge.badge"
           id="uuid"
           uuid="uuid"
           required
@@ -52,13 +52,12 @@ export default {
   },
   computed: {
     filteredUsers: function () {
-      const f = this.users.filter(
+      return this.users.filter(
         ({ lastname, firstname, email }) =>
           lastname.includes(this.search) ||
           firstname.includes(this.search) ||
           email.includes(this.search)
       );
-      return new Array(20).fill(0).map(() => f[0]);
     },
     badge: {
       get: function () {

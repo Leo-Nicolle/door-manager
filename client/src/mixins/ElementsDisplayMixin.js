@@ -4,11 +4,20 @@ export default {
     return {
       elements: [],
       filteredElements: [],
+      elementsToFilter: [],
       groups: [],
       selectedElement: null,
     };
   },
+  watch: {
+    elements: function(newElements) {
+      this.elementsToFilter = this.getElementsToFilter(newElements);
+    },
+  },
   methods: {
+    getElementsToFilter(elements) {
+      return elements;
+    },
     onElementClick(element) {
       this.selectedElement = element;
     },

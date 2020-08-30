@@ -19,13 +19,19 @@ export default {
     };
   },
   methods: {
+    matchQuery(query, string) {
+      return query
+        .split(" ")
+        .filter((query) => query.length)
+        .reduce((score, query) => score + +string.includes(query), 0);
+    },
     match(object, query) {
       return Object.values(object).reduce((score, field) => {
         if (typeof field === "object") {
           return score + this.match(field, query);
         }
         if (typeof field === "string") {
-          return score + +field.includes(query);
+          return score + this.matchQuery(query, field);
         }
         return score;
       }, 0);
@@ -38,7 +44,7 @@ export default {
       this.filteredElements = this.elements
         .map((element) => [element, this.match(element, query)])
         .filter(([, score]) => score)
-        .sort((a, b) => b.score - a.score)
+        .sort(([, a], [, b]) => b - a)
         .map(([element]) => element);
       console.log("update", this.filteredElements);
     },

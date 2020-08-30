@@ -2,6 +2,7 @@
   <div class="logs">
     <ElementsDisplay
       :elements="elements"
+      :elementsToFilter="elementsToFilter"
       :selectedElement="selectedElement"
       @queryResult="onQueryResult"
       @add="onAddElement"
@@ -11,12 +12,14 @@
         <th>Nom</th>
         <th>Porte</th>
         <th>Date</th>
+        <th>Authorisée</th>
       </tr>
-      <tr slot="body" v-for="(log, i) in computedLogs" :key="i" @click="onElementClick(log)">
+      <tr slot="body" v-for="(log, i) in filteredElements" :key="i" @click="onElementClick(log)">
         <td>{{ log.firstname }}</td>
         <td>{{ log.lastname }}</td>
         <td>{{ log.doorName }}</td>
         <td>{{ new Date(log.date).format('DD/MM/YY--HH:mm') }}</td>
+        <td>{{ +log.authorized === 200 }}</td>
       </tr>
       <!-- <Log slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" /> -->
     </ElementsDisplay>
@@ -34,14 +37,15 @@ export default {
   mixins: [ElementsDisplayMixin],
   data() {
     return {
-      computedLogs: [],
       users: [],
       doors: [],
     };
   },
-  watch: {
-    filteredElements: function (newValue) {
-      this.computedLogs = newValue.map((log) => {
+  methods: {
+    onAddElement() {},
+    onElementClick() {},
+    getElementsToFilter(elements) {
+      return elements.map((log) => {
         const user = this.users.find(({ badges }) =>
           badges.includes(log.badge)
         );
@@ -55,10 +59,9 @@ export default {
         };
       });
     },
-  },
-  methods: {
-    onAddElement() {},
     fetch() {
+      console.log("la");
+
       axios
         .get(getUrl("user"))
         .then(({ data }) => {

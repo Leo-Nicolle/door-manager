@@ -3,6 +3,7 @@
     <ElementsDisplay
       :elements="elements"
       :selectedElement="selectedElement"
+      :elementsToFilter="elementsToFilter"
       @queryResult="onQueryResult"
       @add="onAddElement"
     >
