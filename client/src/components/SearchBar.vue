@@ -28,7 +28,14 @@ export default {
     match(object, query) {
       return (
         object &&
-        Object.values(object).reduce((score, field) => {
+        Object.entries(object).reduce((score,[fieldname, field]) => {
+          if(fieldname === 'date'){
+            return score 
+            + this.matchQuery(
+              query,
+              new Date(+field).format('DD/MM/YY--HH:mm')
+              )
+          }
           if (typeof field === "object") {
             return score + this.match(field, query);
           }

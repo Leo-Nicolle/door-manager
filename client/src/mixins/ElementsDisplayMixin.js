@@ -13,13 +13,16 @@ export default {
   },
   computed: {
     sortedElements: function(){
-      console.log('sort')
       const sorted =  this.filteredElements
         .slice()
         .sort((a,b) => {
           if(!this.sortBy)return 0;
-          return a[this.sortBy]   
-          .localeCompare( b[this.sortBy])* this.order;
+          if(typeof a[this.sortBy] === 'string'){
+            return a[this.sortBy]   
+            .localeCompare( b[this.sortBy])* this.order;
+          }else{
+            return (a[this.sortBy] - b[this.sortBy])* this.order;
+          }
         });
         console.log(sorted.map(e => e[this.sortBy]))
         return sorted;

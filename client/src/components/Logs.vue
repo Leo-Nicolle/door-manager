@@ -53,7 +53,6 @@ export default {
           badges.includes(log.badge)
         );
         const door = this.doors.find(({ id }) => id === log.door);
-        console.log(user, door);
         return {
           ...log,
           firstname: user.firstname,
