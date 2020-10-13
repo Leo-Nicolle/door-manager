@@ -8,11 +8,11 @@
       @add="onAddElement"
     >
       <tr slot="headers">
-        <th>Nom</th>
+        <th @click="onHeaderClick('name')">Nom</th>
       </tr>
       <tr
         slot="body"
-        v-for="(group, i) in filteredElements"
+        v-for="(group, i) in sortedElements"
         :key="i"
         @click="onElementClick(group)"
       >

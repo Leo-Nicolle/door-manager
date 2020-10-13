@@ -142,7 +142,7 @@ export default {
           if (!e.response.data) return console.error(e);
           console.log("response error", e.response.data.errors);
           this.errors = e.response.data.errors;
-
+          this.invalidFields = this.errors.filter((e) => e.param);
           event.preventDefault();
         });
       event.preventDefault();

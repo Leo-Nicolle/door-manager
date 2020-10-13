@@ -8,12 +8,12 @@
       @add="onAddElement"
     >
       <tr slot="headers">
-        <th>Nom</th>
-        <th>Prenom</th>
+        <th @click="onHeaderClick('lastname')">Nom</th>
+        <th @click="onHeaderClick('firstname')">Prenom</th>
         <th>Badges</th>
-        <th>Groupes</th>
+        <th @click="onHeaderClick('groupNames')">Groupes</th>
       </tr>
-      <tr slot="body" v-for="(user, i) in filteredElements" :key="i" @click="onElementClick(user)">
+      <tr slot="body" v-for="(user, i) in sortedElements" :key="i" @click="onElementClick(user)">
         <td>{{ user.lastname }}</td>
         <td>{{ user.firstname }}</td>
         <td>TODO</td>

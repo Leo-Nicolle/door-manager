@@ -9,13 +9,13 @@
       @add="onDeleteLogs"
     >
       <tr slot="headers">
-        <th>Prenom</th>
-        <th>Nom</th>
-        <th>Porte</th>
-        <th>Date</th>
+        <th @click="onHeaderClick('firstname')">Prenom</th>
+        <th @click="onHeaderClick('lastname')">Nom</th>
+        <th @click="onHeaderClick('doorName')">Porte</th>
+        <th @click="onHeaderClick('date')">Date</th>
         <th>Authorisée</th>
       </tr>
-      <tr slot="body" v-for="(log, i) in filteredElements" :key="i" @click="onElementClick(log)">
+      <tr slot="body" v-for="(log, i) in sortedElements" :key="i" @click="onElementClick(log)">
         <td>{{ log.firstname }}</td>
         <td>{{ log.lastname }}</td>
         <td>{{ log.doorName }}</td>

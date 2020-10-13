@@ -12,7 +12,7 @@
     </tr>
     <tr
       slot="body"
-      v-for="(schedule, i) in filteredElements"
+      v-for="(schedule, i) in sortedElements"
       :key="i"
       @click="onElementClick(schedule)"
     >

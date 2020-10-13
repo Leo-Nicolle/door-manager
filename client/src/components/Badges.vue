@@ -14,13 +14,13 @@
       </tr>
       <tr
         slot="body"
-        v-for="(badge, i) in filteredElements"
+        v-for="(badge, i) in sortedElements"
         :key="i"
         @click="onElementClick(badge)"
       >
-        <td>{{ badge.firstname }}</td>
-        <td>{{ badge.lastname }}</td>
-        <td>{{ badge.badge }}</td>
+        <td @click="onHeaderClick('firstname')">{{ badge.firstname }}</td>
+        <td @click="onHeaderClick('lastname')">{{ badge.lastname }}</td>
+        <td @click="onHeaderClick('badge')">{{ badge.badge }}</td>
       </tr>
       <Badge slot="form" :element="selectedElement" :users="users" @cancel="onCancel()" />
     </ElementsDisplay>
