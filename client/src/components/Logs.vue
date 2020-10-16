@@ -9,11 +9,13 @@
       @add="onDeleteLogs"
     >
       <tr slot="headers">
-        <th @click="onHeaderClick('firstname')">Prenom</th>
-        <th @click="onHeaderClick('lastname')">Nom</th>
-        <th @click="onHeaderClick('doorName')">Porte</th>
-        <th @click="onHeaderClick('date')">Date</th>
-        <th>Authorisée</th>
+        <th v-for="(header,i) in headers"
+          :key= "i"
+          @click = "onHeaderClick(header.key)"
+        >
+          <span>{{header.title}}</span> 
+          <span class ="icon" >{{getIcon(header.key)}}</span>
+        </th>
       </tr>
       <tr slot="body" v-for="(log, i) in sortedElements" :key="i" @click="onElementClick(log)">
         <td>{{ log.firstname }}</td>
@@ -22,7 +24,6 @@
         <td>{{ new Date(log.date).format('DD/MM/YY--HH:mm') }}</td>
         <td :class="+log.authorized === 200? 'open':'closed'"></td>
       </tr>
-      <!-- <Log slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" /> -->
     </ElementsDisplay>
   </div>
 </template>
@@ -40,6 +41,13 @@ export default {
     return {
       users: [],
       doors: [],
+      headers: [
+          {title: 'Prenom', key: 'firstname'},
+          {title: 'Nom', key: 'lastname'},
+          {title: 'Porte', key: 'doorName'},
+          {title: 'Date', key: 'date'},
+          {title: 'Authorisée', key: 'authorized'}
+      ]
     };
   },
   methods: {

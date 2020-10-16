@@ -8,15 +8,17 @@
       @add="onAddElement"
     >
       <tr slot="headers">
-        <th @click="onHeaderClick('lastname')">Nom</th>
-        <th @click="onHeaderClick('firstname')">Prenom</th>
-        <th>Badges</th>
-        <th @click="onHeaderClick('groupNames')">Groupes</th>
+        <th v-for="(header,i) in headers"
+          :key= "i"
+          @click = "onHeaderClick(header.key)"
+        >
+          <span>{{header.title}}</span> 
+          <span class ="icon" >{{getIcon(header.key)}}</span>
+        </th>
       </tr>
       <tr slot="body" v-for="(user, i) in sortedElements" :key="i" @click="onElementClick(user)">
         <td>{{ user.lastname }}</td>
         <td>{{ user.firstname }}</td>
-        <td>TODO</td>
         <td>{{ user.groupNames.join(' ') }}</td>
       </tr>
       <User slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
@@ -36,6 +38,11 @@ export default {
   data() {
     return {
       groups: [],
+       headers: [
+          {title: 'Nom', key: 'lastname'},
+          {title: 'Prenom', key: 'firstname'},
+          {title: 'Groupes', key: 'groupNames'},
+      ]
     };
   },
   mixins: [ElementsDisplayMixin],

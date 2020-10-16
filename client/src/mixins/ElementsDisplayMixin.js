@@ -15,15 +15,7 @@ export default {
     sortedElements: function(){
       const sorted =  this.filteredElements
         .slice()
-        .sort((a,b) => {
-          if(!this.sortBy)return 0;
-          if(typeof a[this.sortBy] === 'string'){
-            return a[this.sortBy]   
-            .localeCompare( b[this.sortBy])* this.order;
-          }else{
-            return (a[this.sortBy] - b[this.sortBy])* this.order;
-          }
-        });
+        .sort((a,b) => this.compare(a,b));
         console.log(sorted.map(e => e[this.sortBy]))
         return sorted;
     }
@@ -34,6 +26,29 @@ export default {
     },
   },
   methods: {
+    getIcon(fieldname){
+      return this.sortBy === fieldname 
+        ? this.order > 0 
+        ? '\uEA02'
+        : '\uEA03'
+        : '\uEA01';
+    },
+    compare(a,b){
+      if(!this.sortBy)return 0;
+      const aSortBy = a[this.sortBy];
+      const bSortBy = b[this.sortBy];
+
+      if(aSortBy.constructor === Array){
+        return aSortBy[0]   
+        .localeCompare(bSortBy[0])* this.order;
+      }
+      if(typeof aSortBy === 'string'){
+        return aSortBy   
+        .localeCompare(bSortBy)* this.order;
+      }else{
+        return (aSortBy - bSortBy)* this.order;
+      }
+    },
     getElementsToFilter(elements) {
       return elements;
     },

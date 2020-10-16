@@ -61,3 +61,25 @@ input[type="submit"] {
   box-shadow: 0px 0px 4px 1px #c9404d;
   content: "";
 }
+
+
+@font-face {
+  font-family: "icon-font";
+  src: url("./webfont.eot");
+  src: url("./webfont.eot?#iefix") format("embedded-opentype"),
+    url("./webfont.woff") format("woff"),
+    url("./webfont.ttf") format("truetype"),
+    url("./webfont.svg#webfont") format("svg");
+}
+
+[data-icon]:before {
+  font-family: icon-font; 
+  content: attr(data-icon);
+}
+
+.icon{
+  font-family: icon-font;
+}
+
+tr > th {
+}

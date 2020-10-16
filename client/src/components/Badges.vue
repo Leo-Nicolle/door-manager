@@ -8,9 +8,13 @@
       @add="onAddElement"
     >
       <tr slot="headers">
-        <th>firstname</th>
-        <th>lastname</th>
-        <th>uuid</th>
+         <th v-for="(header,i) in headers"
+          :key= "i"
+          @click = "onHeaderClick(header.key)"
+        >
+          <span>{{header.title}}</span> 
+          <span class ="icon" >{{getIcon(header.key)}}</span>
+        </th>
       </tr>
       <tr
         slot="body"
@@ -39,6 +43,11 @@ export default {
   data() {
     return {
       users: [],
+      headers: [
+        {title: 'Prenom', key: 'firstname'},
+          {title: 'Nom', key: 'lastname'},
+          {title: 'Groupes', key: 'badge'},
+      ]
     };
   },
   mixins: [ElementsDisplayMixin],
