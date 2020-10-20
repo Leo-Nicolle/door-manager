@@ -3,7 +3,14 @@
     <div slot="body" class="body large-body">
       <label>
         nom
-        <input type="text" v-model="schedule.name" id="name" name="name" required />
+        <input 
+          :class="getClass('name')" 
+          type="text" 
+          v-model="schedule.name" 
+          id="name" 
+          name="name" 
+          required 
+        />
       </label>
       <div class="large-form-container">
         <span class="date-container">
@@ -24,7 +31,7 @@
           class="date-container"
           :class="getDateContainerClass(indexDay)"
           v-for="(interval, j) in currentDay.intervals"
-          :key="j"
+          :key="`${j}-${indexDay}`"
         >
           <p>de</p>
           <TimePicker
@@ -33,6 +40,7 @@
             @change="onDatePicked(j)"
             :minute-interval="5"
             :class="getTimePickerClass(0, j)"
+            placeholder="heure de début"
           ></TimePicker>
           <p>a</p>
           <TimePicker
@@ -41,6 +49,7 @@
             @change="onDatePicked(j)"
             :minute-interval="5"
             :class="getTimePickerClass(1, j)"
+            placeholder="heure de fin"
           ></TimePicker>
         </span>
       </div>
@@ -91,7 +100,14 @@ export default {
   },
   methods: {
     getDayButtonClass(i) {
-      return i === this.indexDay ? "validate" : "";
+      return (this.errors.find(
+        ({ indexDay }) =>
+          indexDay === i)
+        ? "invalid"
+        : "")
+        + (i === this.indexDay 
+        ? " validate" 
+        : "");
     },
     getDateContainerClass(indexDay) {
       return this.schedule.days[indexDay].allDay ? "hidden" : "";
@@ -120,6 +136,24 @@ export default {
       ) {
         intervals.push({ start: { HH: "", mm: "" }, end: { HH: "", mm: "" } });
       }
+      this.validate()
+      .then(() => {
+            this.errors = [];
+            this.invalidFields = []
+
+      })
+      .catch(e => { 
+        if (!e.response.data) return console.error(e);
+        console.log("response error", e.response.data.errors);
+        const errors = e.response.data.errors;
+        if(!errors.find(({indexDay}) => indexDay === this.indexDay)){
+        // if there is no errors for today's dates, validate it
+        this.errors = this.errors.filter(({indexDay})=> 
+          indexDay !== undefined 
+          && indexDay !== this.indexDay)
+        }
+      })
+      this.$force
     },
     onDayClick(i, evt) {
       this.indexDay = i;
@@ -132,19 +166,24 @@ export default {
       evt.stopPropagation();
       evt.preventDefault();
     },
+    validate(){
+     return axios
+        .post(getUrl("schedule/validate"), 
+          JSON.parse(JSON.stringify(this.schedule)));
+    },
 
     onSubmit(event) {
       this.errors = [];
       axios
-        .post(getUrl("schedule"), JSON.parse(JSON.stringify(this.schedule)))
-        .then(() => this.$emit("submit"))
-        .catch((e) => {
-          if (!e.response.data) return console.error(e);
-          console.log("response error", e.response.data.errors);
-          this.errors = e.response.data.errors;
-          this.invalidFields = this.errors.filter((e) => e.param);
-          event.preventDefault();
-        });
+      .post(getUrl("schedule"), JSON.parse(JSON.stringify(this.schedule)))
+      .then(() => this.$emit('submit'))
+      .catch((e) => {
+        if (!e.response.data) return console.error(e);
+        console.log("response error", e.response.data.errors);
+        this.errors = e.response.data.errors;
+        this.invalidFields = this.errors.filter((e) => e.param);
+        return false;
+      });
       event.preventDefault();
       event.stopPropagation();
     },
@@ -190,5 +229,8 @@ label > input {
 .invalid > input.display-time {
   border-color: #c03;
   outline-color: #c03;
+}
+button.invalid  {
+  border: solid 2px #c03;
 }
 </style>

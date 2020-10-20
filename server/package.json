@@ -2,7 +2,7 @@
   "name": "simple-express",
   "version": "1.0.0",
   "description": "express server with babel installed",
-  "main": "index.js",
+  "main": "dist/server.js",
   "scripts": {
     "watch": "webpack --watch --mode development",
     "build": "rm -rf dist && webpack",

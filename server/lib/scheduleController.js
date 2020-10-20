@@ -9,8 +9,12 @@ function validateTime(time) {
 
   return (time.HH && time.mm) || (!time.HH && !time.mm);
 }
+function filterOutEmptyIntervals(schedule){
+  schedule.days.forEach(day => {
+    day.intervals = day.intervals.filter(({start, end }) => !(!start && !end));
+  });
+}
 function validateSchedule(schedule) {
-  console.log(schedule.days, schedule.days.length);
   if (!schedule.days || schedule.days.length !== 7)
     return [
       {
@@ -19,6 +23,7 @@ function validateSchedule(schedule) {
       },
     ];
 
+  filterOutEmptyIntervals(schedule);
   return schedule.days.reduce((acc, { intervals }, i) => {
     intervals.forEach(({ start, end }, j) => {
       if (!validateTime(start))
@@ -50,6 +55,20 @@ export default function scheduleController({ app, db, authMiddleware }) {
     const schedule = db.get("schedules").find({ id: req.params.id }).value();
     res.send(schedule);
   });
+  app.post(
+    "/schedule/validate",
+    authMiddleware,
+    [body("name").isString().notEmpty(), body("days").isArray().notEmpty()],
+    (req, res) => {
+      let errors = validationResult(req).array();
+      // validate times:
+      errors.push(...validateSchedule(req.body));
+      if (errors.length) {
+        return res.status(422).json({ errors });
+      }
+      res.send(200);
+    }
+  );
   app.post(
     "/schedule",
     authMiddleware,

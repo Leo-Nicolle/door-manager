@@ -13,7 +13,7 @@ export default {
   },
   methods: {
     getClass(fieldName) {
-      return this.invalidFields.find((f) => f === fieldName) ? "invalid" : "";
+      return this.invalidFields.find((f) => f === fieldName || f.param === fieldName) ? "invalid" : "";
     },
     onSubmit() {
       console.log("TODO");

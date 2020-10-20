@@ -70,7 +70,7 @@ groupController({ authMiddleware, app, db });
 accessController({ authMiddleware, app, db });
 logController({ authMiddleware, app, db });
 
-let server = app.listen(5050, () => {
+let server = app.listen(5051, () => {
   console.log(
     `server running at port http://localhost/${server.address().port}`
   );
