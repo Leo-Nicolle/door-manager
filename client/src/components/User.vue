@@ -60,7 +60,7 @@
       </div>
       <label class="long-input">
         Groupes
-        <VoerroTagsInput v-model="selectedGroups" :existing-tags="groupTags" :typeahead="true" />
+        <Treeselect v-model="selectedGroups" :multiple="true" :options="groupTags" :typeahead="true" />
       </label>
       <label class="long-input">
         Badges
@@ -85,7 +85,8 @@
 <script>
 import { getUrl } from "../js/utils";
 import axios from "axios";
-import VoerroTagsInput from "@voerro/vue-tagsinput";
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import encrypt from "quick-encrypt";
 import Form from "../mixins/Form";
 import FormMixin from "../mixins/FormMixin";
@@ -144,29 +145,31 @@ export default {
     },
     updateSelectedGroups() {
       if (!this.user) return;
-      this.selectedGroups = this.getGroups(this.user.groups);
-      this.groupTags = this.groups.map((group) => ({ value: group.name }));
+      this.selectedGroups = this.user.groups.slice();
+      this.groupTags = this.groups.map(({ name, id }) => ({ id, label: name }));
     },
     fetch() {
       return axios
         .get(getUrl("group"))
         .then(({ data }) => {
-          this.groupTags = data.map(({ name }) => ({ value: name }));
+          this.groupTags = data.map(({ name, id }) => ({ id, label: name }));
           this.groups = data;
         })
         .then(() => this.updateSelectedGroups());
     },
     getGroups(ids) {
-      return ids.map((id) => ({
-        value: this.groups.find((group) => group.id === id).name,
-      }));
+      return ids.map((id) => {
+        const group = this.groups.find((group) => group.id === id) 
+        return {
+          label: group.name,
+          id: group.id
+        }
+      });
     },
     onSubmit(event) {
       event.preventDefault();
       event.stopPropagation();
-      this.user.groups = this.selectedGroups.map(
-        ({ value }) => this.groups.find((group) => group.name === value).id
-      );
+      this.user.groups = this.selectedGroups.slice();
       axios
         .get(getUrl("encrypt"))
         .then(({ data }) => {
@@ -202,7 +205,7 @@ export default {
     },
   },
   components: {
-    VoerroTagsInput,
+    Treeselect,
     Confirm,
     Form,
   },

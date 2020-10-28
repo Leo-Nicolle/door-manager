@@ -38,8 +38,7 @@ npm run serve
 - [x] add RFID
 - [x] add log
 - [x] add proper logout
-- [ ] sort entries by column
-
+- [x] sort entries by column
 - [ ] add door ESP32 UI
 
 ### ESP32
