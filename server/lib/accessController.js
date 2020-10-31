@@ -90,8 +90,9 @@ function authorizeAccess(doorId, badgeId, db) {
 }
 
 export default function accessController({ app, db }) {
-  app.get("/access/:doorid", (req, res) => {
+  app.get("/access/download/:type/:doorid", (req, res) => {
     const doorId = req.params.doorid;
+    const type = req.params.type;
     const schedulePerGroupId = db
       .get("groups")
       .value()
@@ -124,8 +125,16 @@ export default function accessController({ app, db }) {
       },
       {}
     );
-    console.log("request DoorId", doorId);
-    res.send({ schedulePerBadge, generatedSchedules });
+    if(type === 'badge'){
+      res.send(
+        Object.entries(schedulePerBadge)
+         .reduce((csv, [badgeId, scheduleId]) => 
+          csv += `${badgeId},${scheduleId}\n` ,'')
+      );
+    }
+    if(type === 'schedule'){
+      res.send(generatedSchedules);
+    }
   });
 
   app.get("/access/:doorid/:badgeId", (req, res) => {
