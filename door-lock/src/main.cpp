@@ -2,11 +2,13 @@
 #include <WiFi.h>
 #include <SPI.h>
 #include "database.h"
+#include "ota.h"
 
-const char *ssid = "4G-Gateway-1B52";
-const char *password = "9NG4AT1NARF";
+const char *ssid = "Livebox-8261";
+const char *password = "E7859199A22A53F068F66F94FE";
 char *doorId = "9d1d68a3-83b0-469b-a33b-db0eba69cc59";
 Database database;
+Ota ota;
 
 char rfid[512];
 tm currentTime;
@@ -22,13 +24,14 @@ void setupSerial(){
   }
 }
 void refreshSystem(bool force = false){
-  time_t now;
-  time(&now);
-  if (now - lastTimeUpdate < refreshFrequency && !force)
-    return;
-  configTime(3600, 0, "pool.ntp.org");
-  database.downloadDatabase(doorId);
-  lastTimeUpdate = now;
+  // time_t now;
+  // time(&now);
+  // if (now - lastTimeUpdate < refreshFrequency && !force)
+  //   return;
+  // configTime(3600, 0, "pool.ntp.org");
+  // database.downloadDatabase(doorId);
+  // lastTimeUpdate = now;
+  ota.checkForUpdates();
 }
 void printLocalTime()
 {
@@ -55,12 +58,13 @@ void setup(){
   SPI.begin(18,19,23);
   database.setupDatabase();
   connectWifi();
+  ota.setup();
   refreshSystem(true);
   strcpy(rfid, "badges1");
-  bool a = database.authorizeRFID(rfid);
+  // bool a = database.authorizeRFID(rfid);
 
-  Serial.print("Authorize values ");
-  Serial.println(a);
+  Serial.println("Coucou ");
+  // Serial.println(a);
   // requestAccess(doorId, "badges1");
 }
 
@@ -68,4 +72,5 @@ void loop(){
   // make sure wifi is connected
   connectWifi();
   refreshSystem();
+  ota.loop();
 }

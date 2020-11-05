@@ -125,14 +125,15 @@ export default function accessController({ app, db }) {
       },
       {}
     );
-    if(type === 'badge'){
+    if (type === "badge") {
       res.send(
-        Object.entries(schedulePerBadge)
-         .reduce((csv, [badgeId, scheduleId]) => 
-          csv += `${badgeId},${scheduleId}\n` ,'')
+        Object.entries(schedulePerBadge).reduce(
+          (csv, [badgeId, scheduleId]) => (csv += `${badgeId},${scheduleId}\n`),
+          ""
+        )
       );
     }
-    if(type === 'schedule'){
+    if (type === "schedule") {
       res.send(generatedSchedules);
     }
   });

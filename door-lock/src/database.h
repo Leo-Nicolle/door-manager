@@ -3,6 +3,7 @@
 #include <SD.h>
 #include <HTTPClient.h>
 #include <ArduinoJson.h>
+#include "config.h"
 
 #define SD_CS 27
 class Database {
@@ -12,7 +13,6 @@ class Database {
   File file;
   char url[512];
   char fileLine[1024];
-  char *baseUrl = "http://192.168.8.137:5051/";
   StaticJsonDocument<256> filter;
 
   Database();

@@ -140,7 +140,6 @@ bool Database::authorizeRFID(char *rfid){
   int hour = currentTime.tm_hour;
   int minute = currentTime.tm_min;
   JsonObject schedule = jsonBuffer[scheduleId]["days"][day];
-  serializeJson(schedule, Serial);
   if (schedule["allDay"]){
     authorize = true;
   }
