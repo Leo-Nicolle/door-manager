@@ -16,8 +16,7 @@ export default {
       const sorted =  this.filteredElements
         .slice()
         .sort((a,b) => this.compare(a,b));
-        console.log(sorted.map(e => e[this.sortBy]))
-        return sorted;
+      return sorted;
     }
   },
   watch: {
@@ -37,7 +36,7 @@ export default {
       if(!this.sortBy)return 0;
       const aSortBy = a[this.sortBy];
       const bSortBy = b[this.sortBy];
-
+      if(aSortBy === undefined || bSortBy=== undefined ) return 0;
       if(aSortBy.constructor === Array){
         return aSortBy[0]   
         .localeCompare(bSortBy[0])* this.order;

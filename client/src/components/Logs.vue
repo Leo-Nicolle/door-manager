@@ -63,9 +63,9 @@ export default {
         const door = this.doors.find(({ id }) => id === log.door);
         return {
           ...log,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          doorName: door.name,
+          firstname: user && user.firstname,
+          lastname: user && user.lastname,
+          doorName: door && door.name,
         };
       });
     },
