@@ -14,7 +14,14 @@
         <td>{{ door.name }}</td>
       </tr>
       <Door slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
+
     </ElementsDisplay>
+    <button @click = "onCompileCode">COMPILE CODE</button>
+    <div>
+    <p :class = "compileStatus.length ? compileStatus === 'success' ? 'validate' : 'delete' : 'hidden'">
+      {{compileStatus === 'success' ? 'compile success' : 'compile failed : please check your c++ code'}}</p>
+    </div>
+
   </div>
 </template>
 
@@ -28,13 +35,33 @@ import ElementsDisplayMixin from "../mixins/ElementsDisplayMixin.js";
 export default {
   name: "Doors",
   mixins: [ElementsDisplayMixin],
+  data(){
+    return {compileStatus: ''} 
+  },
   methods: {
     onAddElement() {
       this.selectedElement = {
         name: "",
       };
     },
+    onCompileCode(){
+      let successCompile = true;
+      this.compileStatus = '';
+       axios
+        .get(getUrl("code-compile"))
+        .then(() => {
+          console.log("code compiled")
+        }).catch(e => {
+          if (!e.response || !e.response.data) return console.error(e);
+          console.error(e);
+          successCompile &= !e.response.data.e.match('error: ');
+        }).then(() => {
+          this.compileStatus = successCompile ? 'success' : 'failed';
+          return axios.get('http://192.168.1.34:5051/code-update')
+        }).then(() => console.log('requested'));
+    },
     fetch() {
+      this.onCompileCode();
       axios
         .get(getUrl("door"))
         .then(({ data }) => {
@@ -52,10 +79,16 @@ export default {
             });
 
           axios
-            .get(getUrl(`access/${this.elements[1].id}/badge2`))
+            .get(getUrl(`access/download/badge/${this.elements[1].id}`))
             .then(({ data }) => {
-              console.log("should fail", data);
+              console.log(data);
             });
+          axios
+            .get(getUrl(`access/download/schedule/${this.elements[1].id}`))
+            .then(({ data }) => {
+              console.log(data);
+            });
+
           // axios.get(getUrl(`access/${this.elements[1].id}/badge not exits`)).then(({ data }) => {
           //     console.log('should fail',data)
           // });

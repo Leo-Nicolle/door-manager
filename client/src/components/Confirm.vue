@@ -1,16 +1,15 @@
 <template>
-  <div class="modal" v-if="visible">
-    <div class="modal-body modal-body-small">
-      <p class="body">{{message}}</p>
-      <div class="footer">
-        <button class="delete" @click="onCancel">annuler</button>
-        <button class="validate" @click="onConfirm">Ok</button>
-      </div>
+ <Modal v-if="visible">
+    <h3>{{message}}</h3>
+    <div class="footer">
+      <button class="delete" @click="onCancel">annuler</button>
+      <button class="validate" @click="onConfirm">Ok</button>
     </div>
-  </div>
+  </Modal>
 </template>
 
 <script>
+import Modal from './Modal';
 export default {
   name: "Confirm",
   props: ["visible", "message"],
@@ -26,6 +25,7 @@ export default {
       this.$emit("confirm");
     },
   },
+  components: {Modal}
 };
 </script>
 <style>

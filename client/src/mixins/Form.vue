@@ -81,16 +81,7 @@ label {
 label > input[type="checkbox"] {
   margin-top: 4px;
 }
-.footer {
-  min-width: calc(100% - 20px);
-  max-width: calc(100% - 20px);
-  display: flex;
-  justify-content: space-between;
-  margin: 0 6px;
-  margin-top: 12px;
-  padding-top: 8px;
-  border-top: 1px solid #ccc;
-}
+
 
 .long-input {
 }
