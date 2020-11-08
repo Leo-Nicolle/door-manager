@@ -19,7 +19,7 @@ class Database {
   void readFiles();
   void setupSD();
   void setupDatabase();
-  void downloadDatabase(char* doorId);
+  void downloadDatabase();
   int compareHours(int hourA, int minA, int hourB, int minB);
   bool authorizeRFID(char *rfid);
   bool requestAccess(char *doorId, char *rfid);

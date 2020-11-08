@@ -9,9 +9,9 @@ db.defaults({
   users: [],
   doors: [],
   groups: [],
-  doors: [],
   schedules: [],
   logs: [],
+  code: []
 }).write();
 
 export default db;

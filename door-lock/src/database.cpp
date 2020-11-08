@@ -71,7 +71,7 @@ void Database::setupSD()
   Serial.println("card initialized.");
 }
 
-void Database::downloadDatabase(char *doorId)
+void Database::downloadDatabase()
 {
   strcpy(url, baseUrl);
   strcat(url, "access/download/badge/");

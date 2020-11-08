@@ -11,7 +11,9 @@
 class Ota{
   HTTPClient http;
   char url[356];
+  bool shouldUpdate = false;
   public:
+  bool updating = false;
   Ota();
   void setup();
   void loop();

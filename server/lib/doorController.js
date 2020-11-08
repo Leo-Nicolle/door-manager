@@ -25,14 +25,13 @@ export default function doorController({ app, db, authMiddleware }) {
       } else {
         // make new entry
         db.get("doors")
-          .push({ id: uuid(), ...req.body })
+          .push({ id: uuid(), ...req.body, codeDate: 0 })
           .write();
       }
       res.send(200);
     }
   );
   app.delete("/door/:id", authMiddleware, (req, res) => {
-    console.log("ICI DOOR DELETE");
     db.set(
       "doors",
       db
