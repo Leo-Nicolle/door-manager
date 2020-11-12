@@ -11,7 +11,8 @@ db.defaults({
   groups: [],
   schedules: [],
   logs: [],
-  code: []
+  locks: [],
+  code: [],
 }).write();
 
 export default db;

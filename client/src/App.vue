@@ -9,12 +9,14 @@
       <router-link to="/log">Logs</router-link>|
       <router-link to="/login">{{logginText}}</router-link>
     </div>
+    <PopupNewLock />
     <router-view @login="onLogIn" @logout="onLogOut" />
   </div>
 </template>
 
 <script>
 import { loggedIn } from "./js/utils";
+import PopupNewLock from './components/PopupNewLock';
 export default {
   name: "App",
   data() {
@@ -39,6 +41,9 @@ export default {
   mounted() {
     loggedIn().then((isLoggedIn) => (this.loggedIn = isLoggedIn));
   },
+  components: {
+    PopupNewLock
+  }
 };
 </script>
 <style>

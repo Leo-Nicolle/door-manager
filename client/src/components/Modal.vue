@@ -15,6 +15,7 @@ export default {
 </script>
 <style>
 .modal {
+  z-index: 10;
   position: absolute;
   top: 0;
   left: 50%;

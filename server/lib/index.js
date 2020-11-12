@@ -71,7 +71,7 @@ scheduleController({ authMiddleware, app, db });
 groupController({ authMiddleware, app, db });
 accessController({ authMiddleware, app, db });
 logController({ authMiddleware, app, db });
-codeController({app, db})
+codeController({authMiddleware, app, db})
 
 let server = app.listen(5051, () => {
   console.log(
