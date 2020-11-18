@@ -26,17 +26,11 @@
       <div>
         <label>
           Horraire
-          <select
-            :class="getClass('currentDoorAcces')"
-            type="select"
-            v-model="currentDoorAcces"
-          >
-            <option
-              v-for="(schedule, j) in schedules"
-              :key="j"
-              :value="schedule.id"
-            >{{schedule.name}}</option>
-          </select>
+          <Treeselect class= "caped-width getClass('currentDoorAcces')" 
+          v-model="currentDoorAcces" 
+          :multiple="false" 
+          :options="treeSchedules" 
+          :typeahead="true" />
         </label>
       </div>
     </div>
@@ -48,6 +42,7 @@ import { getUrl } from "../js/utils";
 import axios from "axios";
 import Form from "../mixins/Form";
 import FormMixin from "../mixins/FormMixin";
+import Treeselect from '@riophae/vue-treeselect'
 
 export default {
   name: "Group",
@@ -77,6 +72,9 @@ export default {
         this.element = group;
       },
     },
+    treeSchedules: function(){
+      return this.schedules.map(({id, name}) => ({id, label: name}))
+    }
   },
   watch: {
     errorResponses: function (newValue) {
@@ -125,6 +123,7 @@ export default {
   },
   components: {
     Form,
+    Treeselect,
   },
 };
 </script>

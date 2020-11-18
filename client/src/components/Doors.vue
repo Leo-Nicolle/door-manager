@@ -14,7 +14,7 @@
       </tr>
       <tr slot="body" v-for="(door, i) in sortedElements" :key="i" @click="onElementClick(door)">
         <td>{{ door.name }}</td>
-        <td>{{ door.ip }}</td>
+        <td>{{ door.ip || 'Pas Assignee' }}</td>
       </tr>
       <Door slot="form" :locks="locks" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
 
@@ -108,7 +108,7 @@ export default {
     },
     getIp(door){
       const lock = this.locks.find(lock => lock.doorId === door.id);
-      return lock ? lock.ip : 'Pas assignee';
+      return lock ? lock.ip : null;
     },
     getElementsToFilter(elements) {
       return elements.map((door) => {

@@ -12,17 +12,13 @@
           required
         />
       </label>
-            <label>
-        ip
-        <select
-          :class="getClass('ip')"
-          v-model="door.ip"
-          id="ip"
-          name="ip"
-          required
-        >
-        <option v-for="(lock, i) in getLocks()" :key = "i"> {{lock.ip}}</option>
-        </select>
+      <label>
+        IP
+        <Treeselect class= "caped-width getClass('ip')" 
+        v-model="door.ip" 
+        :multiple="false" 
+        :options="treeIps" 
+        :typeahead="true" />
       </label>
     </div>
   </Form>
@@ -32,6 +28,7 @@
 import { getUrl } from "../js/utils";
 import axios from "axios";
 import Form from "../mixins/Form";
+import Treeselect from '@riophae/vue-treeselect'
 import FormMixin from "../mixins/FormMixin";
 
 export default {
@@ -47,12 +44,15 @@ export default {
         this.element = door;
       },
     },
+    treeIps: function(){
+      const a =  this.locks
+        .filter(lock => !lock.doorId)
+        .map(({ ip }) => ({label: ip, id: ip}));
+      console.log(a);
+      return a;
+    }
   },
   methods: {
-    getLocks(){
-      return [this.element].concat(
-        this.locks.filter(lock => !lock.doorId));
-    },
     onSubmit(event) {
       axios
         .post(getUrl("door"), this.door)
@@ -76,6 +76,7 @@ export default {
   },
   components: {
     Form,
+    Treeselect,
   },
 };
 </script>
