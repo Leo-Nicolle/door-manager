@@ -9,11 +9,14 @@
     >
       <tr slot="headers">
         <th @click="onHeaderClick('name')">Nom</th>
+        <th @click="onHeaderClick('ip')">IP</th>
+
       </tr>
       <tr slot="body" v-for="(door, i) in sortedElements" :key="i" @click="onElementClick(door)">
         <td>{{ door.name }}</td>
+        <td>{{ door.ip }}</td>
       </tr>
-      <Door slot="form" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
+      <Door slot="form" :locks="locks" :element="selectedElement" @cancel="onCancel()" @submit="onSubmit()" />
 
     </ElementsDisplay>
     <button @click = "onCompileCode">COMPILE CODE</button>
@@ -36,7 +39,7 @@ export default {
   name: "Doors",
   mixins: [ElementsDisplayMixin],
   data(){
-    return {compileStatus: ''} 
+    return {compileStatus: '', locks: []} 
   },
   methods: {
     onAddElement() {
@@ -63,6 +66,11 @@ export default {
     fetch() {
       this.onCompileCode();
       axios
+        .get(getUrl("lock"))
+        .then(({ data }) => {
+          this.locks = data;
+        })
+      axios
         .get(getUrl("door"))
         .then(({ data }) => {
           this.elements = data;
@@ -72,22 +80,22 @@ export default {
           //     console.log('should succeed',data)
           // });
 
-          axios
-            .get(getUrl(`access/${this.elements[1].id}/badges1`))
-            .then(({ data }) => {
-              console.log("should succeed", data);
-            });
+          // axios
+          //   .get(getUrl(`access/${this.elements[1].id}/badges1`))
+          //   .then(({ data }) => {
+          //     console.log("should succeed", data);
+          //   });
 
-          axios
-            .get(getUrl(`access/download/badge/${this.elements[1].id}`))
-            .then(({ data }) => {
-              console.log(data);
-            });
-          axios
-            .get(getUrl(`access/download/schedule/${this.elements[1].id}`))
-            .then(({ data }) => {
-              console.log(data);
-            });
+          // axios
+          //   .get(getUrl(`access/download/badge/${this.elements[1].id}`))
+          //   .then(({ data }) => {
+          //     console.log(data);
+          //   });
+          // axios
+          //   .get(getUrl(`access/download/schedule/${this.elements[1].id}`))
+          //   .then(({ data }) => {
+          //     console.log(data);
+          //   });
 
           // axios.get(getUrl(`access/${this.elements[1].id}/badge not exits`)).then(({ data }) => {
           //     console.log('should fail',data)
@@ -97,6 +105,19 @@ export default {
           //     console.log('should fail',data)
           // });
         });
+    },
+    getIp(door){
+      const lock = this.locks.find(lock => lock.doorId === door.id);
+      return lock ? lock.ip : 'Pas assignee';
+    },
+    getElementsToFilter(elements) {
+      return elements.map((door) => {
+        const ip = this.getIp(door);
+        return {
+          ...door,
+          ip,
+        };
+      });
     },
   },
   components: {

@@ -1,6 +1,6 @@
 <template>
   <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
-    <div slot="body" class="body large-body">
+    <div slot="body" class="form-body large-body">
       <label>
         nom
         <input 
@@ -210,6 +210,7 @@ export default {
 }
 .date-container {
   min-width: min-content;
+  max-width: 400px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -219,9 +220,6 @@ export default {
   margin: 0 5px;
   margin-bottom: 10px;
   min-width: max-content;
-}
-label {
-  max-width: fit-content;
 }
 label > input {
   margin: 0 10px;

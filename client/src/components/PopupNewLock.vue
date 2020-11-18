@@ -1,6 +1,6 @@
 <template>
-  <span class="newlock" v-if = "lock">
-    <p class = 'long-button validate' @click="onAssign">New Lock at <b>{{lock.ip}}</b>.</p>
+  <span class="lock" v-if = "newLock">
+    <p class = 'long-button validate' @click="onAssign">New Lock at <b>{{newLock.ip}}</b>.</p>
     <p class = 'short-button gray' @click="onDelete">X</p>
     <Modal v-if="modalVisible">
       <ul class = 'doorlist'>
@@ -28,11 +28,11 @@ import Modal from "./Modal";
 export default {
   name: "PopupNewLock",
   data(){
-    return {locks: [], modalVisible: false, doors: []};
+    return {newLocks: [], modalVisible: false, doors: []};
   },
   computed: {
-    lock: function(){
-      return this.locks[0];
+    newLock: function(){
+      return this.newLocks[0];
     }
   },
   methods: {
@@ -40,14 +40,14 @@ export default {
       axios
       .get(getUrl('lock'))
       .then(({ data }) => {
-        console.log(data);
-        this.locks = data.filter(({doorId}) => !doorId);
+        this.newLocks = data.filter(({doorId}) => !doorId);
+        this.locks = data;
       });
 
       axios
       .get(getUrl('door'))
       .then(({ data }) => {
-        this.doors = data;
+        this.doors = data.filter(({id}) => !this.locks.find(({doorId}) => doorId === id));
       });
     },
     onAssign(){
@@ -55,7 +55,7 @@ export default {
     },
     onSelect(door){
       axios.post(getUrl('lock'), {
-        ...this.lock,
+        ...this.newLock,
         doorId: door.id
       }).then(() => {
         this.fetch();

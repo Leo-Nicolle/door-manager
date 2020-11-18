@@ -1,5 +1,13 @@
+label{
+  font-size: 16px;
+  max-width: 340px;
+}
 input {
   border: 1px solid #d2d2d2;
+}
+select, option, input {
+  font-size: 16px;
+  padding: 4.8px 8px;
 }
 button,
 input[type="submit"] {
@@ -11,7 +19,7 @@ input[type="submit"] {
   letter-spacing: 1px;
   height: 38px;
   width: 120px;
-  line-height: 38px;
+  line-height: 30px;
   overflow: hidden;
   background: #4dbecf;
   border-radius: 3px;
@@ -84,6 +92,11 @@ input[type="submit"] {
   font-family: icon-font;
 }
 
+.form-body{
+  display: flex;
+  flex-direction: column;
+  margin: 0 12px;
+}
 .footer {
   min-width: calc(100% - 20px);
   max-width: calc(100% - 20px);
@@ -93,4 +106,8 @@ input[type="submit"] {
   margin-top: 12px;
   padding-top: 8px;
   border-top: 1px solid #ccc;
+}
+label > *{
+  width: 190px;
+  margin: 0 10px;
 }

@@ -1,8 +1,6 @@
 <template>
   <form v-if="element">
-    <div class="body">
-      <slot name="body"></slot>
-    </div>
+    <slot class = "body"  name="body"></slot>
     <div class="footer">
       <input class="validate" type="submit" value="valider" @click="onSubmit" />
       <button @click="onCancel">cancel</button>
@@ -81,8 +79,6 @@ label {
 label > input[type="checkbox"] {
   margin-top: 4px;
 }
-
-
 .long-input {
 }
 .small-button {

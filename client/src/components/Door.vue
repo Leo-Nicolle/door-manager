@@ -12,6 +12,18 @@
           required
         />
       </label>
+            <label>
+        ip
+        <select
+          :class="getClass('ip')"
+          v-model="door.ip"
+          id="ip"
+          name="ip"
+          required
+        >
+        <option v-for="(lock, i) in getLocks()" :key = "i"> {{lock.ip}}</option>
+        </select>
+      </label>
     </div>
   </Form>
 </template>
@@ -25,6 +37,7 @@ import FormMixin from "../mixins/FormMixin";
 export default {
   name: "Door",
   mixins: [FormMixin],
+  props: ['locks'],
   computed: {
     door: {
       get: function () {
@@ -36,6 +49,10 @@ export default {
     },
   },
   methods: {
+    getLocks(){
+      return [this.element].concat(
+        this.locks.filter(lock => !lock.doorId));
+    },
     onSubmit(event) {
       axios
         .post(getUrl("door"), this.door)

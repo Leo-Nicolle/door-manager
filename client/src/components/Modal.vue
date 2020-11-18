@@ -29,8 +29,9 @@ export default {
   transform: translateX(-50%);
 }
 .modal-body {
-  min-width: calc(100% - 30px);
-  max-width: calc(100% - 30px);
+  width: 600px;
+  padding: 0 11px;
+  border-radius: 10px;
   opacity: 1;
   background: #fff;
   min-height: 50%;

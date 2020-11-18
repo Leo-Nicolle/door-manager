@@ -1,6 +1,6 @@
 <template>
 <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
-  <div slot="body">
+  <div slot="body" class= "form-body">
     <label>
       nom de famille
       <input :class="getClass('lastname')" type="text" v-model="user.lastname" id="lastname" name="lastname" required />
@@ -15,7 +15,7 @@
     </label>
     <label class="long-input">
       Groupes
-      <Treeselect v-model="selectedGroups" :multiple="true" :options="groupTags" :typeahead="true" />
+      <Treeselect class= "caped-width" v-model="selectedGroups" :multiple="true" :options="groupTags" :typeahead="true" />
     </label>
     <label class="long-input">
       Badges
