@@ -58,6 +58,8 @@ void Ota::checkForUpdates(){
   strcat(url, WiFi.localIP().toString().c_str());
   strcat(url, "/");
   strcat(url, codeDate);
+  strcat(url, "/");
+  strcat(url, doorId);
 
   http.begin(url);
   Serial.print("request code update ");

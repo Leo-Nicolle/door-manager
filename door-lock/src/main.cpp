@@ -8,17 +8,17 @@
 Database database;
 Ota ota;
 
-char rfid[512];
 tm currentTime;
 unsigned long lastTimeUpdate = 0;
 // time between two updates of the database (in secondes)
-const unsigned long refreshFrequency= 60;
+const unsigned long refreshFrequency= 3600;
 void setupSerial(){
   Serial.begin(9600);
   while (!Serial)
   {
     ;
   }
+  Serial.println("STARTED SERIAL");
 }
 void refreshSystem(bool force = false){
   time_t now;
@@ -57,10 +57,9 @@ void setup(){
   connectWifi();
   ota.setup();
   refreshSystem(true);
-  strcpy(rfid, "badges1");
-  // bool a = database.authorizeRFID(rfid);
-
-  // Serial.println(a);
+  bool a = database.authorize(database.rfid);
+  Serial.print("AUTHORIZE ");
+  Serial.println(a);
   // requestAccess(doorId, "badges1");
 }
 

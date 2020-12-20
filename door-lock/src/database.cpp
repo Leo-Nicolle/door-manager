@@ -4,6 +4,8 @@ Database::Database(){
 }
 
 void Database::readFiles(){
+  if (SD.cardType() == CARD_NONE)
+    return;
   // re-open the file for reading:
   file = SD.open("/badge.csv");
   if (file)
@@ -35,7 +37,17 @@ void Database::readFiles(){
   }
 }
 
-bool Database::requestAccess(char *doorId, char *rfid)
+bool Database::authorize(char *rfid) {
+  if(WiFi.status() == WL_CONNECTED){
+    Serial.println("By wifi");
+    return requestAccess(rfid);
+  }
+  Serial.println("By Card");
+  return authorizeRFID(rfid);
+}
+
+
+bool Database::requestAccess(char *rfid)
 {
   strcpy(url, baseUrl);
   strcat(url, "access/");
@@ -47,15 +59,35 @@ bool Database::requestAccess(char *doorId, char *rfid)
 
   int httpResponseCode = http.GET();
   bool access = false;
+  bool shouldAssignAccess = false;
   if (httpResponseCode == 200)
   {
     access = true;
   }
+  else if(httpResponseCode == 128){
+    // response is to assign ID to badge:
+    shouldAssignAccess = true;
+  }
   http.end();
+  if(shouldAssignAccess){
+    assignIdToBadge();
+  }
   return access;
 }
+void Database::assignIdToBadge(){
+  strcpy(url, baseUrl);
+  strcat(url, "access/add-badge");
 
-void Database::setupDatabase(){
+  int httpResponseCode = http.GET();
+  if (httpResponseCode == 200){
+    strcpy(rfid, http.getString().c_str());
+    // TODO: write into RFID badge 
+  }
+  http.end();
+}
+
+void Database::setupDatabase()
+{
   setupSD();
 }
 
@@ -73,6 +105,7 @@ void Database::setupSD()
 
 void Database::downloadDatabase()
 {
+  if (SD.cardType() == CARD_NONE) return;
   strcpy(url, baseUrl);
   strcat(url, "access/download/badge/");
   strcat(url, doorId);
@@ -105,6 +138,9 @@ bool Database::authorizeRFID(char *rfid){
   int badgeLength = strlen(rfid);
   if (!badgeLength)
     return false;
+  if (SD.cardType() == CARD_NONE)
+    return false;
+
   file = SD.open(F("/badge.csv"), FILE_READ);
   bool lineFound;
   // finds the right line
