@@ -22,8 +22,9 @@ function jsonToHFile(json){
   }, file);
 }
 
-function compile(options = {}){
+function compile(options, db){
   // generate config file:
+  console.log('compile');
   if(compileLock) throw new Error('Compiler busy');
   compileLock = true;
   const codeDate = Date.now().toString();
@@ -53,7 +54,7 @@ function compile(options = {}){
       resolve(codeDate);
     });
   }).then((date) => {
-    const db = options.db;
+    const doorId = options.doorId;
     // update the date of the code in the database
     if (db.get("code").find({ doorId }).value()){
       db.get("code").find({ doorId }).assign({ date }).write();
@@ -65,7 +66,7 @@ function compile(options = {}){
 }
 
 function transferCode({ip, doorId, res, db}){
-   compile({ doorId, db })
+  return compile({doorId}, db )
      .then(() => {
        res.send(200);
        var esp = new EspOTA();
@@ -103,12 +104,15 @@ function handleUnassigned({ip, res, db}){
      .value()
      .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1);
    // check if there is an unassigned lock with this ip:
-   const lock = db.get("locks").get({ ip }).value();
+   const lock = db.get("locks").find({ ip }).value();
    if (!lock) {
      db.get("locks").push({ ip, date: Date.now() }).write();
-     res.send(400);
-     return;
+     return res.send(400);
    }
+   if(!lock.doorId){
+     return res.send(400);
+   }
+   console.log('compiling', lock, lock.doorId);
    // if there is already a lock with this ip, check if a doorId has been assigned to it
    // and start a transfer
    transferCode({ db, ip, doorId: lock.doorId, res })
@@ -125,7 +129,7 @@ function handleUnassigned({ip, res, db}){
 
 export default function doorController({ app, db, authMiddleware }) {
   app.get("/code-compile", (req,res) => {
-    compile().then(() => {
+    compile({}, db).then(() => {
       res.send(200);
     })
     .catch(e => {
@@ -140,9 +144,10 @@ export default function doorController({ app, db, authMiddleware }) {
     const doorId = req.params.doorId;
 
     if(doorId === 'unassigned'){
-      handleUnassigned({ip, res, db})
+      return handleUnassigned({ip, res, db});
     }
-    const mostRecentCodeDate = db.get("code").find({ doorId }).value().date;
+    const mostRecentCode = db.get("code").find({ doorId }).value();
+    const mostRecentCodeDate = mostRecentCode ? mostRecentCode.date : 0;
     console.log("request code update", ip, date, doorId);
 
     if(mostRecentCodeDate <= date){

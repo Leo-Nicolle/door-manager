@@ -60,6 +60,7 @@ table {
 th {
   background: #000;
   color: #fff;
+  padding: 5px 0;
 }
 tr {
   cursor: pointer;
@@ -69,5 +70,8 @@ tr:nth-of-type(odd) {
 }
 tr:hover {
   background: #ddd;
+}
+td{
+  padding: 3px 0;
 }
 </style>

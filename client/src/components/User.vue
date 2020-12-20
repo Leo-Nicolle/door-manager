@@ -93,17 +93,21 @@ export default {
     onStartAddBadge() {
       this.addingBadgeMessage = "En attente de scan du badge";
       this.isAddingBadge = true;
+      const date = Date.now();
       this.requestNewBadgeTimeout = setInterval(() => {
         axios
-          .get(getUrl("newbadge"))
+          .get(getUrl("/access/last-unknown-badge"))
           .then(({
             data
           }) => {
             if (!data) return;
+            // must be less than two minutes
+            if((date - data.date)/ 1000 > 2 ) return;
             this.newBadgeUuid = data;
-            this.addingBadgeMessage = `UUID: ${data}`;
-            clearInterval(this.requestNewBadgeTimeout);
+            this.addingBadgeMessage = `Badge scanné! Enregistrement`;
+            return axios.get(getUrl(`/access/badge-updated/${data.date}`));
           })
+          // .then((should) => )
           .catch((e) => console.error(e));
       }, 500);
     },

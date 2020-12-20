@@ -4,6 +4,8 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import passport from "passport";
 import { v4 as uuid } from "uuid";
+import { existsSync } from "fs";
+
 import db from "./database";
 import doorController from "./doorController";
 import userController from "./userController";
@@ -12,9 +14,8 @@ import groupController from "./groupController";
 import accessController from "./accessController";
 import logController from "./logController";
 import codeController from "./codeController";
+import mailController from "./mailController";
 
-
-import { existsSync } from "fs";
 passport.serializeUser((user, done) => {
   done(null, user.id);
 });
@@ -46,7 +47,6 @@ let app = express();
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -71,7 +71,9 @@ scheduleController({ authMiddleware, app, db });
 groupController({ authMiddleware, app, db });
 accessController({ authMiddleware, app, db });
 logController({ authMiddleware, app, db });
-codeController({authMiddleware, app, db})
+codeController({authMiddleware, app, db});
+
+mailController();
 
 let server = app.listen(5051, () => {
   console.log(

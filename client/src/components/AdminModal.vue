@@ -3,15 +3,15 @@
   <form>
    <div class="body">
       <label>
-        email
+        email:
         <input :class="getClass('email')" type="text" v-model="user.email" id="email" name="email" required />
       </label>
       <label>
-        password
+        Mot de Passe:
         <input :class="getClass('password')" type="password" v-model="user.password" id="password" name="password" required />
       </label>
        <label>
-        confirm
+        Confirmer:
         <input :class="getClass('password')" type="password" v-model="passwordCheck" id="passwordCheck" name="passwordCheck" required />
       </label>
     </div>

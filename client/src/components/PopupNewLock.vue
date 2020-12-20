@@ -1,8 +1,10 @@
 <template>
   <span class="lock" v-if = "newLock">
-    <p class = 'long-button validate' @click="onAssign">New Lock at <b>{{newLock.ip}}</b>.</p>
-    <p class = 'short-button gray' @click="onDelete">X</p>
+    <p class = 'long-button validate' @click="onClickMessage">Nouvelle serrure: <b>{{newLock.ip}}</b>.</p>
     <Modal v-if="modalVisible">
+      <h3>Assigner une Porte a la nouvelle serrure</h3>
+      <b>{{selectedDoor ? selectedDoor.name: ' '}}</b>
+
       <ul class = 'doorlist'>
         <li class='doorname' 
           v-for="(door, i) in doors" 
@@ -13,7 +15,9 @@
 
       </ul> 
       <div class="footer">
-      <button @click="onCancel">cancel</button>
+      <button @click="onCancel">annuler</button>
+      <button @click="onConfirm">valider</button>
+
     </div>
     </Modal>
   </span>
@@ -28,7 +32,7 @@ import Modal from "./Modal";
 export default {
   name: "PopupNewLock",
   data(){
-    return {newLocks: [], modalVisible: false, doors: []};
+    return {newLocks: [], modalVisible: false, doors: [], selectedDoor: null};
   },
   computed: {
     newLock: function(){
@@ -50,20 +54,24 @@ export default {
         this.doors = data.filter(({id}) => !this.locks.find(({doorId}) => doorId === id));
       });
     },
-    onAssign(){
+    onClickMessage(){
+      this.selectedDoor = false;
       this.modalVisible = true;
     },
     onSelect(door){
+      this.selectedDoor = door; 
+    },
+    onConfirm(){
       axios.post(getUrl('lock'), {
         ...this.newLock,
-        doorId: door.id
+        doorId: this.selectedDoor.id
       }).then(() => {
         this.fetch();
+        this.modalVisible = false;
       })
-      this.modalVisible = false;
     },
-    onDelete(){
-      console.log('todo')
+    onCancel(){
+      this.modalVisible = false;
     }
   },
   mounted(){
@@ -77,11 +85,16 @@ export default {
 };
 </script>
 <style>
-.long-button{
-  flex: 0 0 95%; 
+.lock{
+  display: flex;
 }
-.short-button{
-  flex: 0 0 5%; 
+.long-button{
+  cursor: pointer;
+  width: 100%;
+  margin: 5px 12px;
+  padding: 5px 0;
+
+  border-radius: 5px;
 }
 .newlock{
   display: flex;
