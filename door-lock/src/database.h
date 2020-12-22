@@ -25,7 +25,7 @@ class Database {
   int compareHours(int hourA, int minA, int hourB, int minB);
   bool authorizeRFID(char *rfid);
   bool requestAccess(char *rfid);
-  bool authorize(char *rfid);
+  bool authorize();
 };
 
 #endif /* DATABASE_H */

@@ -1,17 +1,22 @@
 #include "RFID.h"
 
-
 RFID::RFID(){
   mfrc522 = MFRC522(25,16);
 }
 
-void RFID::setup(){
+void RFID::setup(Database* database){
+  this->database = database;
   mfrc522.PCD_Init();
 }
 
 void RFID::loop(){
-  if (!mfrc522.PICC_IsNewCardPresent())
-  {
+  time_t now;
+  time(&now);
+  if (now - lastTimeUpdate < refreshFrequency){
+    return;
+  }
+  lastTimeUpdate = now;
+  if (!mfrc522.PICC_IsNewCardPresent()){
     return;
   }
 
@@ -28,18 +33,15 @@ void RFID::loop(){
   }
   else
   {
-    char tag[sizeof(mfrc522.uid.uidByte) * 4] = {0};
+    database->rfid[0] = 0;
     for (int i = 0; i < mfrc522.uid.size; i++)
     {
       char buff[5]; // 3 digits, dash and \0.
       snprintf(buff, sizeof(buff), "%s%d", i ? "-" : "", mfrc522.uid.uidByte[i]);
-      strncat(tag, buff, sizeof(tag));
+      strncat(database->rfid, buff, sizeof(database->rfid));
     };
-    Serial.println("Good scan: ");
-    Serial.println(tag);
+    database->rfid[mfrc522.uid.size] = 0;
+    database->authorize();
   };
-
-  // disengage with the card.
-  //
   mfrc522.PICC_HaltA();
 }

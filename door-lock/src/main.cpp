@@ -55,24 +55,24 @@ void connectWifi(){
 void setup(){
   setupSerial();
   SPI.begin(18,19,23);
-  return rfid.setup();
+  rfid.setup(&database);
   database.setupDatabase();
   connectWifi();
   ota.setup();
   refreshSystem(true);
-  bool a = database.authorize(database.rfid);
-  Serial.print("AUTHORIZE ");
-  Serial.println(a);
-  // requestAccess(doorId, "badges1");
+  // bool a = database.authorize(database.rfid);
+  // Serial.print("AUTHORIZE ");
+  // Serial.println(a);
+  // // requestAccess(doorId, "badges1");
 }
 
 void loop(){
-  return rfid.loop();
 
   if(!ota.updating){
-  // make sure wifi is connected
-  connectWifi();
-  refreshSystem();
+    // make sure wifi is connected
+    connectWifi();
+    refreshSystem();
+    rfid.loop();
   }
   ota.loop();
 }

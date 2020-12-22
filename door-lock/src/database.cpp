@@ -37,7 +37,7 @@ void Database::readFiles(){
   }
 }
 
-bool Database::authorize(char *rfid) {
+bool Database::authorize() {
   if(WiFi.status() == WL_CONNECTED){
     Serial.println("By wifi");
     return requestAccess(rfid);
