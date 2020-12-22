@@ -4,9 +4,11 @@
 #include "config.h"
 #include "database.h"
 #include "ota.h"
+#include "RFID.h"
 
 Database database;
 Ota ota;
+RFID rfid;
 
 tm currentTime;
 unsigned long lastTimeUpdate = 0;
@@ -53,6 +55,7 @@ void connectWifi(){
 void setup(){
   setupSerial();
   SPI.begin(18,19,23);
+  return rfid.setup();
   database.setupDatabase();
   connectWifi();
   ota.setup();
@@ -64,6 +67,8 @@ void setup(){
 }
 
 void loop(){
+  return rfid.loop();
+
   if(!ota.updating){
   // make sure wifi is connected
   connectWifi();
