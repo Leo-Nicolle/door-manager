@@ -16,6 +16,7 @@
             required
           />
         </label>
+        <router-link to="/password-reset">Mot de passe oublie</router-link>|
         <p class="invalid">{{ errorMessage }}</p>
       </div>
       <div class="footer">

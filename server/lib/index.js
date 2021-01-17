@@ -14,7 +14,6 @@ import groupController from "./groupController";
 import accessController from "./accessController";
 import logController from "./logController";
 import codeController from "./codeController";
-import mailController from "./mailController";
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -73,7 +72,7 @@ accessController({ authMiddleware, app, db });
 logController({ authMiddleware, app, db });
 codeController({authMiddleware, app, db});
 
-mailController();
+// mailController();
 
 let server = app.listen(5051, () => {
   console.log(

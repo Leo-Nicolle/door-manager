@@ -4,7 +4,7 @@
     <div class="footer">
       <input class="validate" type="submit" value="valider" @click="onSubmit" />
       <button @click="onCancel">cancel</button>
-      <input class="delete" type="submit" value="suprimer" @click="onDeleteClick" />
+      <input v-if="onDelete" class="delete" type="submit" value="suprimer" @click="onDeleteClick" />
     </div>
     <Confirm
       :message="getDeleteMessage()"

@@ -2,6 +2,8 @@ import { body, validationResult } from "express-validator";
 import { v4 as uuid } from "uuid";
 import encrypt from "quick-encrypt";
 import fs from "fs";
+import sendPasswordResetMail  from "./utils/mail";
+import { config } from "process";
 
 const keys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
 const publicKey = keys.public;
@@ -31,6 +33,23 @@ function validateGroupsIds(db, groupIds) {
         };
     })
     .filter((e) => e);
+}
+
+function validatePassword(password, confirm ){
+  const errors = []
+  if(password!==confirm){
+    errors.push({
+      param: "password",
+      msg: "password missmatch",
+    });
+  }
+  if(password.length< 4){
+    errors.push({
+      param: "password",
+      msg: "password should not be at least 4 characters",
+    });
+  }
+  return errors;
 }
 
 export default function userController({ app, db, authMiddleware }) {
@@ -100,11 +119,12 @@ export default function userController({ app, db, authMiddleware }) {
 
       if (req.body.isAdmin) {
         const { password, email } = req.body;
-        if (!password.length)
-          errors.push({
-            param: "password",
-            msg: "password should not be empty",
-          });
+        // TODO: add confirm
+        const decryptedPassword = encrypt.decrypt(
+          req.body.password,
+          privateKey
+        ); 
+        errors.push(...validatePassword(decryptedPassword, decryptedPassword));
         if (!email.length)
           errors.push({ param: "email", msg: "email should not be empty" });
       }
@@ -144,4 +164,85 @@ export default function userController({ app, db, authMiddleware }) {
     ).write();
     res.send(200);
   });
+
+  app.get("/user/reset/:email", (req, res) => {
+    const user = db
+    .get("users")
+    .find(({email}) => email === req.params.email)
+    .value();
+
+    const resetToken = {
+      date: Date.now(),
+      hash:uuid()
+    };
+
+    db.get("users").find({ id: user.id }).assign({
+      ...user,
+      resetToken
+    }).write();
+    res.send(200);
+  });
+  app.post("/user/resetpassword", (req, res) => {
+    const user = db
+      .get("users")
+      .find(({ email }) => email === req.body.email)
+      .value();
+    
+    if(!user) res.send(200);
+    
+    const resetToken = {
+      date: Date.now(),
+      hash: uuid(),
+    };
+    return sendPasswordResetMail({
+      destination: user.email,
+      url: `http://localhost:8080/password-reset/${resetToken.hash}`,
+    })
+      .then(() => {
+        db.get("users")
+          .find({ id: user.id })
+          .assign({
+            ...user,
+            resetToken,
+          })
+          .write();
+        res.send(200);
+      })
+      .catch((e) => {
+        console.log("reset password error", e);
+        res.send(500);
+      });
+  });
+
+   app.post('/user/setpassword', (req, res) => {
+     const token = req.body.token;
+     console.log('token', token)
+     const user = db
+       .get("users")
+       .find((user) => user.resetToken && user.resetToken.hash === token)
+       .value();
+     // token not found or outdated
+     if(!user){
+       return res.sendStatus(500);
+     }
+     if (!user || Date.now() - user.resetToken.date > 2 * 36 * 1e5) {
+
+       return res.sendStatus(400).json({diff: Date.now() - user.resetToken.date});
+     }
+
+    const password = encrypt.decrypt(req.body.password, privateKey);
+    const confirm = encrypt.decrypt(req.body.confirm, privateKey);
+    const errors = validatePassword(password, confirm)
+    if (errors.length) {
+      return res.status(400).json({ errors });
+    }
+    // everything is fine, set the password.
+    delete user.resetToken;
+    user.password = encrypt.encrypt(password,
+    persitantKeys.public
+    );
+    db.get("users").find({ id: user.id }).assign(user).write();
+    res.send(200);
+  })
+
 }

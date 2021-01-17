@@ -6,6 +6,9 @@ module.exports = {
   entry: {
     server: "./lib/index.js",
   },
+  watchOptions: {
+    ignored: ['db/', 'node_modules/']
+  },
   output: {
     path: path.join(__dirname, "dist"),
     publicPath: "/",

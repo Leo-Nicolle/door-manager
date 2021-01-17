@@ -8,6 +8,8 @@ import Schedules from "../components/Schedules.vue";
 import Doors from "../components/Doors.vue";
 import Badges from "../components/Badges.vue";
 import Logs from "../components/Logs.vue";
+import PasswordReset from "../components/PasswordReset.vue";
+
 
 // import Users from "../components/Users.vue";
 
@@ -17,62 +19,71 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: Home,
+    component: Home
   },
   {
     path: "/user",
     name: "Users",
     component: Users,
     meta: {
-      requiresAuth: true,
-    },
+      requiresAuth: true
+    }
   },
   {
     path: "/login",
     name: "Login",
-    component: Login,
+    component: Login
   },
   {
     path: "/group",
     name: "Group",
     component: Groups,
     meta: {
-      requiresAuth: true,
-    },
+      requiresAuth: true
+    }
   },
   {
     path: "/door",
     name: "Door",
     component: Doors,
     meta: {
-      requiresAuth: true,
-    },
+      requiresAuth: true
+    }
   },
   {
     path: "/badge",
     name: "Badge",
     component: Badges,
     meta: {
-      requiresAuth: true,
-    },
+      requiresAuth: true
+    }
   },
   {
     path: "/log",
     name: "Logs",
     component: Logs,
     meta: {
-      requiresAuth: true,
-    },
+      requiresAuth: true
+    }
   },
   {
     path: "/schedule",
     name: "Schedule",
     component: Schedules,
     meta: {
-      requiresAuth: true,
-    },
+      requiresAuth: true
+    }
   },
-
+  {
+    path: "/password-reset/:token",
+    name: "PasswordReset",
+    component: PasswordReset
+  },
+  {
+    path: "/password-reset",
+    name: "PasswordReset",
+    component: PasswordReset
+  },
   {
     path: "/about",
     name: "About",
@@ -80,8 +91,8 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/About.vue"),
-  },
+      import(/* webpackChunkName: "about" */ "../views/About.vue")
+  }
 ];
 
 const router = new VueRouter({
