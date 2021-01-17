@@ -69,7 +69,7 @@ export default {
         .get(getUrl("lock"))
         .then(({ data }) => {
           this.locks = data;
-        })
+        }).catch(e => e)
       axios
         .get(getUrl("door"))
         .then(({ data }) => {
@@ -104,7 +104,7 @@ export default {
           //  axios.get(getUrl(`access/door not exist/hdisfidsfhdsi`)).then(({ data }) => {
           //     console.log('should fail',data)
           // });
-        });
+        }).catch(e => e)
     },
     getIp(door){
       const lock = this.locks.find(lock => lock.doorId === door.id);

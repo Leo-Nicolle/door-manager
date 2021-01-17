@@ -3,7 +3,7 @@ import { v4 as uuid } from "uuid";
 import encrypt from "quick-encrypt";
 import fs from "fs";
 import sendPasswordResetMail  from "./utils/mail";
-import { config } from "process";
+import config from "./config";
 
 const keys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
 const publicKey = keys.public;
@@ -194,10 +194,14 @@ export default function userController({ app, db, authMiddleware }) {
       date: Date.now(),
       hash: uuid(),
     };
-    return sendPasswordResetMail({
-      destination: user.email,
-      url: `http://localhost:8080/password-reset/${resetToken.hash}`,
-    })
+    return config
+      .getValue("domain")
+      .then((domain) =>
+        sendPasswordResetMail({
+          destination: user.email,
+          url: `${domain}password-reset/${resetToken.hash}`,
+        })
+      )
       .then(() => {
         db.get("users")
           .find({ id: user.id })

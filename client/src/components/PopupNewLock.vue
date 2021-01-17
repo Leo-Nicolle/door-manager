@@ -46,13 +46,13 @@ export default {
       .then(({ data }) => {
         this.newLocks = data.filter(({doorId}) => !doorId);
         this.locks = data;
-      });
+      }).catch(() => {})
 
       axios
       .get(getUrl('door'))
       .then(({ data }) => {
         this.doors = data.filter(({id}) => !this.locks.find(({doorId}) => doorId === id));
-      });
+      }).catch(() => {});
     },
     onClickMessage(){
       this.selectedDoor = false;

@@ -7,7 +7,7 @@
           <input type="text" v-model="userData.email" id="email" name="email" required />
         </label>
         <label>
-          Prenom
+          Mot de passe
           <input
             type="password"
             v-model="userData.password"
@@ -16,7 +16,7 @@
             required
           />
         </label>
-        <router-link to="/password-reset">Mot de passe oublie</router-link>|
+        <router-link to="/password-reset">Mot de passe oublie</router-link>
         <p class="invalid">{{ errorMessage }}</p>
       </div>
       <div class="footer">
