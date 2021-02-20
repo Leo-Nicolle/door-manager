@@ -1,4 +1,4 @@
-// import { v4 as uuid } from "uuid";
+import { v4 as uuid } from "uuid";
 import EspOTA from 'esp-ota';
 import fs from 'fs';
 import { exec } from 'child_process';
@@ -66,10 +66,13 @@ function compile(options, db) {
     .then((date) => {
       const { doorId } = options;
       // update the date of the code in the database
-      if (db.get('code').find({ doorId }).value()) {
-        db.get('code').find({ doorId }).assign({ date }).write();
+      const door = db.get('doors').find({ doorId }).value() 
+      if (door) {
+        db.get('doors').find({ doorId }).assign({...door, codeDate: 
+           date 
+        }).write();
       } else {
-        db.get('code').push({ doorId, date }).write();
+        // db.get('doors').push({ doorId, date }).write();
       }
       return true;
     });
@@ -113,26 +116,37 @@ function transferCode({
 
 function handleUnassigned({ ip, res, db }) {
   // cleanup too old requests (more than one day):
-  const now = Date.now();
-  db.get('locks')
+  db.set('locks', db
+    .get('locks')
     .value()
-    .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1);
-  // check if there is an unassigned lock with this ip:
+    .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1)
+    .value()
+  );
   const lock = db.get('locks').find({ ip }).value();
+  // if the lock was not created, create it
   if (!lock) {
     db.get('locks').push({ ip, date: Date.now() }).write();
     return res.send(400);
   }
+  // if the lock was not assigned yet, just return
   if (!lock.doorId) {
     return res.send(400);
   }
   console.log('compiling', lock, lock.doorId);
-  // if there is already a lock with this ip, check if a doorId has been assigned to it
-  // and start a transfer
+  // if the lock was assigned to a door, tranfer it code.
+  const id = uuid();
   transferCode({
     db, ip, doorId: lock.doorId, res,
+    id
   })
     .then(() => {
+      // assign id to the door: 
+      const door = db.get('doors').find(door => door.id == doorId ).value();
+      if(door){
+        door.lockId = id;
+        db.get('doors').find({ id: door.id }).assign(door).write();
+      }
+      // cleanup locks
       db.set(
         'locks',
         db
@@ -162,8 +176,8 @@ export default function doorController({ app, db, authMiddleware }) {
     if (doorId === 'unassigned') {
       return handleUnassigned({ ip, res, db });
     }
-    const mostRecentCode = db.get('code').find({ doorId }).value();
-    const mostRecentCodeDate = mostRecentCode ? mostRecentCode.date : 0;
+    const door = db.get('doors').find({ doorId }).value();
+    const mostRecentCodeDate = door && door.codeDate ? door.codeDate : 0;
     console.log('request code update', ip, date, doorId);
 
     if (mostRecentCodeDate <= date) {
