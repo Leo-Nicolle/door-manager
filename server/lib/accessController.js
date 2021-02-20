@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 
 function compareHours(a, b) {
   const compHours = +a.HH - +b.HH;
@@ -23,35 +23,34 @@ function getMergedIntervals(intervals) {
       }
       return mergedIntervals;
     },
-    [sortedIntervals[0]]
+    [sortedIntervals[0]],
   );
 }
 
 function getLargestSchedule(schedules) {
   return {
-    id: schedules.map(({ id }) => id).join("-"),
+    id: schedules.map(({ id }) => id).join('-'),
     days: schedules.slice(1).reduce(
-      (allDays, { days }) =>
-        days.map((day, i) => ({
-          allDay: day.allDay || allDays[i].allDay,
-          intervals: getMergedIntervals([
-            ...allDays[i].intervals,
-            ...day.intervals,
-          ]),
-        })),
-      schedules[0].days
+      (allDays, { days }) => days.map((day, i) => ({
+        allDay: day.allDay || allDays[i].allDay,
+        intervals: getMergedIntervals([
+          ...allDays[i].intervals,
+          ...day.intervals,
+        ]),
+      })),
+      schedules[0].days,
     ),
   };
 }
 
 function authorizeAccess(doorId, badgeId, db) {
   const schedulePerGroupId = db
-    .get("groups")
+    .get('groups')
     .value()
     .filter(({ doorAccess }) => doorAccess[doorId])
     .reduce((acc, { id, doorAccess }) => {
       const schedule = db
-        .get("schedules")
+        .get('schedules')
         .find({ id: doorAccess[doorId] })
         .value();
       acc[id] = schedule;
@@ -59,15 +58,15 @@ function authorizeAccess(doorId, badgeId, db) {
     }, {});
 
   const user = db
-    .get("users")
+    .get('users')
     .find(({ badges }) => badges.some((badge) => badge === badgeId))
     .value();
-  if (!user) return {authorized: false, error: 'unknown-badge' };
+  if (!user) return { authorized: false, error: 'unknown-badge' };
   const allowedGroups = user.groups.filter((id) => schedulePerGroupId[id]);
-  if (!allowedGroups.length) return {authorized: false, error: 'no-access-door' };
+  if (!allowedGroups.length) return { authorized: false, error: 'no-access-door' };
 
   const schedule = getLargestSchedule(
-    allowedGroups.map((groupId) => schedulePerGroupId[groupId])
+    allowedGroups.map((groupId) => schedulePerGroupId[groupId]),
   );
 
   const date = new Date();
@@ -81,46 +80,45 @@ function authorizeAccess(doorId, badgeId, db) {
   if (scheduleDay.allDay === true) return { authorized: true };
 
   const authorized = scheduleDay.intervals.some(
-    ({ start, end }) =>
-      start &&
-      end &&
-      compareHours(start, time) <= 0 &&
-      compareHours(time, end) <= 0
+    ({ start, end }) => start
+      && end
+      && compareHours(start, time) <= 0
+      && compareHours(time, end) <= 0,
   );
-  return authorized ? { authorized } :{ authorized, error: 'not-in-shcedule' };
+  return authorized ? { authorized } : { authorized, error: 'not-in-shcedule' };
 }
-let state = {
+const state = {
   isAddingBadge: false,
   timeoutAddingBadge: null,
-  lastUnknown: null
-}
+  lastUnknown: null,
+};
 export default function accessController({ app, db, authMiddleware }) {
-  app.get("/access/download/:type/:doorid", (req, res) => {
+  app.get('/access/download/:type/:doorid', (req, res) => {
     const doorId = req.params.doorid;
-    const type = req.params.type;
+    const { type } = req.params;
     const schedulePerGroupId = db
-      .get("groups")
+      .get('groups')
       .value()
       .filter(({ doorAccess }) => doorAccess[doorId])
       .reduce((acc, { id, doorAccess }) => {
         const schedule = db
-          .get("schedules")
+          .get('schedules')
           .find({ id: doorAccess[doorId] })
           .value();
         acc[id] = schedule;
         return acc;
       }, {});
 
-    const users = db.get("users").value();
+    const users = db.get('users').value();
 
-    let generatedSchedules = {};
+    const generatedSchedules = {};
     const schedulePerBadge = users.reduce(
       (schedulePerBadge, { firstname, groups, badges }) => {
         const allowedGroups = groups.filter((id) => schedulePerGroupId[id]);
         if (!allowedGroups.length) return schedulePerBadge;
 
         const schedule = getLargestSchedule(
-          allowedGroups.map((groupId) => schedulePerGroupId[groupId])
+          allowedGroups.map((groupId) => schedulePerGroupId[groupId]),
         );
         generatedSchedules[schedule.id] = schedule;
         badges.forEach((badgeUuid) => {
@@ -128,29 +126,29 @@ export default function accessController({ app, db, authMiddleware }) {
         });
         return schedulePerBadge;
       },
-      {}
+      {},
     );
-    if (type === "badge") {
+    if (type === 'badge') {
       res.send(
         Object.entries(schedulePerBadge).reduce(
           (csv, [badgeId, scheduleId]) => (csv += `${badgeId},${scheduleId}\n`),
-          ""
-        )
+          '',
+        ),
       );
     }
-    if (type === "schedule") {
+    if (type === 'schedule') {
       res.send(generatedSchedules);
     }
   });
 
-  app.get("/access/:doorid/:badgeId", (req, res) => {
+  app.get('/access/:doorid/:badgeId', (req, res) => {
     const doorId = req.params.doorid;
-    const badgeId = req.params.badgeId;
+    const { badgeId } = req.params;
 
-    console.log("request DoorId", doorId, "badgeId", badgeId);
+    console.log('request DoorId', doorId, 'badgeId', badgeId);
 
     const { authorized, error } = authorizeAccess(doorId, badgeId, db);
-    db.get("logs")
+    db.get('logs')
       .push({
         id: uuid(),
         date: Date.now(),
@@ -160,22 +158,22 @@ export default function accessController({ app, db, authMiddleware }) {
         error,
       })
       .write();
-    if (!authorized && error === "unknown-badge" && state.isAddingBadge) {
+    if (!authorized && error === 'unknown-badge' && state.isAddingBadge) {
       return res.send(128);
     }
     res.send(authorized ? 200 : 400);
   });
 
-  app.get("/access/start-adding-badge/:userId", authMiddleware, (req, res) => {
+  app.get('/access/start-adding-badge/:userId', authMiddleware, (req, res) => {
     // set into addingBadge mode
     const user = db.get('user')
-      .find(({id}) => id === req.userId)
+      .find(({ id }) => id === req.userId)
       .value();
-    if(!user)return res.send(400);
+    if (!user) return res.send(400);
 
     const lastUnknown = db
-      .get("logs")
-      .filter({ error: "unknown-badge" })
+      .get('logs')
+      .filter({ error: 'unknown-badge' })
       .sort((a, b) => b.date - a.date)
       .value()[0];
 
@@ -193,35 +191,33 @@ export default function accessController({ app, db, authMiddleware }) {
   });
 
   app.get('/access/add-badge', (req, res) => {
-    if(!state.isAddingBadge) return res.send(400);
+    if (!state.isAddingBadge) return res.send(400);
     const badgeId = uuid();
     const user = db
-      .get("user")
+      .get('user')
       .find(({ id }) => id === state.user.id)
       .value();
 
     if (!user) return res.send(400);
     user.badges.push(badgeId);
     db
-    .get("user")
-    .find(({ id }) => id === state.user.id)
-    .assign(user).write();
+      .get('user')
+      .find(({ id }) => id === state.user.id)
+      .assign(user).write();
     res.send(200);
-    
   });
 
-
-  app.get("/access/badge-updated/:date",authMiddleware, (req, res) => {
+  app.get('/access/badge-updated/:date', authMiddleware, (req, res) => {
     // if the lastUnknown does not exist or if it a different one, return error
-    if(state.lastUnknown.date !== req.params.date) return res.send(400);
+    if (state.lastUnknown.date !== req.params.date) return res.send(400);
 
     const user = db
       .get('user')
-      .find(({id}) => id === state.user.id)
+      .find(({ id }) => id === state.user.id)
       .value();
 
-    if(!user) return res.send(400);
-    if(!user.badges.find(badge => badge === state.badgeId))res.send(400);
+    if (!user) return res.send(400);
+    if (!user.badges.find((badge) => badge === state.badgeId))res.send(400);
     res.send(200);
   });
 }

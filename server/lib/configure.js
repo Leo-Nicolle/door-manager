@@ -1,10 +1,8 @@
-var inquirer = require("inquirer");
-var encrypt = require("quick-encrypt");
+const encrypt = require('quick-encrypt');
+const fs = require('fs');
 
-var fs = require("fs");
-
-fs.readFile("teststss.json", (err, data) => {
-  console.log("error", err);
+fs.readFile('teststss.json', (err, data) => {
+  console.log('error', err);
   if (err.code) return;
   persitantKeys = JSON.parse(data);
 });
@@ -24,7 +22,7 @@ fs.readFile("teststss.json", (err, data) => {
 //   .then((answer) => {});
 
 const keys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
-fs.writeFileSync("./keys.json", JSON.stringify(keys));
+fs.writeFileSync('./keys.json', JSON.stringify(keys));
 
 // inquirer
 //   .prompt([

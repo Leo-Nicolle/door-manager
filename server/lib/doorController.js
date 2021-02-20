@@ -1,19 +1,19 @@
-import { body, validationResult } from "express-validator";
-import { v4 as uuid } from "uuid";
+import { body, validationResult } from 'express-validator';
+import { v4 as uuid } from 'uuid';
 
 export default function doorController({ app, db, authMiddleware }) {
-  app.get("/door", authMiddleware, (req, res) => {
-    const doors = db.get("doors").value();
+  app.get('/door', authMiddleware, (req, res) => {
+    const doors = db.get('doors').value();
     res.send(doors);
   });
-  app.get("/door/:id", authMiddleware, (req, res) => {
-    const door = db.get("doors").find({ id: req.params.id }).value();
+  app.get('/door/:id', authMiddleware, (req, res) => {
+    const door = db.get('doors').find({ id: req.params.id }).value();
     res.send(door);
   });
   app.post(
-    "/door",
+    '/door',
     authMiddleware,
-    [body("name").isString().notEmpty()],
+    [body('name').isString().notEmpty()],
     (req, res) => {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
@@ -21,42 +21,42 @@ export default function doorController({ app, db, authMiddleware }) {
       }
       // modify entry
       if (req.body.id) {
-        db.get("doors").find({ id: req.body.id }).assign(req.body).write();
+        db.get('doors').find({ id: req.body.id }).assign(req.body).write();
       } else {
         // make new entry
-        db.get("doors")
+        db.get('doors')
           .push({ id: uuid(), ...req.body, codeDate: 0 })
           .write();
       }
       res.send(200);
-    }
+    },
   );
-  app.delete("/door/:id", authMiddleware, (req, res) => {
+  app.delete('/door/:id', authMiddleware, (req, res) => {
     db.set(
-      "doors",
+      'doors',
       db
-        .get("doors")
+        .get('doors')
         .filter(({ id }) => id !== req.params.id)
-        .value()
+        .value(),
     ).write();
 
     db.set(
-      "groups",
+      'groups',
       db
-        .get("groups")
+        .get('groups')
         .value()
         .map((group) => {
-          const doorAccess = group.doorAccess;
+          const { doorAccess } = group;
           delete doorAccess[req.params.id];
           group.doorAccess = doorAccess;
           return group;
-        })
+        }),
     ).write();
 
     res.send(200);
   });
 
-  app.get("/newbadge", authMiddleware, (req, res) => {
+  app.get('/newbadge', authMiddleware, (req, res) => {
     res.send(uuid());
   });
 }

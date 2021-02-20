@@ -1,12 +1,12 @@
-const nodemailer = require("nodemailer");
-import config  from "../config";
-const fs = require('fs');
+import config from '../config';
 
-export default function sendPasswordResetMail({destination, url}) {
+const nodemailer = require('nodemailer');
+
+export default function sendPasswordResetMail({ destination, url }) {
   return config
-    .getValue("mail")
+    .getValue('mail')
     .then(({ id, password, service }) => {
-      let transporter = nodemailer.createTransport({
+      const transporter = nodemailer.createTransport({
         service,
         auth: {
           user: id,
@@ -17,12 +17,12 @@ export default function sendPasswordResetMail({destination, url}) {
       return transporter.sendMail({
         from: `"Door Manager" <${id}>`,
         to: `${destination}`,
-        subject: "Password reset",
+        subject: 'Password reset',
         text: `Cliquez sur ce lien pour changer de mot de passe: ${url}`,
         html: `<a href= ${url}>Cliquez sur ce lien pour changer de mot de passe</a>`,
       });
     })
     .then((info) => {
-      console.log("Message sent: %s", info.messageId);
+      console.log('Message sent: %s', info.messageId);
     });
 }
