@@ -2,13 +2,13 @@
 import EspOTA from "esp-ota";
 import fs from "fs";
 import { exec } from "child_process";
+import config from './config';
 let compileLock = false;
 
 function jsonToHFile(json){
   let file = "#ifndef LABAUX_CONFIG_H\n"
   file += "#define LABAUX_CONFIG_H\n"
   return Object.entries(json).reduce((hFile, [key, value], i, array) => {
-    console.log('la', hFile)
     if(typeof value === 'string'){
       hFile += `static const char* ${key} = "${value}";\n`;
     }else{
@@ -28,32 +28,42 @@ function compile(options, db){
   if(compileLock) throw new Error('Compiler busy');
   compileLock = true;
   const codeDate = Date.now().toString();
-  const configFile = jsonToHFile({
-    passwordOTA: "coucou",
-    baseUrl: "http://192.168.1.34:5051/",
-    ssid: "Livebox-8261",
-    wifiPassword: "E7859199A22A53F068F66F94FE",
-    codeDate,
-    doorId: "unassigned",
-    ...options
-  });
 
-  fs.writeFileSync('../door-lock/src/config.h', configFile);
-  return new Promise((resolve, reject) => {
-    const child = exec("~/.platformio/penv/bin/platformio run -d ../door-lock/");
-    child.stdout.on("data", function (data) {
-    });
-    child.stderr.on("data", function (data) {
-      if(data.match('error: ')){
+  Promise.all([
+    config
+      .getValue("doorDefaults"),
+    config
+    .getValue("doorLockPath"),
+    config
+    .getValue("platformioPath")
+  ])
+    .then(([doorDefaults, doorLockPath, platformioPath]) =>{
+      const configFile = jsonToHFile({
+        ...doorDefaults,
+        codeDate,
+        doorId: "unassigned",
+        ...options
+      });        
+      fs.writeFileSync(path.resolve(doorLockPath,'src/config.h'), configFile);
+      return {platformioPath, doorLockPath}
+  })
+  .then(({platformioPath, doorLockPath}) => 
+    new Promise((resolve, reject) => {
+      const child = exec(`${platformioPath} run -d ${doorLockPath}`);
+      child.stdout.on("data", function (data) {
+      });
+      child.stderr.on("data", function (data) {
+        if(data.match('error: ')){
+          compileLock = false;
+          reject(data);
+        }
+      });
+      child.on("close", function (code) {
         compileLock = false;
-        reject(data);
-      }
-    });
-    child.on("close", function (code) {
-      compileLock = false;
-      resolve(codeDate);
-    });
-  }).then((date) => {
+        resolve(codeDate);
+      });
+  }))
+  .then((date) => {
     const doorId = options.doorId;
     // update the date of the code in the database
     if (db.get("code").find({ doorId }).value()){
@@ -62,12 +72,14 @@ function compile(options, db){
       db.get("code").push({doorId, date}).write();
     }
     return true;
-  });
+  })
 }
 
 function transferCode({ip, doorId, res, db}){
   return compile({doorId}, db )
-     .then(() => {
+    .then(() => config
+    .getValue("doorLockPath"))
+     .then((doorLockPath) => {
        res.send(200);
        var esp = new EspOTA();
        // Optional arguments in this order: (bindAddress, bindPort, chunkSize, secondsTimeout)
@@ -84,8 +96,8 @@ function transferCode({ip, doorId, res, db}){
 
        // If you need to authenticate, uncomment the following and change the password
        esp.setPassword("coucou");
-       const transfer = esp.uploadFirmware(
-         "../door-lock/.pio/build/featheresp32/firmware.bin",
+       const transfer = esp.uploadFirmware(path.resolve(
+        doorLockPath, ".pio/build/featheresp32/firmware.bin"),
          ip,
          3232
        );

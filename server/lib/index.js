@@ -69,7 +69,7 @@ userController({ authMiddleware, app, db });
 scheduleController({ authMiddleware, app, db });
 groupController({ authMiddleware, app, db });
 accessController({ authMiddleware, app, db });
-logController({ authMiddleware, app, db });
+logController({ authMiddleware, app });
 codeController({authMiddleware, app, db});
 
 // mailController();

@@ -1,4 +1,14 @@
-export default function logController({ app, db, authMiddleware }) {
+const low = require("lowdb");
+const FileSync = require("lowdb/adapters/FileSync");
+
+const adapter = new FileSync("db/logs.json");
+const db = low(adapter);
+
+db.defaults({
+  logs: [],
+}).write();
+
+export default function logController({ app, authMiddleware }) {
   app.get("/log", authMiddleware, (req, res) => {
     const logs = db.get("logs").value();
     res.send(logs);
