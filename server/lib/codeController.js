@@ -1,6 +1,7 @@
 import { v4 as uuid } from "uuid";
 import EspOTA from 'esp-ota';
 import fs from 'fs';
+import path from 'path';
 import { exec } from 'child_process';
 import config from './config';
 
@@ -18,19 +19,17 @@ function jsonToHFile(json) {
     if (i === array.length - 1) {
       hFile += '#endif // config\n';
     }
-    console.log(hFile);
     return hFile;
   }, file);
 }
 
 function compile(options, db) {
   // generate config file:
-  console.log('compile');
   if (compileLock) throw new Error('Compiler busy');
   compileLock = true;
   const codeDate = Date.now().toString();
 
-  Promise.all([
+  return Promise.all([
     config
       .getValue('doorDefaults'),
     config
@@ -132,7 +131,6 @@ function handleUnassigned({ ip, res, db }) {
   if (!lock.doorId) {
     return res.send(400);
   }
-  console.log('compiling', lock, lock.doorId);
   // if the lock was assigned to a door, tranfer it code.
   const id = uuid();
   transferCode({
