@@ -1,5 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import { v4 as uuid } from 'uuid';
+import { compareHours } from './utils';
 
 function validateTime(time) {
   const validate1 = time && typeof time.HH === 'string' && typeof time.mm === 'string';
@@ -31,7 +32,7 @@ function validateSchedule(schedule) {
           indexDay: i,
           indexInterval: j,
           indexStartEnd: 0,
-          msg: 'wrong ',
+          msg: 'wrong start',
         });
       }
 
@@ -40,7 +41,15 @@ function validateSchedule(schedule) {
           indexDay: i,
           indexInterval: j,
           indexStartEnd: 1,
-          msg: 'wrong ',
+          msg: 'wrong end',
+        });
+      }
+      if (compareHours(start, end) > 0) {
+        acc.push({
+          indexDay: i,
+          indexInterval: j,
+          indexStartEnd: 1,
+          msg: 'end should be higher than start',
         });
       }
     });

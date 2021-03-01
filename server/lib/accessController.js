@@ -1,10 +1,5 @@
 import { v4 as uuid } from 'uuid';
-
-function compareHours(a, b) {
-  const compHours = +a.HH - +b.HH;
-  const compMins = +a.mm - +b.mm;
-  return compHours === 0 ? compMins : compHours;
-}
+import { compareHours } from './utils';
 
 function getMergedIntervals(intervals) {
   if (!intervals.length) return [{}];

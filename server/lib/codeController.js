@@ -1,4 +1,4 @@
-import { v4 as uuid } from "uuid";
+import { v4 as uuid } from 'uuid';
 import EspOTA from 'esp-ota';
 import fs from 'fs';
 import path from 'path';
@@ -65,10 +65,12 @@ function compile(options, db) {
     .then((date) => {
       const { doorId } = options;
       // update the date of the code in the database
-      const door = db.get('doors').find({ doorId }).value() 
+      const door = db.get('doors').find({ doorId }).value();
       if (door) {
-        db.get('doors').find({ doorId }).assign({...door, codeDate: 
-           date 
+        db.get('doors').find({ doorId }).assign({
+          ...door,
+          codeDate:
+           date,
         }).write();
       } else {
         // db.get('doors').push({ doorId, date }).write();
@@ -115,12 +117,11 @@ function transferCode({
 
 function handleUnassigned({ ip, res, db }) {
   // cleanup too old requests (more than one day):
+  const now = Date.now();
   db.set('locks', db
     .get('locks')
     .value()
-    .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1)
-    .value()
-  );
+    .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1));
   const lock = db.get('locks').find({ ip }).value();
   // if the lock was not created, create it
   if (!lock) {
@@ -134,13 +135,16 @@ function handleUnassigned({ ip, res, db }) {
   // if the lock was assigned to a door, tranfer it code.
   const id = uuid();
   transferCode({
-    db, ip, doorId: lock.doorId, res,
-    id
+    db,
+    ip,
+    doorId: lock.doorId,
+    res,
+    id,
   })
     .then(() => {
-      // assign id to the door: 
-      const door = db.get('doors').find(door => door.id == doorId ).value();
-      if(door){
+      // assign id to the door:
+      const door = db.get('doors').find((door) => door.id === lock.doorId).value();
+      if (door) {
         door.lockId = id;
         db.get('doors').find({ id: door.id }).assign(door).write();
       }

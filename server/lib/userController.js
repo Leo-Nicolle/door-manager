@@ -1,4 +1,4 @@
-import { body, validationResult } from 'express-validator';
+import { body, oneOf, validationResult } from 'express-validator';
 import { v4 as uuid } from 'uuid';
 import encrypt from 'quick-encrypt';
 import fs from 'fs';
@@ -109,9 +109,13 @@ export default function userController({ app, db, authMiddleware }) {
     [
       body('lastname').isString().notEmpty(),
       body('firstname').isString().notEmpty(),
-      body('email').isString(),
-      body('isAdmin').isBoolean(),
-      body('password').isString(),
+      oneOf([
+        body('isAdmin').equals('false'),
+        [
+          body('email').isString().notEmpty(),
+          body('password').isString().notEmpty(),
+        ],
+      ]),
       body('groups').isArray(),
       body('badges').isArray(),
     ],
@@ -119,14 +123,13 @@ export default function userController({ app, db, authMiddleware }) {
       const errors = validationResult(req).array();
 
       if (req.body.isAdmin) {
-        const { password, email } = req.body;
+        const { password } = req.body;
         // TODO: add confirm
         const decryptedPassword = encrypt.decrypt(
-          req.body.password,
+          password,
           privateKey,
         );
         errors.push(...validatePassword(decryptedPassword, decryptedPassword));
-        if (!email.length) { errors.push({ param: 'email', msg: 'email should not be empty' }); }
       }
       errors.push(...validateGroupsIds(db, req.body.groups));
 
@@ -137,10 +140,33 @@ export default function userController({ app, db, authMiddleware }) {
         return res.status(400).json({ errors });
       }
       if (req.body.password) {
+        console.log('errors 1 ', persitantKeys.public, privateKey);
+
         req.body.password = encrypt.encrypt(
           encrypt.decrypt(req.body.password, privateKey),
           persitantKeys.public,
         );
+      }
+      console.log('modify', req.body.id, req.body.lastname, req.body.badges);
+
+      if (req.body.badges) {
+        req.body.badges = req.body.badges.filter((b) => b);
+        // unassign badges from other users:
+        const users = db.get('users')
+          .filter(({ badges, id }) => badges.length && id !== req.body.id)
+          .value();
+        users.forEach((user) => {
+          let shouldUpdate = false;
+          let { badges } = user;
+          req.body.badges.forEach((badge, i) => {
+            if (!user.badges.includes(badge)) return;
+            shouldUpdate = true;
+            badges = badges.filter((b) => b !== badge);
+          });
+          if (!shouldUpdate) return;
+          user.badges = badges;
+          db.get('users').find({ id: user.id }).assign(user).write();
+        });
       }
       // modify entry
       if (req.body.id) {

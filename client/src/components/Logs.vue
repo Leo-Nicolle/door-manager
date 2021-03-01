@@ -21,7 +21,7 @@
         <td>{{ log.firstname }}</td>
         <td>{{ log.lastname }}</td>
         <td>{{ log.doorName }}</td>
-        <td>{{ new Date(log.date).format('DD/MM/YY--HH:mm') }}</td>
+        <td>{{ formatDate(new Date(log.date)) }}</td>
         <td :class="+log.authorized === 200? 'open':'closed'"></td>
       </tr>
     </ElementsDisplay>
@@ -33,6 +33,8 @@ import { getUrl } from "../js/utils";
 import axios from "axios";
 import ElementsDisplay from "../mixins/ElementsDisplay";
 import ElementsDisplayMixin from "../mixins/ElementsDisplayMixin.js";
+import dateformat from "dateformat";
+
 
 export default {
   name: "Logs",
@@ -53,6 +55,9 @@ export default {
   methods: {
     onDeleteLogs() {
       axios.delete(getUrl("log")).then(() => this.fetch());
+    },
+    formatDate(date){
+      return dateformat(date,'dd/mm/yy--HH:mm')
     },
     onElementClick() {},
     getElementsToFilter(elements) {

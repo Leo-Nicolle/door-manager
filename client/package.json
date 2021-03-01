@@ -8,9 +8,12 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@riophae/vue-treeselect": "^0.4.0",
     "@voerro/vue-tagsinput": "^2.2.0",
     "axios": "^0.19.2",
     "core-js": "^3.6.5",
+    "dateformat": "^4.5.1",
+    "eslint-config-airbnb-base": "^14.2.1",
     "quick-encrypt": "^1.0.8",
     "vue": "^2.6.11",
     "vue-cal": "^3.6.4",

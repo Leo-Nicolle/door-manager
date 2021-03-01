@@ -6,7 +6,7 @@
         <input
           :class="getClass('name')"
           type="text"
-          v-model="badge.badge"
+          v-model="badge"
           id="uuid"
           uuid="uuid"
           required
@@ -61,10 +61,10 @@ export default {
     },
     badge: {
       get: function () {
-        return this.element;
+        return this.element.badge;
       },
       set: function (badge) {
-        this.element = badge;
+        this.element.badge = badge;
       },
     },
   },
@@ -84,9 +84,12 @@ export default {
     },
     onSubmit(event) {
       if (!this.selectedUser) return;
-      this.selectedUser.badges.push(this.badge.uuid);
+      const user = {
+        ...this.selectedUser,
+        badges: [...this.selectedUser.badges, this.badge],
+      };
       axios
-        .post(getUrl("user"), this.selectedUser)
+        .post(getUrl("user"), user)
         .then(() => this.$emit("submit"))
         .catch((e) => {
           if (!e.response.data) return console.error(e);
