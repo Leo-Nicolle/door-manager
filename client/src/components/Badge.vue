@@ -98,13 +98,11 @@ export default {
           event.preventDefault();
         });
     },
-    onDelete() {
-      axios
-        .delete(getUrl(`badge/${this.badge.id}`))
-        .then(() => this.$emit("submit"))
-        .catch((e) => {
-          console.error(e);
-        });
+    onDelete(event) {
+      this.selectedUser = this.users.find(({id}) => id == this.element.id)
+      this.selectedUser.badges = this.selectedUser.badges.filter(b => b!== this.badge);
+      this.badge = null;
+      this.onSubmit(event);
     },
   },
   components: {
