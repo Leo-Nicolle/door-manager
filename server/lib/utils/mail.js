@@ -23,6 +23,7 @@ export default function sendPasswordResetMail({ destination, url }) {
       });
     })
     .then((info) => {
+      console.log('ICI');
       console.log('Message sent: %s', info.messageId);
     });
 }

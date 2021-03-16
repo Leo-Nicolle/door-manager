@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { compareHours } from './utils';
+import { compareHours } from './utils/index';
 
 function getMergedIntervals(intervals) {
   if (!intervals.length) return [{}];

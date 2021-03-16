@@ -10,11 +10,11 @@ const publicKey = keys.public;
 const privateKey = keys.private;
 
 let persitantKeys = null;
-fs.readFile('db/keys.json', (err, data) => {
+fs.readFile(config.KEYS_PATH, (err, data) => {
   if (err) {
     if (err.code === 'ENOENT') {
       persitantKeys = encrypt.generate(1024); // Use either 2048 bits or 1024 bits.
-      fs.writeFile('db/keys.json', JSON.stringify(persitantKeys), (err) => {
+      fs.writeFile(config.KEYS_PATH, JSON.stringify(persitantKeys), (err) => {
         if (err) throw err;
       });
       return;
@@ -123,13 +123,19 @@ export default function userController({ app, db, authMiddleware }) {
       const errors = validationResult(req).array();
 
       if (req.body.isAdmin) {
-        const { password } = req.body;
-        // TODO: add confirm
-        const decryptedPassword = encrypt.decrypt(
-          password,
-          privateKey,
-        );
-        errors.push(...validatePassword(decryptedPassword, decryptedPassword));
+        try {
+          const { password } = req.body;
+          // TODO: add confirm
+          const decryptedPassword = encrypt.decrypt(
+            password,
+            privateKey,
+          );
+          errors.push(...validatePassword(decryptedPassword, decryptedPassword));
+        } catch (e) {
+          // TODO: use utils to handle the error and avoid sending the key
+          errors.push('something went wront on decrypt1');
+          return res.status(500).json({ errors });
+        }
       }
       errors.push(...validateGroupsIds(db, req.body.groups));
 
@@ -140,12 +146,15 @@ export default function userController({ app, db, authMiddleware }) {
         return res.status(400).json({ errors });
       }
       if (req.body.password) {
-        console.log('errors 1 ', persitantKeys.public, privateKey);
-
-        req.body.password = encrypt.encrypt(
-          encrypt.decrypt(req.body.password, privateKey),
-          persitantKeys.public,
-        );
+        try {
+          req.body.password = encrypt.encrypt(
+            encrypt.decrypt(req.body.password, privateKey),
+            persitantKeys.public,
+          );
+        } catch (e) {
+          errors.push('something went wront on decrypt2');
+          return res.status(500).json({ errors });
+        }
       }
       console.log('modify', req.body.id, req.body.lastname, req.body.badges);
 

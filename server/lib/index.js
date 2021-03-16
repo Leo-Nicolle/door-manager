@@ -4,8 +4,8 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import { v4 as uuid } from 'uuid';
 import { existsSync } from 'fs';
-
 import db from './database';
+import config from './config';
 import doorController from './doorController';
 import userController from './userController';
 import scheduleController from './scheduleController';
@@ -70,8 +70,10 @@ codeController({ authMiddleware, app, db });
 
 // mailController();
 
-const server = app.listen(5051, () => {
-  console.log(
-    `server running at port http://localhost/${server.address().port}`,
-  );
-});
+// const server = app.listen(config.PORT, () => {
+//   console.log(
+//     `server running at port http://localhost/${server.address().port}`,
+//   );
+// });
+
+export default app;

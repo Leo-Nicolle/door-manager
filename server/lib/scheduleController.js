@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import { v4 as uuid } from 'uuid';
-import { compareHours } from './utils';
+import { compareHours } from './utils/index';
 
 function validateTime(time) {
   const validate1 = time && typeof time.HH === 'string' && typeof time.mm === 'string';
