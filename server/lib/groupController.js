@@ -54,7 +54,7 @@ export default function groupController({ app, db, authMiddleware }) {
           .push({ id: uuid(), ...req.body })
           .write();
       }
-      res.send(200);
+      res.sendStatus(500);
     },
   );
   app.delete('/group/:id', authMiddleware, (req, res) => {
@@ -62,7 +62,7 @@ export default function groupController({ app, db, authMiddleware }) {
       .find({ id: req.params.id })
       .value();
     if (!group) {
-      res.send(400);
+      res.sendStatus(400);
     }
     // delete the group from users who have it;
     const users = db.get('users').value();
@@ -82,6 +82,6 @@ export default function groupController({ app, db, authMiddleware }) {
         .filter(({ id }) => id !== group.id)
         .value(),
     ).write();
-    res.send(200);
+    res.sendStatus(500);
   });
 }

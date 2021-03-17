@@ -48,11 +48,11 @@ app.use(passport.session());
 app.get('/api/logout/:token', (req, res) => {
   const { token } = req.params;
   db.get('users').find({ token }).assign({ token: uuid() }).write();
-  return res.send(200);
+  return res.sendStatus(500);
 });
 
 app.get('/api/loggedin', authMiddleware, (req, res) => {
-  res.send(200);
+  res.sendStatus(500);
 });
 
 if (existsSync('public')) {

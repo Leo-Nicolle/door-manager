@@ -154,7 +154,7 @@ export default function accessController({ app, db, authMiddleware }) {
       })
       .write();
     if (!authorized && error === 'unknown-badge' && state.isAddingBadge) {
-      return res.send(128);
+      return res.sendStatus(128);
     }
     res.send(authorized ? 200 : 400);
   });
@@ -164,7 +164,7 @@ export default function accessController({ app, db, authMiddleware }) {
     const user = db.get('user')
       .find(({ id }) => id === req.userId)
       .value();
-    if (!user) return res.send(400);
+    if (!user) return res.sendStatus(400);
 
     const lastUnknown = db
       .get('logs')
@@ -186,33 +186,33 @@ export default function accessController({ app, db, authMiddleware }) {
   });
 
   app.get('/access/add-badge', (req, res) => {
-    if (!state.isAddingBadge) return res.send(400);
+    if (!state.isAddingBadge) return res.sendStatus(400);
     const badgeId = uuid();
     const user = db
       .get('user')
       .find(({ id }) => id === state.user.id)
       .value();
 
-    if (!user) return res.send(400);
+    if (!user) return res.sendStatus(400);
     user.badges.push(badgeId);
     db
       .get('user')
       .find(({ id }) => id === state.user.id)
       .assign(user).write();
-    res.send(200);
+    res.sendStatus(500);
   });
 
   app.get('/access/badge-updated/:date', authMiddleware, (req, res) => {
     // if the lastUnknown does not exist or if it a different one, return error
-    if (state.lastUnknown.date !== req.params.date) return res.send(400);
+    if (state.lastUnknown.date !== req.params.date) return res.sendStatus(400);
 
     const user = db
       .get('user')
       .find(({ id }) => id === state.user.id)
       .value();
 
-    if (!user) return res.send(400);
-    if (!user.badges.find((badge) => badge === state.badgeId))res.send(400);
-    res.send(200);
+    if (!user) return res.sendStatus(400);
+    if (!user.badges.find((badge) => badge === state.badgeId))res.sendStatus(400);
+    res.sendStatus(500);
   });
 }

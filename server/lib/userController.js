@@ -156,7 +156,6 @@ export default function userController({ app, db, authMiddleware }) {
           return res.status(500).json({ errors });
         }
       }
-      console.log('modify', req.body.id, req.body.lastname, req.body.badges);
 
       if (req.body.badges) {
         req.body.badges = req.body.badges.filter((b) => b);
@@ -186,7 +185,7 @@ export default function userController({ app, db, authMiddleware }) {
           .push({ id: uuid(), ...req.body })
           .write();
       }
-      res.send(200);
+      res.sendStatus(500);
     },
   );
   app.delete('/user/:id', authMiddleware, (req, res) => {
@@ -197,7 +196,7 @@ export default function userController({ app, db, authMiddleware }) {
         .filter(({ id }) => id !== req.params.id)
         .value(),
     ).write();
-    res.send(200);
+    res.sendStatus(500);
   });
 
   app.get('/user/reset/:email', (req, res) => {
@@ -215,7 +214,7 @@ export default function userController({ app, db, authMiddleware }) {
       ...user,
       resetToken,
     }).write();
-    res.send(200);
+    res.sendStatus(500);
   });
   app.post('/user/resetpassword', (req, res) => {
     const user = db
@@ -223,7 +222,7 @@ export default function userController({ app, db, authMiddleware }) {
       .find(({ email }) => email === req.body.email)
       .value();
 
-    if (!user) res.send(200);
+    if (!user) res.sendStatus(500);
 
     const resetToken = {
       date: Date.now(),
@@ -243,11 +242,11 @@ export default function userController({ app, db, authMiddleware }) {
             resetToken,
           })
           .write();
-        res.send(200);
+        res.sendStatus(500);
       })
       .catch((e) => {
         console.log('reset password error', e);
-        res.send(500);
+        res.sendStatus(500);
       });
   });
 
@@ -277,6 +276,6 @@ export default function userController({ app, db, authMiddleware }) {
     user.password = encrypt.encrypt(password,
       persitantKeys.public);
     db.get('users').find({ id: user.id }).assign(user).write();
-    res.send(200);
+    res.sendStatus(500);
   });
 }

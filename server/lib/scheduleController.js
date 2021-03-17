@@ -77,7 +77,7 @@ export default function scheduleController({ app, db, authMiddleware }) {
       if (errors.length) {
         return res.status(422).json({ errors });
       }
-      res.send(200);
+      res.sendStatus(500);
     },
   );
   app.post(
@@ -116,7 +116,7 @@ export default function scheduleController({ app, db, authMiddleware }) {
           .push({ id: uuid(), ...req.body })
           .write();
       }
-      res.send(200);
+      res.sendStatus(500);
     },
   );
   app.delete('/schedule/:id', authMiddleware, (req, res) => {
@@ -143,6 +143,6 @@ export default function scheduleController({ app, db, authMiddleware }) {
           return group;
         }),
     ).write();
-    res.send(200);
+    res.sendStatus(500);
   });
 }

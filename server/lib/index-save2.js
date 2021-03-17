@@ -3,7 +3,7 @@ import express from 'express';
 const app = express();
 
 app.get('/test', (req, res) => {
-  res.send(200);
+  res.sendStatus(500);
 });
 
 // if (require.main === module) { // true if file is executed
