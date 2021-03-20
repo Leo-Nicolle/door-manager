@@ -28,7 +28,7 @@ export function sendRequest({
   });
 }
 
-export function createUsers(options = {}) {
+export function createUsers(options = {}, us = []) {
   return {
     users: [
       {
@@ -42,6 +42,15 @@ export function createUsers(options = {}) {
         password: encrypt({ message: 'password', persistant: true }),
         ...options,
       },
+      ...us.map((user, i) => (
+        {
+          ...user,
+          ...['firstname', 'lastname', 'email', 'password'].reduce((acc, key) => {
+            acc[key] = encrypt({ message: user[key] || `${key}-${i}`, persistant: true });
+            return acc;
+          }, {}),
+        }
+      )),
     ],
   };
 }

@@ -48,17 +48,36 @@ function createFailingIntervals() {
       .slice(time.dayIndex + 1)
       .map(() => ({ intervals: [] })));
 }
+export const schedules = [
+  {
+    shouldAccess: true,
+    id: 'idSchedule1',
+    doorId: 'idDoor1',
+    days: new Array(7).fill(0).map(() => ({ allDay: true })),
+  },
+  {
+    shouldAccess: true,
+    id: 'idSchedule2',
+    doorId: 'idDoor2',
 
+    days: createPassingIntervals(),
+  },
+  {
+    shouldAccess: false,
+    id: 'idSchedule3',
+    doorId: 'idDoor3',
+    days: createFailingIntervals(),
+  },
+];
 export default {
   groups: [
     {
       id: 'idGroup1',
       name: 'group1',
-      doorAccess: {
-        idDoor1: 'idSchedule1',
-        idDoor2: 'idSchedule2',
-        idDoor3: 'idSchedule3',
-      },
+      doorAccess: schedules.reduce((acc, { id, doorId }, i) => {
+        acc[doorId] = id;
+        return acc;
+      }, {}),
     },
   ],
   schedules: [
@@ -79,18 +98,8 @@ export default {
       days: createFailingIntervals(),
     },
   ],
-  doors: [
-    {
-      id: 'idDoor1',
-      name: 'door1',
-    },
-    {
-      id: 'idDoor2',
-      name: 'door2',
-    },
-    {
-      id: 'idDoor3',
-      name: 'door3',
-    },
-  ],
+  doors: schedules.map(({ doorId }, i) => ({
+    name: `door-${i}`,
+    id: doorId,
+  })),
 };

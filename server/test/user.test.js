@@ -23,7 +23,7 @@ describe('Users', () => {
     callback: (err, res) => {
       expect(res).to.have.status(200);
       expect(err).to.be.null;
-      expect(res.body).to.have.length(1);
+      expect(res.body).to.have.length(2);
     },
   }));
 
@@ -48,7 +48,7 @@ describe('Users', () => {
       callback: (err, res) => {
         expect(res).to.have.status(200);
         expect(err).to.be.null;
-        expect(res.body).to.have.length(2);
+        expect(res.body).to.have.length(3);
       },
     });
   }));
@@ -56,8 +56,8 @@ describe('Users', () => {
   it('should modify a user', () => sendRequest({
     req: '/user',
     callback: (err, res) => {
-      expect(res.body).to.have.length(2);
-      return res.body[1];
+      expect(res.body).to.have.length(3);
+      return res.body[res.body.length - 1];
     },
   }).then((user) => sendRequest({
     req: '/user',
@@ -86,7 +86,7 @@ describe('Users', () => {
     sendRequest({
       req: '/user',
       callback: (err, res) => {
-        expect(res.body).to.have.length(2);
+        expect(res.body).to.have.length(3);
         return res.body[res.body.length - 1];
       },
     })
@@ -103,7 +103,7 @@ describe('Users', () => {
         sendRequest({
           req: '/user',
           callback: (err, res) => {
-            expect(res.body).to.have.length(1);
+            expect(res.body).to.have.length(2);
             done();
           },
         });
