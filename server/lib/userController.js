@@ -185,7 +185,7 @@ export default function userController({ app, db, authMiddleware }) {
           .push({ id: uuid(), ...req.body })
           .write();
       }
-      res.sendStatus(500);
+      res.sendStatus(200);
     },
   );
   app.delete('/user/:id', authMiddleware, (req, res) => {
@@ -196,7 +196,7 @@ export default function userController({ app, db, authMiddleware }) {
         .filter(({ id }) => id !== req.params.id)
         .value(),
     ).write();
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
 
   app.get('/user/reset/:email', (req, res) => {
@@ -214,7 +214,7 @@ export default function userController({ app, db, authMiddleware }) {
       ...user,
       resetToken,
     }).write();
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
   app.post('/user/resetpassword', (req, res) => {
     const user = db
@@ -242,11 +242,11 @@ export default function userController({ app, db, authMiddleware }) {
             resetToken,
           })
           .write();
-        res.sendStatus(500);
+        res.sendStatus(200);
       })
       .catch((e) => {
         console.log('reset password error', e);
-        res.sendStatus(500);
+        res.sendStatus(400);
       });
   });
 

@@ -28,11 +28,11 @@ export default function logController({ app, authMiddleware }) {
         .value(),
     ).write();
 
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
 
   app.delete('/log', authMiddleware, (req, res) => {
     db.set('logs', []).write();
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
 }

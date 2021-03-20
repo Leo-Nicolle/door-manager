@@ -48,11 +48,11 @@ app.use(passport.session());
 app.get('/api/logout/:token', (req, res) => {
   const { token } = req.params;
   db.get('users').find({ token }).assign({ token: uuid() }).write();
-  return res.sendStatus(500);
+  return res.sendStatus(200);
 });
 
 app.get('/api/loggedin', authMiddleware, (req, res) => {
-  res.sendStatus(500);
+  res.sendStatus(200);
 });
 
 if (existsSync('public')) {
@@ -69,11 +69,11 @@ logController({ authMiddleware, app });
 codeController({ authMiddleware, app, db });
 
 // mailController();
-
-// const server = app.listen(config.PORT, () => {
-//   console.log(
-//     `server running at port http://localhost/${server.address().port}`,
-//   );
-// });
-
+if (require.main === module) {
+  const server = app.listen(config.PORT, () => {
+    console.log(
+      `server running at port http://localhost/${server.address().port}`,
+    );
+  });
+}
 export default app;

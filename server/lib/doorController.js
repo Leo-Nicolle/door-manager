@@ -28,7 +28,7 @@ export default function doorController({ app, db, authMiddleware }) {
           .push({ id: uuid(), ...req.body, codeDate: 0 })
           .write();
       }
-      res.sendStatus(500);
+      res.sendStatus(200);
     },
   );
   app.delete('/door/:id', authMiddleware, (req, res) => {
@@ -53,7 +53,7 @@ export default function doorController({ app, db, authMiddleware }) {
         }),
     ).write();
 
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
 
   app.get('/newbadge', authMiddleware, (req, res) => {

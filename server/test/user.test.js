@@ -1,67 +1,20 @@
 import { encrypt, decrypt } from '../lib/utils/encrypt';
+import { createUsers, writeDb, sendRequest } from './utils';
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const fs = require('fs');
 
 chai.use(chaiHttp);
 
 const { expect } = chai;
-
-function createDb() {
-  const db = {
-    users: [
-      {
-        firstname: encrypt({ message: 'firstname', persistant: true }),
-        lastname: encrypt({ message: 'lastname', persistant: true }),
-        email: encrypt({ message: 'test@mail.com', persistant: true }),
-        isAdmin: true,
-        token: 'token',
-        badges: [],
-        groups: [],
-        password: encrypt({ message: 'password', persistant: true }),
-      },
-    ],
-  };
-  return new Promise((resolve, reject) => {
-    fs.writeFile(process.env.DB_PATH, JSON.stringify(db), (err) => {
-      if (err) return reject(err);
-      resolve();
-    });
-  });
-}
-let app;
-function sendRequest({
-  req, callback, token = true, method = 'get',
-  payload = {},
-}) {
-  if (method !== 'get') {
-    return new Promise((resolve, reject) => {
-      chai.request(app)
-        [method](req)
-        .set('authorization', 'token')
-        .send(payload)
-        .end((err, res) => {
-          resolve(callback(err, res));
-        });
-    });
-  }
-  return new Promise((resolve, reject) => {
-    chai.request(app)
-      .get(req)
-      .set('authorization', 'token')
-      .end((err, res) => {
-        resolve(callback(err, res));
-      });
-  });
-}
-
 describe('Users', () => {
   before((done) => {
-    createDb().then(() => {
-      app = require('../dist/server');
-      done();
-    });
+    setTimeout(() => {
+      writeDb(createUsers()).then(() => {
+        global.app = require('../dist/server');
+        done();
+      });
+    }, 500);
   });
 
   // Test to get all students record

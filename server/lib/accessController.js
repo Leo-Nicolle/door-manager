@@ -199,7 +199,7 @@ export default function accessController({ app, db, authMiddleware }) {
       .get('user')
       .find(({ id }) => id === state.user.id)
       .assign(user).write();
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
 
   app.get('/access/badge-updated/:date', authMiddleware, (req, res) => {
@@ -213,6 +213,6 @@ export default function accessController({ app, db, authMiddleware }) {
 
     if (!user) return res.sendStatus(400);
     if (!user.badges.find((badge) => badge === state.badgeId))res.sendStatus(400);
-    res.sendStatus(500);
+    res.sendStatus(200);
   });
 }

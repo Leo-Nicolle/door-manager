@@ -86,7 +86,7 @@ function transferCode({
     .then(() => config
       .getValue('doorLockPath'))
     .then((doorLockPath) => {
-      res.sendStatus(500);
+      res.sendStatus(200);
       const esp = new EspOTA();
       // Optional arguments in this order: (bindAddress, bindPort, chunkSize, secondsTimeout)
 
@@ -162,7 +162,7 @@ function handleUnassigned({ ip, res, db }) {
 export default function doorController({ app, db, authMiddleware }) {
   app.get('/code-compile', (req, res) => {
     compile({}, db).then(() => {
-      res.sendStatus(500);
+      res.sendStatus(200);
     })
       .catch((e) => {
         console.log('error on compile ', e);
