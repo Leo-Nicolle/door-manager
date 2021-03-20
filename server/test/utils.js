@@ -1,5 +1,5 @@
 import fs from 'fs';
-import { encrypt, decrypt } from '../lib/utils/encrypt';
+import { encrypt } from '../lib/utils/encrypt';
 
 const chai = require('chai');
 

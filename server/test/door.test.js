@@ -28,7 +28,7 @@ describe('Doors', () => {
       callback: (err, res) => {
         expect(res).to.have.status(200);
         expect(err).to.be.null;
-        expect(res.body).to.have.length(1);
+        expect(res.body).to.have.length(3);
         done();
       },
     });
@@ -39,7 +39,7 @@ describe('Doors', () => {
       req: '/door',
       method: 'post',
       payload: {
-        name: 'door 2',
+        name: 'test-door',
       },
       callback: (err, res) => {
         expect(res).to.have.status(200);
@@ -51,7 +51,7 @@ describe('Doors', () => {
         callback: (err, res) => {
           expect(res).to.have.status(200);
           expect(err).to.be.null;
-          expect(res.body).to.have.length(2);
+          expect(res.body).to.have.length(4);
           done();
         },
       });
@@ -61,16 +61,13 @@ describe('Doors', () => {
   it('should modify a door', (done) => {
     sendRequest({
       req: '/door',
-      callback: (err, res) => {
-        expect(res.body).to.have.length(2);
-        return res.body[1];
-      },
+      callback: (err, res) => res.body.find(({ name }) => name === 'test-door'),
     }).then((door) => sendRequest({
       req: '/door',
       method: 'post',
       payload: {
         ...door,
-        name: 'new name door 2',
+        name: 'new name door',
       },
       callback: (err, res) => {
         expect(res).to.have.status(200);
@@ -83,38 +80,33 @@ describe('Doors', () => {
           req: `/door/${id}`,
           callback: (err, res) => {
             expect(res.body.name)
-              .to.be.equal('new name door 2');
+              .to.be.equal('new name door');
             done();
           },
         });
       });
   });
 
-  it('should delete a door', (done) => {
-    sendRequest({
+  it('should delete a door', () => sendRequest({
+    req: '/door',
+    callback: (err, res) => {
+      expect(res.body).to.have.length(4);
+      return res.body[res.body.length - 1];
+    },
+  })
+    .then((door) => sendRequest({
+      req: `/door/${door.id}`,
+      method: 'delete',
+      callback: (err, res) => {
+        expect(res).to.have.status(200);
+        expect(err).to.be.null;
+        return door;
+      },
+    }))
+    .then(() => sendRequest({
       req: '/door',
       callback: (err, res) => {
-        expect(res.body).to.have.length(2);
-        return res.body[1];
+        expect(res.body).to.have.length(3);
       },
-    })
-      .then((door) => sendRequest({
-        req: `/door/${door.id}`,
-        method: 'delete',
-        callback: (err, res) => {
-          expect(res).to.have.status(200);
-          expect(err).to.be.null;
-          return door;
-        },
-      }))
-      .then(() => {
-        sendRequest({
-          req: '/door',
-          callback: (err, res) => {
-            expect(res.body).to.have.length(1);
-            done();
-          },
-        });
-      });
-  });
+    })));
 });
