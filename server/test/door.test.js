@@ -91,7 +91,7 @@ describe('Doors', () => {
     req: '/door',
     callback: (err, res) => {
       expect(res.body).to.have.length(4);
-      return res.body[res.body.length - 1];
+      return res.body[1];
     },
   })
     .then((door) => sendRequest({
@@ -103,10 +103,26 @@ describe('Doors', () => {
         return door;
       },
     }))
-    .then(() => sendRequest({
+    .then((door) => sendRequest({
       req: '/door',
       callback: (err, res) => {
         expect(res.body).to.have.length(3);
+        return door;
       },
-    })));
+    }))
+    .then((door) => {
+      sendRequest({
+        req: '/group',
+        callback: (err, res) => {
+          // check if the groups has been updated
+          const wrongGroups = res.body.reduce((wrongGroups, group) => {
+            if (Object.values(group.doorAccess).find((v) => v === door.id)) {
+              wrongGroups.push(group);
+            }
+            return wrongGroups;
+          }, []);
+          expect(wrongGroups).to.have.length(0);
+        },
+      });
+    }));
 });

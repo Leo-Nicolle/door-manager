@@ -87,7 +87,7 @@ describe('Groups', () => {
     req: '/group',
     callback: (err, res) => {
       expect(res.body).to.have.length(2);
-      return res.body[res.body.length - 1];
+      return res.body[1];
     },
   })
     .then((group) => sendRequest({
@@ -99,11 +99,25 @@ describe('Groups', () => {
         return group;
       },
     }))
-    .then(() => {
+    .then((group) => sendRequest({
+      req: '/group',
+      callback: (err, res) => {
+        expect(res.body).to.have.length(1);
+        return group;
+      },
+    }))
+    .then((group) => {
       sendRequest({
-        req: '/group',
+        req: '/user',
         callback: (err, res) => {
-          expect(res.body).to.have.length(1);
+          // check if the groups has been updated
+          const wrongUsers = res.body.reduce((wrongUsers, user) => {
+            if (user.groups.find((id) => id === group.id)) {
+              wrongUsers.push(user);
+            }
+            return wrongUsers;
+          }, []);
+          expect(wrongUsers).to.have.length(0);
         },
       });
     }));
