@@ -1,7 +1,7 @@
 <template>
-  <div class="home">
-    <Calendar />
-  </div>
+<div class="home">
+  <Calendar />
+</div>
 </template>
 
 <script>
@@ -32,6 +32,8 @@ export default {
     //   });
   },
   watch: {},
-  components: { Calendar },
+  components: {
+    Calendar
+  },
 };
 </script>

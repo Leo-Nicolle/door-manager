@@ -1,7 +1,9 @@
+import config from './config';
+
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync('db/db.json');
+const adapter = new FileSync(config.DB_PATH);
 const db = low(adapter);
 
 // Set some defaults

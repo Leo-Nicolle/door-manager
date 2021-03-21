@@ -14,6 +14,7 @@
     "core-js": "^3.6.5",
     "dateformat": "^4.5.1",
     "eslint-config-airbnb-base": "^14.2.1",
+    "levenshtein": "^1.0.5",
     "quick-encrypt": "^1.0.8",
     "vue": "^2.6.11",
     "vue-cal": "^3.6.4",
@@ -30,7 +31,7 @@
     "@vue/cli-plugin-vuex": "^4.4.6",
     "@vue/cli-service": "~4.4.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.7.2",
+    "eslint": "^6.8.0",
     "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11"
   },

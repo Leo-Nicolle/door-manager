@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import { compareHours } from './utils';
+import { compareHours } from './utils/index';
 
 function getMergedIntervals(intervals) {
   if (!intervals.length) return [{}];
@@ -82,15 +82,31 @@ function authorizeAccess(doorId, badgeId, db) {
   );
   return authorized ? { authorized } : { authorized, error: 'not-in-shcedule' };
 }
+
+function getLastUnknownBadge(db) {
+  return db
+    .get('logs')
+    .filter({ error: 'unknown-badge' })
+    .sort((a, b) => b.date - a.date)
+    .value()
+    .slice(0, 1)
+    .filter(({ date }) => Date.now() - date < 5 * 60 * 1000);
+}
 const state = {
   isAddingBadge: false,
   timeoutAddingBadge: null,
   lastUnknown: null,
+  user: null,
 };
+function resetState() {
+  state.isAddingBadge = false;
+  state.lastUnknown = null;
+  state.user = null;
+  clearTimeout(state.timeoutAddingBadge);
+}
 export default function accessController({ app, db, authMiddleware }) {
-  app.get('/access/download/:type/:doorid', (req, res) => {
-    const doorId = req.params.doorid;
-    const { type } = req.params;
+  app.get('/access/download/:type/:doorId', (req, res) => {
+    const { type, doorId } = req.params;
     const schedulePerGroupId = db
       .get('groups')
       .value()
@@ -108,14 +124,14 @@ export default function accessController({ app, db, authMiddleware }) {
 
     const generatedSchedules = {};
     const schedulePerBadge = users.reduce(
-      (schedulePerBadge, { firstname, groups, badges }) => {
+      (schedulePerBadge, { groups, badges }) => {
         const allowedGroups = groups.filter((id) => schedulePerGroupId[id]);
         if (!allowedGroups.length) return schedulePerBadge;
 
         const schedule = getLargestSchedule(
           allowedGroups.map((groupId) => schedulePerGroupId[groupId]),
         );
-        generatedSchedules[schedule.id] = schedule;
+        generatedSchedules[schedule.id] = schedule.days;
         badges.forEach((badgeUuid) => {
           schedulePerBadge[badgeUuid] = schedule.id;
         });
@@ -126,7 +142,7 @@ export default function accessController({ app, db, authMiddleware }) {
     if (type === 'badge') {
       res.send(
         Object.entries(schedulePerBadge).reduce(
-          (csv, [badgeId, scheduleId]) => (csv += `${badgeId},${scheduleId}\n`),
+          (csv, [badgeId, scheduleId]) => (`${csv}${badgeId},${scheduleId}\n`),
           '',
         ),
       );
@@ -136,11 +152,10 @@ export default function accessController({ app, db, authMiddleware }) {
     }
   });
 
-  app.get('/access/:doorid/:badgeId', (req, res) => {
-    const doorId = req.params.doorid;
-    const { badgeId } = req.params;
+  app.get('/access/:doorId/:badgeId', (req, res) => {
+    const { badgeId, doorId } = req.params;
 
-    console.log('request DoorId', doorId, 'badgeId', badgeId);
+    // console.log('request DoorId', doorId, 'badgeId', badgeId);
 
     const { authorized, error } = authorizeAccess(doorId, badgeId, db);
     db.get('logs')
@@ -154,65 +169,71 @@ export default function accessController({ app, db, authMiddleware }) {
       })
       .write();
     if (!authorized && error === 'unknown-badge' && state.isAddingBadge) {
-      return res.send(128);
+      state.lastUnknown = badgeId;
+      return res.sendStatus(202);
     }
-    res.send(authorized ? 200 : 400);
+
+    res.sendStatus(authorized ? 200 : 400);
   });
 
-  app.get('/access/start-adding-badge/:userId', authMiddleware, (req, res) => {
+  app.post('/badge/start-adding', authMiddleware, (req, res) => {
     // set into addingBadge mode
-    const user = db.get('user')
-      .find(({ id }) => id === req.userId)
+    const user = db.get('users')
+      .find(({ id }) => id === req.body.userId)
       .value();
-    if (!user) return res.send(400);
+    if (!user) return res.sendStatus(400);
+    if (state.isAddingBadge) return res.sendStatus(402);
 
-    const lastUnknown = db
-      .get('logs')
-      .filter({ error: 'unknown-badge' })
-      .sort((a, b) => b.date - a.date)
-      .value()[0];
-
+    resetState();
     state.isAddingBadge = true;
-    state.lastUnknown = lastUnknown;
+    state.lastUnknown = getLastUnknownBadge(db);
     state.user = user;
-    clearTimeout(state.timeoutAddingBadge);
     state.timeoutAddingBadge = setTimeout(() => {
-      state.isAddingBadge = false;
-      state.lastUnknown = null;
-      state.user = null;
-    }, 5 * 60);
+      resetState();
+    }, 5 * 60 * 1000);
 
-    res.send(lastUnknown);
+    res.send(state.lastUnknown);
   });
 
-  app.get('/access/add-badge', (req, res) => {
-    if (!state.isAddingBadge) return res.send(400);
-    const badgeId = uuid();
-    const user = db
-      .get('user')
-      .find(({ id }) => id === state.user.id)
-      .value();
-
-    if (!user) return res.send(400);
-    user.badges.push(badgeId);
-    db
-      .get('user')
-      .find(({ id }) => id === state.user.id)
-      .assign(user).write();
+  app.post('/badge/stop-adding', authMiddleware, (req, res) => {
+    resetState();
     res.send(200);
   });
 
-  app.get('/access/badge-updated/:date', authMiddleware, (req, res) => {
-    // if the lastUnknown does not exist or if it a different one, return error
-    if (state.lastUnknown.date !== req.params.date) return res.send(400);
+  app.get('/badge/last-unknown', authMiddleware, (req, res) => {
+    if (!state.isAddingBadge) {
+      // if not adding badge, send timeout error
+      return res.send(408);
+    }
+    res.send(state.lastUnknown);
+  });
+
+  app.post('/badge/assign', authMiddleware, (req, res) => {
+    if (!state.isAddingBadge) {
+      return res.send(408);
+    }
+    if (!state.lastUnknown) {
+      return res.send(406);
+    }
+
+    if (!state.user) {
+      return res.send(500);
+    }
 
     const user = db
-      .get('user')
+      .get('users')
       .find(({ id }) => id === state.user.id)
       .value();
 
-    if (!user) return res.send(400);
-    if (!user.badges.find((badge) => badge === state.badgeId))res.send(400);
+    if (!user) {
+      return res.send(500);
+    }
+    db.get('users').find({ id: user.id }).assign({
+      ...user,
+      badges: user.badges.concat(state.lastUnknown),
+    }).write();
+
+    resetState();
     res.send(200);
   });
 }

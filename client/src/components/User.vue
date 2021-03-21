@@ -1,6 +1,6 @@
 <template>
 <Form :element="element" :onSubmit="onSubmit" :onDelete="onDelete" :onCancel="onCancel">
-  <div slot="body" class= "form-body">
+  <div slot="body" class="form-body">
     <label>
       nom de famille
       <input :class="getClass('lastname')" type="text" v-model="user.lastname" id="lastname" name="lastname" required />
@@ -15,7 +15,7 @@
     </label>
     <label class="long-input">
       Groupes
-      <Treeselect class= "caped-width" v-model="selectedGroups" :multiple="true" :options="groupTags" :typeahead="true" />
+      <Treeselect class="caped-width" v-model="selectedGroups" :multiple="true" :options="groupTags" :typeahead="true" />
     </label>
     <label class="long-input">
       Badges
@@ -23,10 +23,7 @@
       <button class="delete small-button" v-for="(uuid, i) in user.badges" :key="i" @click="onDeleteBadge($event, uuid)">{{ uuid.slice(0,6) }}</button>
     </label>
     <Confirm :visible="isAddingBadge" :message="addingBadgeMessage" @confirm="onConfirmAddBadge" @cancel="onCancelAddBadge" />
-    <AdminModal 
-      :element="element && adminModalVisible ? element : null" 
-      @cancel="onAdminCancel()" 
-      @submit="onAdminSubmit()" />
+    <AdminModal :element="element && adminModalVisible ? element : null" @cancel="onAdminCancel()" @submit="onAdminSubmit()" />
   </div>
 </Form>
 </template>
@@ -54,7 +51,6 @@ export default {
       isAddingBadge: false,
       addingBadgeMessage: "",
       requestNewBadgeTimeout: null,
-      newBadgeUuid: null,
       adminModalVisible: false
     };
   },
@@ -73,43 +69,52 @@ export default {
     onAdminChange(evt) {
       this.adminModalVisible = evt.target.checked;
     },
-    onAdminCancel(){
+    onAdminCancel() {
       this.adminModalVisible = false;
     },
-    onAdminSubmit(){
+    onAdminSubmit() {
       this.adminModalVisible = false;
     },
     onConfirmAddBadge() {
-      if (this.newBadgeUuid) {
-        this.user.badges = this.user.badges.concat(this.newBadgeUuid);
-      }
-      this.onCancelAddBadge();
+      axios
+        .post(getUrl("badge/assign"))
+        .then(({
+          data
+        }) => {
+          if (!data) return;
+          this.addingBadgeMessage = '';
+        })
+        .catch((e) => console.error(e)).finally(() =>
+          this.onCancelAddBadge()
+        )
     },
     onCancelAddBadge() {
       clearInterval(this.requestNewBadgeTimeout);
-      this.newBadgeUuid = null;
       this.isAddingBadge = false;
+      return axios
+        .post(getUrl("badge/stop-add"), )
     },
     onStartAddBadge() {
       this.addingBadgeMessage = "En attente de scan du badge";
       this.isAddingBadge = true;
-      const date = Date.now();
-      this.requestNewBadgeTimeout = setInterval(() => {
-        axios
-          .get(getUrl("/access/last-unknown-badge"))
-          .then(({
-            data
-          }) => {
-            if (!data) return;
-            // must be less than two minutes
-            if((date - data.date)/ 1000 > 2 ) return;
-            this.newBadgeUuid = data;
-            this.addingBadgeMessage = `Badge scanné! Enregistrement`;
-            return axios.get(getUrl(`/access/badge-updated/${data.date}`));
-          })
-          // .then((should) => )
-          .catch((e) => console.error(e));
-      }, 500);
+      axios
+        .post(getUrl("badge/start-add"), {
+          userId: this.user.id
+        })
+        .then(() => {
+          this.requestNewBadgeTimeout = setInterval(() => {
+            axios
+              .get(getUrl("badge/last-unknown"))
+              .then(({
+                data
+              }) => {
+                if (!data) return;
+                this.addingBadgeMessage = `Badge ${data} scanné. Assigner ?`;
+              })
+              .catch((e) => console.error(e));
+          }, 500);
+        })
+        .catch((e) => console.error(e));
     },
     updateSelectedGroups() {
       if (!this.user) return;

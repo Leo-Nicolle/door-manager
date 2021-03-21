@@ -86,7 +86,7 @@ function transferCode({
     .then(() => config
       .getValue('doorLockPath'))
     .then((doorLockPath) => {
-      res.send(200);
+      res.sendStatus(200);
       const esp = new EspOTA();
       // Optional arguments in this order: (bindAddress, bindPort, chunkSize, secondsTimeout)
 
@@ -111,7 +111,7 @@ function transferCode({
     })
     .catch((e) => {
       console.error(e);
-      res.send(400);
+      res.sendStatus(400);
     });
 }
 
@@ -126,11 +126,11 @@ function handleUnassigned({ ip, res, db }) {
   // if the lock was not created, create it
   if (!lock) {
     db.get('locks').push({ ip, date: Date.now() }).write();
-    return res.send(400);
+    return res.sendStatus(400);
   }
   // if the lock was not assigned yet, just return
   if (!lock.doorId) {
-    return res.send(400);
+    return res.sendStatus(400);
   }
   // if the lock was assigned to a door, tranfer it code.
   const id = uuid();
@@ -162,7 +162,7 @@ function handleUnassigned({ ip, res, db }) {
 export default function doorController({ app, db, authMiddleware }) {
   app.get('/code-compile', (req, res) => {
     compile({}, db).then(() => {
-      res.send(200);
+      res.sendStatus(200);
     })
       .catch((e) => {
         console.log('error on compile ', e);
@@ -184,7 +184,7 @@ export default function doorController({ app, db, authMiddleware }) {
 
     if (mostRecentCodeDate <= date) {
       // code is already updated
-      res.send(400);
+      res.sendStatus(400);
       return;
     }
     transferCode({
@@ -195,7 +195,7 @@ export default function doorController({ app, db, authMiddleware }) {
   app.post('/lock', authMiddleware, (req, res) => {
     const lock = db.get('locks').find({ ip: req.body.ip }).value();
     if (!lock) {
-      res.send(400);
+      res.sendStatus(400);
       return;
     }
     db.get('locks').find({ ip: req.body.ip }).assign(req.body).write();

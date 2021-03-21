@@ -28,7 +28,7 @@ npm run serve
 - [x] handle DELETE API
 - [x] add log door open
 - [x] add proper logout
-- [ ] add door ESP32 API
+- [x] add door ESP32 API
 
 ### client
 
@@ -44,16 +44,16 @@ npm run serve
 ### ESP32
 
 - [x] connect to server and request access
-- [ ] assign doorId to ESP
-- [ ] read RFID and lookup in the DB
-- [ ] store access locally
-- [ ] remote update ?
+- [x] assign doorId to ESP
+- [x] read RFID and lookup in the DB
+- [x] store access locally
+- [x] remote update ?
 
 ### MISC
 
 - [ ] deployment scripts
 - [ ] update scripts + UI
 - [ ] build pipeline
-- [ ] unit tests ?
+- [x] unit tests ?
 - [ ] better security ?
 - [ ] RGPD ?

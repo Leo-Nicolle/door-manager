@@ -4,8 +4,8 @@ import bodyParser from 'body-parser';
 import passport from 'passport';
 import { v4 as uuid } from 'uuid';
 import { existsSync } from 'fs';
-
 import db from './database';
+import config from './config';
 import doorController from './doorController';
 import userController from './userController';
 import scheduleController from './scheduleController';
@@ -48,11 +48,11 @@ app.use(passport.session());
 app.get('/api/logout/:token', (req, res) => {
   const { token } = req.params;
   db.get('users').find({ token }).assign({ token: uuid() }).write();
-  return res.send(200);
+  return res.sendStatus(200);
 });
 
 app.get('/api/loggedin', authMiddleware, (req, res) => {
-  res.send(200);
+  res.sendStatus(200);
 });
 
 if (existsSync('public')) {
@@ -69,9 +69,11 @@ logController({ authMiddleware, app });
 codeController({ authMiddleware, app, db });
 
 // mailController();
-
-const server = app.listen(5051, () => {
-  console.log(
-    `server running at port http://localhost/${server.address().port}`,
-  );
-});
+if (require.main === module) {
+  const server = app.listen(config.PORT, () => {
+    console.log(
+      `server running at port http://localhost/${server.address().port}`,
+    );
+  });
+}
+export default app;

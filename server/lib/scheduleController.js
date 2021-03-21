@@ -1,6 +1,6 @@
 import { body, validationResult } from 'express-validator';
 import { v4 as uuid } from 'uuid';
-import { compareHours } from './utils';
+import { compareHours } from './utils/index';
 
 function validateTime(time) {
   const validate1 = time && typeof time.HH === 'string' && typeof time.mm === 'string';
@@ -77,7 +77,7 @@ export default function scheduleController({ app, db, authMiddleware }) {
       if (errors.length) {
         return res.status(422).json({ errors });
       }
-      res.send(200);
+      res.sendStatus(200);
     },
   );
   app.post(
@@ -91,7 +91,6 @@ export default function scheduleController({ app, db, authMiddleware }) {
       if (errors.length) {
         return res.status(422).json({ errors });
       }
-      console.log('post schedules', req.body.days[0]);
       // clean data
       req.body.days.forEach(
         (day) => (day.intervals = day.intervals.filter(
@@ -116,7 +115,7 @@ export default function scheduleController({ app, db, authMiddleware }) {
           .push({ id: uuid(), ...req.body })
           .write();
       }
-      res.send(200);
+      res.sendStatus(200);
     },
   );
   app.delete('/schedule/:id', authMiddleware, (req, res) => {
@@ -143,6 +142,6 @@ export default function scheduleController({ app, db, authMiddleware }) {
           return group;
         }),
     ).write();
-    res.send(200);
+    res.sendStatus(200);
   });
 }
