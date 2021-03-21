@@ -39,16 +39,14 @@ describe('Schedules', () => {
       expect(res).to.have.status(200);
       expect(err).to.be.null;
     },
-  }).then(() => {
-    sendRequest({
-      req: '/schedule',
-      callback: (err, res) => {
-        expect(res).to.have.status(200);
-        expect(err).to.be.null;
-        expect(res.body).to.have.length(4);
-      },
-    });
-  }));
+  }).then(() => sendRequest({
+    req: '/schedule',
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+      expect(res.body).to.have.length(4);
+    },
+  })));
 
   it('should modify a schedule', () => sendRequest({
     req: '/schedule',
@@ -66,15 +64,13 @@ describe('Schedules', () => {
       return schedule;
     },
   }))
-    .then(({ id }) => {
-      sendRequest({
-        req: `/schedule/${id}`,
-        callback: (err, res) => {
-          expect(res.body.name)
-            .to.be.equal('new name schedule');
-        },
-      });
-    }));
+    .then(({ id }) => sendRequest({
+      req: `/schedule/${id}`,
+      callback: (err, res) => {
+        expect(res.body.name)
+          .to.be.equal('new name schedule');
+      },
+    })));
 
   it('should delete a schedule', () => sendRequest({
     req: '/schedule',
@@ -92,12 +88,10 @@ describe('Schedules', () => {
         return schedule;
       },
     }))
-    .then(() => {
-      sendRequest({
-        req: '/schedule',
-        callback: (err, res) => {
-          expect(res.body).to.have.length(3);
-        },
-      });
-    }));
+    .then(() => sendRequest({
+      req: '/schedule',
+      callback: (err, res) => {
+        expect(res.body).to.have.length(3);
+      },
+    })));
 });

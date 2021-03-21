@@ -23,5 +23,5 @@
         "array-callback-return": 0,
         "global-require": 0,
         "no-unused-expressions": 0
-    },
+    }
 }

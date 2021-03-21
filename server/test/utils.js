@@ -14,7 +14,7 @@ export function sendRequest({
         .set('authorization', 'token')
         .send(payload)
         .end((err, res) => {
-          resolve(callback(err, res));
+          resolve(callback ? callback(err, res) : () => {});
         });
     });
   }
@@ -39,11 +39,13 @@ export function createUsers(options = {}, us = []) {
         token: 'token',
         badges: [],
         groups: [],
+        id: 'idUser1',
         password: encrypt({ message: 'password', persistant: true }),
         ...options,
       },
       ...us.map((user, i) => (
         {
+          id: `idUser${i + 2}`,
           ...user,
           ...['firstname', 'lastname', 'email', 'password'].reduce((acc, key) => {
             acc[key] = encrypt({ message: user[key] || `${key}-${i}`, persistant: true });

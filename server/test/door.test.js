@@ -22,70 +22,57 @@ describe('Doors', () => {
   });
 
   // Test to get all students record
-  it('should send all the doors', (done) => {
-    sendRequest({
-      req: '/door',
-      callback: (err, res) => {
-        expect(res).to.have.status(200);
-        expect(err).to.be.null;
-        expect(res.body).to.have.length(3);
-        done();
-      },
-    });
-  });
+  it('should send all the doors', () => sendRequest({
+    req: '/door',
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+      expect(res.body).to.have.length(3);
+    },
+  }));
 
-  it('should add a door', (done) => {
-    sendRequest({
-      req: '/door',
-      method: 'post',
-      payload: {
-        name: 'test-door',
-      },
-      callback: (err, res) => {
-        expect(res).to.have.status(200);
-        expect(err).to.be.null;
-      },
-    }).then(() => {
-      sendRequest({
-        req: '/door',
-        callback: (err, res) => {
-          expect(res).to.have.status(200);
-          expect(err).to.be.null;
-          expect(res.body).to.have.length(4);
-          done();
-        },
-      });
-    });
-  });
+  it('should add a door', () => sendRequest({
+    req: '/door',
+    method: 'post',
+    payload: {
+      name: 'test-door',
+    },
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+    },
+  }).then(() => sendRequest({
+    req: '/door',
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+      expect(res.body).to.have.length(4);
+    },
+  })));
 
-  it('should modify a door', (done) => {
-    sendRequest({
-      req: '/door',
-      callback: (err, res) => res.body.find(({ name }) => name === 'test-door'),
-    }).then((door) => sendRequest({
-      req: '/door',
-      method: 'post',
-      payload: {
-        ...door,
-        name: 'new name door',
-      },
+  it('should modify a door', () => sendRequest({
+    req: '/door',
+    callback: (err, res) => res.body.find(({ name }) => name === 'test-door'),
+  }).then((door) => sendRequest({
+    req: '/door',
+    method: 'post',
+    payload: {
+      ...door,
+      name: 'new name door',
+    },
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+      return door;
+    },
+  }))
+    .then(({ id }) => sendRequest({
+      req: `/door/${id}`,
       callback: (err, res) => {
-        expect(res).to.have.status(200);
-        expect(err).to.be.null;
-        return door;
+        expect(res.body.name)
+          .to.be.equal('new name door');
       },
-    }))
-      .then(({ id }) => {
-        sendRequest({
-          req: `/door/${id}`,
-          callback: (err, res) => {
-            expect(res.body.name)
-              .to.be.equal('new name door');
-            done();
-          },
-        });
-      });
-  });
+    })));
 
   it('should delete a door', () => sendRequest({
     req: '/door',
@@ -110,19 +97,17 @@ describe('Doors', () => {
         return door;
       },
     }))
-    .then((door) => {
-      sendRequest({
-        req: '/group',
-        callback: (err, res) => {
-          // check if the groups has been updated
-          const wrongGroups = res.body.reduce((wrongGroups, group) => {
-            if (Object.values(group.doorAccess).find((v) => v === door.id)) {
-              wrongGroups.push(group);
-            }
-            return wrongGroups;
-          }, []);
-          expect(wrongGroups).to.have.length(0);
-        },
-      });
-    }));
+    .then((door) => sendRequest({
+      req: '/group',
+      callback: (err, res) => {
+        // check if the groups has been updated
+        const wrongGroups = res.body.reduce((wrongGroups, group) => {
+          if (Object.values(group.doorAccess).find((v) => v === door.id)) {
+            wrongGroups.push(group);
+          }
+          return wrongGroups;
+        }, []);
+        expect(wrongGroups).to.have.length(0);
+      },
+    })));
 });

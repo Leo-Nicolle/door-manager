@@ -40,6 +40,7 @@ export default function doorController({ app, db, authMiddleware }) {
         .value(),
     ).write();
 
+    // remove entries concerning the deleted door in the groups
     db.set(
       'groups',
       db

@@ -46,16 +46,14 @@ describe('Groups', () => {
       expect(res).to.have.status(200);
       expect(err).to.be.null;
     },
-  }).then(() => {
-    sendRequest({
-      req: '/group',
-      callback: (err, res) => {
-        expect(res).to.have.status(200);
-        expect(err).to.be.null;
-        expect(res.body).to.have.length(2);
-      },
-    });
-  }));
+  }).then(() => sendRequest({
+    req: '/group',
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+      expect(res.body).to.have.length(2);
+    },
+  })));
 
   it('should modify a group', () => sendRequest({
     req: '/group',
@@ -73,15 +71,13 @@ describe('Groups', () => {
       return group;
     },
   }))
-    .then(({ id }) => {
-      sendRequest({
-        req: `/group/${id}`,
-        callback: (err, res) => {
-          expect(res.body.name)
-            .to.be.equal('new name group');
-        },
-      });
-    }));
+    .then(({ id }) => sendRequest({
+      req: `/group/${id}`,
+      callback: (err, res) => {
+        expect(res.body.name)
+          .to.be.equal('new name group');
+      },
+    })));
 
   it('should delete a group', () => sendRequest({
     req: '/group',
@@ -106,19 +102,17 @@ describe('Groups', () => {
         return group;
       },
     }))
-    .then((group) => {
-      sendRequest({
-        req: '/user',
-        callback: (err, res) => {
-          // check if the groups has been updated
-          const wrongUsers = res.body.reduce((wrongUsers, user) => {
-            if (user.groups.find((id) => id === group.id)) {
-              wrongUsers.push(user);
-            }
-            return wrongUsers;
-          }, []);
-          expect(wrongUsers).to.have.length(0);
-        },
-      });
-    }));
+    .then((group) => sendRequest({
+      req: '/user',
+      callback: (err, res) => {
+        // check if the groups has been updated
+        const wrongUsers = res.body.reduce((wrongUsers, user) => {
+          if (user.groups.find((id) => id === group.id)) {
+            wrongUsers.push(user);
+          }
+          return wrongUsers;
+        }, []);
+        expect(wrongUsers).to.have.length(0);
+      },
+    })));
 });

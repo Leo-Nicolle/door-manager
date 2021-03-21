@@ -22,6 +22,10 @@ describe('Access', () => {
   before(() => writeDb(fixture).then(() => {
     global.app = require('../dist/server');
   }));
+  after(() => sendRequest({
+    req: '/badge/stop-adding',
+    method: 'post',
+  }));
 
   fixture.users.slice(1, 2).forEach(({ badges }) => {
     badges.forEach((badgeId) => {
@@ -35,4 +39,65 @@ describe('Access', () => {
       });
     });
   });
+
+  it('should download badge', () => sendRequest({
+    req: '/access/download/badge/idDoor1',
+    callback: (err, res) => {
+      expect(err).to.be.null;
+      expect(res.text).to.be.equal('badge0,idSchedule1\n');
+    },
+  }));
+
+  it('should download schedule', () => sendRequest({
+    req: '/access/download/schedule/idDoor1',
+    callback: (err, res) => {
+      expect(err).to.be.null;
+      expect(res.text).to.be.equal(JSON.stringify(
+        {
+          idSchedule1: fixture.schedules[0].days,
+        },
+      ));
+    },
+  }));
+
+  it('should add a badge', () => sendRequest({
+    req: '/user',
+    callback: (err, res) => res.body[1],
+  })
+    .then((user) => sendRequest({
+      req: '/badge/start-adding',
+      method: 'post',
+      payload: {
+        userId: user.id,
+      },
+      callback: (err, res) => {
+        expect(err).to.be.null;
+        expect(res.status).to.be.equal(200);
+      },
+    })).then(() => sendRequest({
+      req: '/access/idDoor1/newBadge',
+      callback: (err, res) => {
+        expect(res.status).to.be.equal(202);
+      },
+    })).then(() => sendRequest({
+      req: '/badge/last-unknown',
+      callback: (err, res) => {
+        expect(res.status).to.be.equal(200);
+      },
+    }))
+    .then(() => sendRequest({
+      req: '/badge/assign',
+      method: 'post',
+      callback: (err, res) => {
+        expect(res.status).to.be.equal(200);
+      },
+    }))
+    .then(() => sendRequest({
+      req: '/user',
+      callback: (err, res) => {
+        expect(res.status).to.be.equal(200);
+        expect(res.body[1].badges).to.have.length(2);
+        expect(res.body[1].badges).to.include.members(['newBadge']);
+      },
+    })));
 });

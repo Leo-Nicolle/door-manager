@@ -42,16 +42,14 @@ describe('Users', () => {
       expect(res).to.have.status(200);
       expect(err).to.be.null;
     },
-  }).then(() => {
-    sendRequest({
-      req: '/user',
-      callback: (err, res) => {
-        expect(res).to.have.status(200);
-        expect(err).to.be.null;
-        expect(res.body).to.have.length(3);
-      },
-    });
-  }));
+  }).then(() => sendRequest({
+    req: '/user',
+    callback: (err, res) => {
+      expect(res).to.have.status(200);
+      expect(err).to.be.null;
+      expect(res.body).to.have.length(3);
+    },
+  })));
 
   it('should modify a user', () => sendRequest({
     req: '/user',
@@ -72,17 +70,15 @@ describe('Users', () => {
       return user;
     },
   }))
-    .then(({ id }) => {
-      sendRequest({
-        req: `/user/${id}`,
-        callback: (err, res) => {
-          expect(decrypt({ message: res.body.lastname, persistant: true }))
-            .to.be.equal('newLastName');
-        },
-      });
-    }));
+    .then(({ id }) => sendRequest({
+      req: `/user/${id}`,
+      callback: (err, res) => {
+        expect(decrypt({ message: res.body.lastname, persistant: true }))
+          .to.be.equal('newLastName');
+      },
+    })));
 
-  it('should delete a user', (done) => {
+  it('should delete a user', () => {
     sendRequest({
       req: '/user',
       callback: (err, res) => {
@@ -99,14 +95,11 @@ describe('Users', () => {
           return user;
         },
       }))
-      .then(() => {
-        sendRequest({
-          req: '/user',
-          callback: (err, res) => {
-            expect(res.body).to.have.length(2);
-            done();
-          },
-        });
-      });
+      .then(() => sendRequest({
+        req: '/user',
+        callback: (err, res) => {
+          expect(res.body).to.have.length(2);
+        },
+      }));
   });
 });
