@@ -20,6 +20,28 @@
         :options="treeIps" 
         :typeahead="true" />
       </label>
+
+       <label>
+        SSID
+         <input
+          :class="getClass('ssid')"
+          type="text"
+          v-model="door.ssid"
+          id="ssid"
+          required
+        />
+      </label>
+
+        <label>
+          wifipassword
+         <input
+          :class="getClass('password')"
+          type="password"
+          v-model="door.password"
+          id="wifipassword"
+          required
+        />
+      </label>
     </div>
   </Form>
 </template>

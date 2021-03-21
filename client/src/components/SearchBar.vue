@@ -9,6 +9,7 @@
 </template>
 
 <script>
+import Levensthein from 'levenshtein';
 export default {
   name: "SearchBar",
   props: ["elements"],
@@ -23,7 +24,12 @@ export default {
       return query
         .split(" ")
         .filter((query) => query.length)
-        .reduce((score, query) => score + +string.includes(query), 0);
+        .reduce((score, query) => score + +string.includes(query) 
+        + string
+          .split(' ')
+          .filter(split => split.length)
+          .reduce((score, splited) => score + +splited.includes(query) +1 / Math.max(1, Levensthein(query, splited)), 0) 
+        , 0);
     },
     match(object, query) {
       return (
@@ -54,12 +60,15 @@ export default {
         this.filteredElements = this.elements;
         return;
       }
-      this.filteredElements = this.elements
+      const elementsAndScore =  this.elements
         .map((element) => [element, this.match(element, query)])
         .filter(([, score]) => score)
-        .sort(([, a], [, b]) => b - a)
+        .sort(([, a], [, b]) => b - a);
+      const scoreThreshold = elementsAndScore[0][1] * 0.8;
+      console.log(elementsAndScore)
+      this.filteredElements = elementsAndScore
+        .filter(([, score]) => score> scoreThreshold)
         .map(([element]) => element);
-      console.log("update", this.filteredElements);
     },
   },
   watch: {

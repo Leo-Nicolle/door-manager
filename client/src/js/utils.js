@@ -9,7 +9,7 @@ export function loggedIn() {
   return axios
     .get(getUrl("api/loggedin"))
     .then(() => true)
-    .catch(() => false);
+.catch(() => false);
 }
 
 export function logOut() {

@@ -36,8 +36,12 @@ export default {
       if(!this.sortBy)return 0;
       const aSortBy = a[this.sortBy];
       const bSortBy = b[this.sortBy];
-      if(aSortBy === undefined || bSortBy=== undefined ) return 0;
+      if(!aSortBy || bSortBy) return -1;
       if(aSortBy.constructor === Array){
+        if(aSortBy[0] === undefined && bSortBy[0] === undefined) return 0;
+        if(aSortBy[0] === undefined) return -1 *  this.order;
+        if(bSortBy[0] === undefined) return 1 *  this.order;
+
         return aSortBy[0]   
         .localeCompare(bSortBy[0])* this.order;
       }

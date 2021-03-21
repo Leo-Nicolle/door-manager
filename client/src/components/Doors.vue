@@ -9,7 +9,7 @@
     >
       <tr slot="headers">
         <th @click="onHeaderClick('name')">Nom</th>
-        <th @click="onHeaderClick('ip')">IP</th>
+        <th @click="onHeaderClick('ip')"></th>
 
       </tr>
       <tr slot="body" v-for="(door, i) in sortedElements" :key="i" @click="onElementClick(door)">
@@ -60,7 +60,7 @@ export default {
           successCompile &= !e.response.data.e.match('error: ');
         }).then(() => {
           this.compileStatus = successCompile ? 'success' : 'failed';
-          return axios.get('http://192.168.1.34:5051/code-update')
+          return axios.get(getUrl('code-update'))
         }).then(() => console.log('requested'));
     },
     fetch() {
