@@ -43,11 +43,15 @@ function validatePassword(password, confirm) {
       param: 'password',
       msg: 'password missmatch',
     });
+    errors.push({
+      param: 'confirm',
+      msg: 'password missmatch',
+    });
   }
   if (password.length < 4) {
     errors.push({
       param: 'password',
-      msg: 'password should not be at least 4 characters',
+      msg: 'password should be at least 4 characters',
     });
   }
   return errors;
@@ -92,6 +96,16 @@ export default function userController({ app, db, authMiddleware }) {
     );
   });
   app.get('/user/:id', authMiddleware, (req, res) => {
+    if (req.params.id === 'new') {
+      return res.send({
+        firstname: '',
+        lastname: '',
+        groups: [],
+        badges: [],
+        email: '',
+        isAdmin: false,
+      });
+    }
     const user = db.get('users').find({ id: req.params.id }).value();
     res.send({
       id: user.id,
@@ -103,6 +117,7 @@ export default function userController({ app, db, authMiddleware }) {
       isAdmin: user.isAdmin,
     });
   });
+
   app.post(
     '/user',
     authMiddleware,
@@ -114,6 +129,7 @@ export default function userController({ app, db, authMiddleware }) {
         [
           body('email').isString().notEmpty(),
           body('password').isString().notEmpty(),
+          body('confirm').isString().notEmpty(),
         ],
       ]),
       body('groups').isArray(),
@@ -122,15 +138,23 @@ export default function userController({ app, db, authMiddleware }) {
     (req, res) => {
       const errors = validationResult(req).array();
 
+      if (errors.length) {
+        return res.status(400).json({ errors });
+      }
+
       if (req.body.isAdmin) {
         try {
-          const { password } = req.body;
+          const { password, confirm } = req.body;
           // TODO: add confirm
           const decryptedPassword = encrypt.decrypt(
             password,
             privateKey,
           );
-          errors.push(...validatePassword(decryptedPassword, decryptedPassword));
+          const decryptedConfirm = encrypt.decrypt(
+            confirm,
+            privateKey,
+          );
+          errors.push(...validatePassword(decryptedPassword, decryptedConfirm));
         } catch (e) {
           // TODO: use utils to handle the error and avoid sending the key
           errors.push('something went wront on decrypt1');
@@ -138,7 +162,6 @@ export default function userController({ app, db, authMiddleware }) {
         }
       }
       errors.push(...validateGroupsIds(db, req.body.groups));
-
       if (!persitantKeys) {
         return res.status(400);
       }
@@ -157,23 +180,24 @@ export default function userController({ app, db, authMiddleware }) {
         }
       }
 
+      // ensure only one user owns a badge
       if (req.body.badges) {
         req.body.badges = req.body.badges.filter((b) => b);
         // unassign badges from other users:
-        const users = db.get('users')
+        const otherUsers = db.get('users')
           .filter(({ badges, id }) => badges.length && id !== req.body.id)
           .value();
-        users.forEach((user) => {
+        otherUsers.forEach((otherUser) => {
           let shouldUpdate = false;
-          let { badges } = user;
-          req.body.badges.forEach((badge, i) => {
-            if (!user.badges.includes(badge)) return;
+          let { badges } = otherUser;
+          req.body.badges.forEach((badge) => {
+            if (!otherUser.badges.includes(badge)) return;
             shouldUpdate = true;
             badges = badges.filter((b) => b !== badge);
           });
           if (!shouldUpdate) return;
-          user.badges = badges;
-          db.get('users').find({ id: user.id }).assign(user).write();
+          otherUser.badges = badges;
+          db.get('users').find({ id: otherUser.id }).assign(otherUser).write();
         });
       }
       // modify entry
@@ -188,6 +212,7 @@ export default function userController({ app, db, authMiddleware }) {
       res.sendStatus(200);
     },
   );
+
   app.delete('/user/:id', authMiddleware, (req, res) => {
     db.set(
       'users',
@@ -245,14 +270,12 @@ export default function userController({ app, db, authMiddleware }) {
         res.sendStatus(200);
       })
       .catch((e) => {
-        console.log('reset password error', e);
         res.sendStatus(400);
       });
   });
 
   app.post('/user/setpassword', (req, res) => {
     const { token } = req.body;
-    console.log('token', token);
     const user = db
       .get('users')
       .find((user) => user.resetToken && user.resetToken.hash === token)
