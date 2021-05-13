@@ -4,15 +4,29 @@
     :title="
       $route.params.id === 'new'
         ? 'Nouveau Groupe'
-        : `${groupWithScheduleNames.name}`
+        : `${group.name}`
     "
-    :item="groupWithScheduleNames"
+    :item="group"
     :filteredData="filteredSchedules"
     :schema="schema"
     @submit="submit"
     @remove="remove"
     @close="$emit('close')"
-  />
+  >
+    <template v-slot:schedules>
+      <b-autocomplete
+        rounded
+        v-model="schedulePerDoor[doorIndex]"
+        style="margin-bottom: 85px;"
+        :data="filteredSchedules"
+        icon="clock-time-four-outline"
+        placeholder="Choisir un horraire"
+        clearable
+        @typing="getFilteredSchedules"
+      >
+      </b-autocomplete>
+    </template>
+  </form-modal>
 </template>
 
 <script>
@@ -42,23 +56,9 @@ export default {
             })),
           },
           {
-            type: "autocomplete",
+            type: "slot",
             condition: () => this.doorIndex >= 0,
-            model: `schedules`,
-            label: "Horraire autorisé",
-            getFilteredData: (text) => {
-              this.getFilteredSchedules(text);
-            },
-            options: this.schedules.map((schedule, i) => {
-              console.log("schedules", this.doorIndex);
-              return {
-                value: schedule.id,
-                selected: i === 0,
-                //   this.group.schedules[this.currentDoor.id] === schedule.id,
-                key: schedule.id,
-                label: schedule.name,
-              };
-            }),
+            name: "schedules",
           },
         ],
         required: ["name"],
@@ -72,9 +72,9 @@ export default {
     return {
       doors: [],
       schedules: [],
+      schedulePerDoor: [],
       doorIndex: -1,
       filteredSchedules: [],
-      groupWithScheduleNames: {},
     };
   },
   methods: {
@@ -89,10 +89,16 @@ export default {
     },
     submit() {
       const group = {
-        ...this.groupWithScheduleNames,
-        schedules: this.groupWithScheduleNames.schedules.map(
-          (name) => this.schedules.find((g) => g.name === name).id
-        ),
+        ...this.group,
+        doorAccess: this.schedulePerDoor.reduce(
+          (doorAccess, scheduleName,i) =>{
+             const schedule = this.schedules.find((g) => g.name === scheduleName)
+             if(!schedule) return doorAccess;
+             const doorId = this.doors[i].id
+             doorAccess[doorId] = schedule.id
+             return doorAccess;
+          }
+        ,{}),
       };
       this.$axios
         .$post("/group", {
@@ -122,47 +128,19 @@ export default {
     ]).then(([doors, schedules]) => {
       this.doors = doors;
       this.schedules = schedules;
-      console.log("group", this.group);
 
-      // const accessArray = Object.entries(this.group.doorAccess).reduce(
-      //   (acc, [doorId, scheduleId]) => {
-      //     const schedule = this.schedules.find(
-      //       (schedule) => schedule.id === scheduleId
-      //     );
-      //     const door = this.doors.find((door) => door.id === doorId);
-      //     if (!schedule || !door) return acc;
-
-      //     acc.doors.push(door.name);
-      //     acc.schedules.push(schedule.name);
-      //     return acc;
-      //   },
-      //   {
-      //     schedules: [],
-      //     doors: [],
-      //   }
-      // );
-      const accessArray =this.doors.reduce(
-        (acc, {id, name}) => {
-          const scheduleId= this.group.doorAccess[id];
+      this.schedulePerDoor = this.doors.reduce(
+        (schedulePerDoor, { id }) => {
+          const scheduleId = this.group.doorAccess[id];
           const schedule = this.schedules.find(
             (schedule) => schedule.id === scheduleId
           );
-          const scheduleName = schedule? schedule.name : '';
-          acc.doors.push(name);
-          acc.schedules.push(scheduleName);
-          return acc;
+          const scheduleName = schedule ? schedule.name : "";
+          schedulePerDoor.push(scheduleName);
+          return schedulePerDoor;
         },
-        {
-          schedules: [],
-          doors: [],
-        }
+          [],
       );
-
-      this.groupWithScheduleNames = {
-        ...this.group,
-        schedules: accessArray.schedules,
-        doors: accessArray.doors,
-      };
       this.getFilteredSchedules("");
     });
   },

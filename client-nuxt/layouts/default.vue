@@ -38,7 +38,12 @@ export default {
         {
           title: "Utilisateurs",
           icon: "utilisateurs",
-          to:  "users",
+          to:  "user",
+        },
+         {
+          title: "Groupes",
+          icon: "groupes",
+          to:  "group",
         },
       ],
     };

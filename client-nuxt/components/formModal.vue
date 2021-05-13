@@ -16,6 +16,7 @@
           :type="getInputType(field.model)"
           v-if="field.condition ? field.condition() : true"
         >
+        
           <b-taginput
             v-if="field.type === 'tag'"
             v-model="item[field.model]"
@@ -29,12 +30,14 @@
           >
             <template #empty> {{ field.placeholder }} </template>
           </b-taginput>
+
           <b-checkbox
             v-else-if="field.type === 'checkbox'"
             v-model="item[field.model]"
           >
             {{ field.label }}
           </b-checkbox>
+
           <section v-else-if="field.type === 'buttons'" :class="field.class">
             <b-button
               v-for="(b, j) in field.buttons"
@@ -58,6 +61,12 @@
           >
             <template #empty>{{ field.placeholder }}</template>
           </b-autocomplete>
+
+          <slot v-else-if="field.type === 'slot'"
+            :name="field.name"
+            :field="field" 
+          >
+          </slot>
 
           <b-input
             v-else

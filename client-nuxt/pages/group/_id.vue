@@ -1,7 +1,7 @@
 <template>
     <item-view :route="route" :columns="columns">
       <template slot-scope="{item}">
-        <group-form :group="item" />
+        <group-form :group="item" @close="$router.push(route)" />
       </template>
     </item-view>
   </section>
