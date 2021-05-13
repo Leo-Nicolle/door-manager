@@ -127,6 +127,7 @@ export default function userController({ app, db, authMiddleware }) {
       oneOf([
         body('isAdmin').equals('false'),
         [
+          body('isAdmin').equals('true'),
           body('email').isString().notEmpty(),
           body('password').isString().notEmpty(),
           body('confirm').isString().notEmpty(),
@@ -137,7 +138,6 @@ export default function userController({ app, db, authMiddleware }) {
     ],
     (req, res) => {
       const errors = validationResult(req).array();
-
       if (errors.length) {
         return res.status(400).json({ errors });
       }

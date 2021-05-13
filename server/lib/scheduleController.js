@@ -33,6 +33,8 @@ function validateSchedule(schedule) {
           indexInterval: j,
           indexStartEnd: 0,
           msg: 'wrong start',
+          param: `day${i}-schedule${j}-0`,
+
         });
       }
 
@@ -42,6 +44,7 @@ function validateSchedule(schedule) {
           indexInterval: j,
           indexStartEnd: 1,
           msg: 'wrong end',
+          param: `day${i}-schedule${j}-1`,
         });
       }
       if (compareHours(start, end) > 0) {
@@ -50,6 +53,14 @@ function validateSchedule(schedule) {
           indexInterval: j,
           indexStartEnd: 1,
           msg: 'end should be higher than start',
+          param: `day${i}-schedule${j}-0`,
+        });
+        acc.push({
+          indexDay: i,
+          indexInterval: j,
+          indexStartEnd: 1,
+          msg: 'end should be higher than start',
+          param: `day${i}-schedule${j}-1`,
         });
       }
     });
@@ -63,6 +74,16 @@ export default function scheduleController({ app, db, authMiddleware }) {
     res.send(schedules);
   });
   app.get('/schedule/:id', authMiddleware, (req, res) => {
+    if (req.params.id === 'new') {
+      return res.send({
+        name: '',
+        days: new Array(7).fill(0).map(() => ({
+          allDay: false,
+          intervals: [],
+        })),
+      });
+    }
+
     const schedule = db.get('schedules').find({ id: req.params.id }).value();
     res.send(schedule);
   });

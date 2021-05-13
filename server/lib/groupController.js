@@ -32,6 +32,12 @@ export default function groupController({ app, db, authMiddleware }) {
     res.send(groups);
   });
   app.get('/group/:id', authMiddleware, (req, res) => {
+    if (req.params.id === 'new') {
+      return res.send({
+        name: '',
+        doorAccess: {},
+      });
+    }
     const group = db.get('groups').find({ id: req.params.id }).value();
     res.send(group);
   });

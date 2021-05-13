@@ -7,6 +7,11 @@ export default function doorController({ app, db, authMiddleware }) {
     res.send(doors);
   });
   app.get('/door/:id', authMiddleware, (req, res) => {
+    if (req.params.id === 'new') {
+      return res.send({
+        name: '',
+      });
+    }
     const door = db.get('doors').find({ id: req.params.id }).value();
     res.send(door);
   });
