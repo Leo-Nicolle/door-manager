@@ -7,7 +7,7 @@
         type="is-success"
         class="is-pulled-right"
       />
-      <table-view :columns="columns" :route="route" />
+      <table-view :columns="columns" :selectable="selectable" :route="route" />
     </section>
     <slot v-else :item="item" />
   </section>
@@ -18,7 +18,7 @@ import tableView from './tableView'
 
 export default {
   name: "itemView",
-  props: ["route","columns"],
+  props: ["route","columns","selectable"],
   data() {
     return {
       item: null,
@@ -34,12 +34,10 @@ export default {
   },
   mounted() {
     const id = this.$route.params.id;
-    console.log('mounted', this.route, id)
     if (!id) return;
     this.$axios
       .$get(`${this.route}/${id}`)
       .then((item) => {
-        console.log('Item ici',this.route, id, item)
         this.item = item;
       })
       .catch((error) => {

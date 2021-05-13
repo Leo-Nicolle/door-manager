@@ -50,6 +50,10 @@ export default {
           title: "Portes",
           to: "/door",
         },
+        {
+          title: "Logs",
+          to: "/log",
+        },
       ],
     };
   },

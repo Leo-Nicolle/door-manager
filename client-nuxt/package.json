@@ -12,6 +12,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.13.1",
     "core-js": "^3.9.1",
+    "dateformat": "^4.5.1",
     "nuxt": "^2.15.3",
     "nuxt-buefy": "^0.4.4",
     "quick-encrypt": "^1.0.8",
