@@ -1,5 +1,11 @@
-export default function ({ $axios }) {
+export default function ({ $axios, redirect }) {
   $axios.onRequest(() => {
     $axios.setHeader('Authorization', localStorage.getItem("token"))
+  })
+
+  $axios.onError(error => {
+    if (error.response.status === 401) {
+      redirect('/login')
+    }
   })
 }

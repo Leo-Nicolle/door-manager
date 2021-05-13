@@ -20,6 +20,7 @@ Vue.mixin({
       }) => 
         invalidFields.concat(nestedErrors ? nestedErrors.map(e => e): {param, msg})
       , []);
+      console.log('invalid',this.invalidFields)
     },
     getMessage(fieldname){
       return this.invalidFields

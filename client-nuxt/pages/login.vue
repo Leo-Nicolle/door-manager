@@ -59,10 +59,9 @@ export default {
           })
         )
         .then(({ token }) => {
-          console.log("TOKEN", token);
           localStorage.setItem("token", token);
-          console.log("TOKEN");
           // this.$emit("login");
+          this.$router.back();
           // this.$router.push("/user");
         })
         .catch((e) => {

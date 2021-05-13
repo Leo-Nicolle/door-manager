@@ -32,18 +32,19 @@ export default {
       items: [
         {
           title: "Home",
-          icon: "home",
           to: { name: "index" },
         },
         {
           title: "Utilisateurs",
-          icon: "utilisateurs",
           to:  "user",
         },
          {
           title: "Groupes",
-          icon: "groupes",
           to:  "group",
+        },
+         {
+          title: "Horraires",
+          to:  "schedule",
         },
       ],
     };
