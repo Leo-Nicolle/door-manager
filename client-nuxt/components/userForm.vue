@@ -1,190 +1,140 @@
 <template>
-  <form action="">
-    <div class="modal-card" style="width: auto">
-      <header class="modal-card-head">
-        <p class="modal-card-title">
-          {{
-            $route.params.id === "new"
-              ? "nouvel utilisateur"
-              : `${user.firstname} ${user.lastname}`
-          }}
-        </p>
-        <button type="button" class="delete" @click="$emit('close')" />
-      </header>
-      <section class="modal-card-body">
-        <b-field label="Nom">
-          <b-input
-            type="nom"
-            v-model="user.lastname"
-            placeholder="nom"
-            :message="getMessage('lastname')"
-            required
-          >
-          </b-input>
-        </b-field>
-        <b-field label="Prenom">
-          <b-input
-            type="prenom"
-            v-model="user.firstname"
-            placeholder="prenom"
-            required
-          >
-          </b-input>
-        </b-field>
-
-        <b-field>
-          <b-checkbox v-model="user.isAdmin">Admin </b-checkbox>
-        </b-field>
-        <section v-if="user.isAdmin">
-          <b-field :type="getInputType('email')" label="Email">
-            <b-input
-              type="email"
-              v-model="user.email"
-              placeholder="email"
-              required
-            >
-            </b-input>
-          </b-field>
-
-          <b-field
-            label="Mot de Passe"
-            :message="getMessage('password')"
-            :type="getInputType('password')"
-          >
-            <b-input
-              type="password"
-              v-model="user.password"
-              password-reveal
-              placeholder="Mot de Passe"
-              required
-            >
-            </b-input>
-          </b-field>
-          <b-field
-            :type="getInputType('confirm')"
-            label="Mot de passe (confirmer)"
-          >
-            <b-input
-              type="password"
-              v-model="user.confirm"
-              password-reveal
-              placeholder="Mot de Passe"
-              :message="getMessage('confirm')"
-              required
-            >
-            </b-input>
-          </b-field>
-        </section>
-
-        <b-field label="Groupes">
-          <b-taginput
-            v-model="userGroups"
-            :data="filteredGroups"
-            :open-on-focus="true"
-            autocomplete
-            field="user.groups"
-            icon="label"
-            placeholder="Ajouter un groupe"
-            @typing="getFilteredGroups"
-          >
-            <template #empty> Aucun groupe </template>
-          </b-taginput>
-        </b-field>
-      </section>
-
-      <footer class="modal-card-foot is-full" style="justify-content: space-between;">
-        <b-button
-          label="Annuler"
-          type="is-danger"
-          @click="$emit('close')"
-        />
-         <b-button
-          label="Suppirmer"
-          @click="remove"
-          type="is-dark"
-        />
-        <b-button
-          label="Valider"
-          @click="submit"
-          type="is-primary"
-        />
-      </footer>
-    </div>
-  </form>
+  <form-modal
+    ref="form"
+    :title="
+      $route.params.id === 'new'
+        ? 'Nouvel Utilisateur'
+        : `${user.firstname} ${user.lastname}`
+    "
+    :item="userWithGroupNames"
+    :filteredData="filteredGroups"
+    :schema="schema"
+    @submit="submit"
+    @remove="remove"
+    @close="$emit('close')"
+  />
 </template>
 
 <script>
+import formModal from "./formModal";
+
 export default {
   name: "UserForm",
   props: ["user"],
   data() {
     return {
+      schema: {
+        fields: [
+          {
+            label: "Prenom",
+            model: "firstname",
+            type: "name",
+          },
+          {
+            label: "Nom",
+            model: "lastname",
+            type: "name",
+          },
+          {
+            label: "Groupes",
+            model: "groups",
+            type: "tag",
+            model: "groups",
+            getFilteredData: (text) => {
+              this.getFilteredGroups(text);
+            },
+          },
+          {
+            label: "Admin",
+            model: "isAdmin",
+            type: "checkbox",
+          },
+          {
+            label: "email",
+            model: "email",
+            type: "email",
+            condition: () => this.userWithGroupNames.isAdmin,
+          },
+          {
+            label: "mot de passe",
+            model: "password",
+            type: "password",
+            condition: () => this.userWithGroupNames.isAdmin,
+          },
+          {
+            label: "mot de passe(confirmer)",
+            model: "confirm",
+            type: "password",
+            condition: () => this.userWithGroupNames.isAdmin,
+          },
+        ],
+        required: ["name"],
+      },
+      // all the groups in the DB
       groups: [],
-      userGroups: [],
+      // the groups filtered by typing
       filteredGroups: [],
+      // the user with groupNames instead of ids
+      userWithGroupNames: {},
     };
-  },
-  watch: {
-    user: function () {
-      this.updateUserGroups();
-    },
   },
   methods: {
     getFilteredGroups(text) {
-      console.log("text", text, this.filteredGroups);
-      this.filteredGroups = this.groups
-        .filter(({ name }) => {
-          return name.toLowerCase().indexOf(text.toLowerCase()) >= 0;
-        })
-        .map(({ name }) => name);
-    },
-    updateUserGroups() {
-      this.userGroups = this.user.groups
-        .map((id) => {
-          const group = this.groups.find((group) => group.id === id);
-          return group && group.name;
-        })
-        .filter((e) => e);
+      console.log('getFG', text)
+      this.filteredGroups = !text.length
+        ? this.groups.map(({name}) => name)
+        : this.groups
+            .filter(({ name }) => {
+              return name.toLowerCase().indexOf(text.toLowerCase()) >= 0;
+            })
+            .map(({ name }) => name);
     },
     submit() {
-      // axios
-      // .get(getUrl("encrypt"))
-      // .then(({
-      //   data
-      // }) => {
-      //   const publicKey = data;
-      //   return this.user.isAdmin && this.user.password.length ?
-      //     encrypt.encrypt(this.user.password, publicKey) :
-      //     "";
-      // })
-      this.invalidFields = [];
-      this.encrypt([this.user.password, this.user.confirm])
-        .then(([password, confirm]) =>
-          this.$axios.$post("/user", {
-            ...this.user,
-            password,
-            confirm,
-          })
-        )
+      const user = {
+        ...this.userWithGroupNames,
+        groups: this.userWithGroupNames.groups.map(
+          (name) => this.groups.find((g) => g.name === name).id
+        ),
+      };
+      console.log("USER", user.password, user.confirm);
+      this.encrypt([user.password, user.confirm])
+        .then(([password, confirm]) => {
+          return this.$axios.$post("/user", {
+            ...user,
+            password: password || "",
+            confirm: confirm || "",
+          });
+        })
         .then(() => {
           this.$emit("close");
         })
-        .catch((e) => this.validation(e));
+        .catch((e) => this.$refs.form.validation(e));
     },
-    remove(){
-       this.$axios
+    remove() {
+      this.$axios
         .$delete(`user/${this.user.id}`)
         .then(() => this.$emit("close"))
         .catch((e) => {
           console.error(e);
         });
     },
-  }, 
+  },
+  components: {
+    formModal,
+  },
   mounted() {
     return this.$axios.$get("/group").then((groups) => {
-      console.log("groups", groups);
       this.groups = groups;
-      this.updateUserGroups();
+      this.userWithGroupNames = {
+        ...this.user,
+        groups: this.user.groups
+          .map((id) => {
+            const group = this.groups.find((group) => group.id === id);
+            return group && group.name;
+          })
+          .filter((e) => e),
+      };
+      this.getFilteredGroups('');
     });
   },
   //   onConfirmAddBadge() {

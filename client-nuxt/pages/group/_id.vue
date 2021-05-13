@@ -1,0 +1,33 @@
+<template>
+    <item-view :route="route" :columns="columns">
+      <template slot-scope="{item}">
+        <group-form :group="item" />
+      </template>
+    </item-view>
+  </section>
+</template>
+
+<script>
+import ItemView from '../../components/itemView.vue';
+import GroupForm from "../../components/groupForm.vue";
+
+export default {
+  name: "groupPage",
+  data() {
+    return {
+      route: "/group",
+      columns: [
+        {
+          field: "name",
+          label: "nom",
+          width: "40",
+        },
+      ],
+    };
+  },
+  components: {
+    GroupForm,
+    ItemView,
+  },
+};
+</script>

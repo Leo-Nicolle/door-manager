@@ -14,7 +14,8 @@
     "core-js": "^3.9.1",
     "nuxt": "^2.15.3",
     "nuxt-buefy": "^0.4.4",
-    "quick-encrypt": "^1.0.8"
+    "quick-encrypt": "^1.0.8",
+    "vue-json-schema-form": "^1.0.4"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.1.3",

@@ -22,8 +22,9 @@ export default {
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios',
-    '~/plugins/encrypt',
-    '~/plugins/validation',
+    '~/mixins/encrypt',
+    '~/mixins/validation',
+    '~/mixins/json-schema'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components

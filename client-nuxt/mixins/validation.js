@@ -7,6 +7,7 @@ Vue.mixin({
   },
   methods: {
     validation(e) {
+      this.invalidFields = [];
       if (!e.response || !e.response.data) return console.error(e);
       e.response.data.errors
       .filter(e => typeof e === 'string')

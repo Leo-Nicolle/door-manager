@@ -4,15 +4,16 @@ import Vue from 'vue'
 Vue.mixin({
   methods: {
     encrypt(toEncrypt = []) {
-      return this.$axios.$get('/encrypt')
-        .then(publicKey => {
-          console.log('public', publicKey)
-          return toEncrypt
-          .filter(e => e && e.length)
-          .map(str =>
-            quickEncrypt.encrypt(str, publicKey)
-          )
-        })
+      const a = this.$axios.$get('/encrypt')
+        .then(publicKey =>
+          toEncrypt
+            .filter(e => e && e.length)
+            .map(str => {
+              return quickEncrypt.encrypt(str, publicKey)
+            })
+        )
+      console.log('toEncrypt',toEncrypt, a)
+      return a;
     },
     decrypt(toDecrypt = []) {
       return this.$axios.$get('/encrypt')
