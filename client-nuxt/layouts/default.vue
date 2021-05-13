@@ -21,7 +21,7 @@
       </div>
     </nav>
 
-    <nuxt />  
+    <nuxt />
   </div>
 </template>
 
@@ -36,44 +36,23 @@ export default {
         },
         {
           title: "Utilisateurs",
-          to:  "user",
+          to: "/user",
         },
-         {
+        {
           title: "Groupes",
-          to:  "group",
+          to: "/group",
         },
-         {
+        {
           title: "Horraires",
-          to:  "schedule",
+          to: "/schedule",
+        },
+        {
+          title: "Portes",
+          to: "/door",
         },
       ],
     };
   },
-  async asyncData({ $axios }) {
-    $axios
-      .$get("/users", {
-        // cancelToken: source.token
-      })
-      .then((users) => console.log("users", users))
-      .catch((error) => {
-        if (this.$axios.isCancel(error)) {
-          console.log("Request canceled", error);
-        } else {
-          // handle error
-        }
-      });
-
-    // const users = await `${serverUrl}/users`
-    //   .then((res) => {
-    //     console.log("res", res, res.json());
-    //   })
-    //   .catch((e) => console.error("error", error));
-    // console.log('ICI', this.$config)
-  },
-
-  // this.posts = await fetch(`${this.$config.serverUrl}/posts`).then(res =>
-  //   console.log('ICII',res)
-  // )
-  // },
+  
 };
 </script>

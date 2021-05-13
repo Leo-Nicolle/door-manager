@@ -37,9 +37,9 @@ export default {
     console.log('mounted', this.route, id)
     if (!id) return;
     this.$axios
-      .$get(`${this.route}/${this.$route.params.id}`)
+      .$get(`${this.route}/${id}`)
       .then((item) => {
-        console.log('Item ici', item)
+        console.log('Item ici',this.route, id, item)
         this.item = item;
       })
       .catch((error) => {
