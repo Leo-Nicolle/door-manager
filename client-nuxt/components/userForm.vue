@@ -80,7 +80,6 @@ export default {
   },
   methods: {
     getFilteredGroups(text) {
-      console.log('getFG', text)
       this.filteredGroups = !text.length
         ? this.groups.map(({name}) => name)
         : this.groups
@@ -96,7 +95,6 @@ export default {
           (name) => this.groups.find((g) => g.name === name).id
         ),
       };
-      console.log("USER", user.password, user.confirm);
       this.encrypt([user.password, user.confirm])
         .then(([password, confirm]) => {
           return this.$axios.$post("/user", {

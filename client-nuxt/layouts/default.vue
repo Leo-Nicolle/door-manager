@@ -6,9 +6,14 @@
       aria-label="main navigation"
     >
       <div class="navbar-brand">
-        <a class="navbar-item" href="/">
-          <img src="~assets/passkey.png" alt="doormanager" height="28" />
-        </a>
+        <nuxt-link class="navbar-item" to="/">
+          <img
+            src="~assets/passkey.png"
+            style="margin-right: 6px"
+            alt="home"
+            height="28"
+          />
+        </nuxt-link>
         <nuxt-link
           v-for="(item, key) of items"
           :key="key"
@@ -18,6 +23,15 @@
         >
           {{ item.title }}
         </nuxt-link>
+        <nuxt-link class="navbar-item" style="margin-left: auto" to="/login">
+          <img
+            :src="require(`~/assets/${loggedIn ? 'logout' : 'login'}.png`)"
+            style="margin-right: 6px"
+            alt="login"
+            height="28"
+          />
+          {{ loggedIn ? "Déconnection" : "Connection" }}
+        </nuxt-link>
       </div>
     </nav>
 
@@ -26,14 +40,13 @@
 </template>
 
 <script>
+import loginout from "../mixins/loginout";
+
 export default {
   data() {
     return {
+      loggedIn: false,
       items: [
-        {
-          title: "Home",
-          to: { name: "index" },
-        },
         {
           title: "Utilisateurs",
           to: "/user",
@@ -57,6 +70,14 @@ export default {
       ],
     };
   },
-  
+  mixins: [loginout],
+  methods: {
+    update() {
+      return this.isLoggedIn().then((loggedId) => (this.loggedIn = loggedId));
+    },
+  },
+  mounted() {
+    this.update().then(() => console.log("loggedin", this.loggedIn));
+  },
 };
 </script>

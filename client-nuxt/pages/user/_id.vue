@@ -19,16 +19,19 @@ export default {
       columns: [
         {
           field: "firstname",
+          searchable: true,
           label: "prenom",
           width: "40",
         },
         {
           field: "lastname",
+          searchable: true,
           label: "nom",
           width: "40",
         },
         {
           field: "isAdmin",
+          searchable: true,
           label: "admin",
           width: "40",
           boolean: true,

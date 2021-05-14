@@ -15,6 +15,7 @@ export default {
       return [
         {
           field: "date",
+          searchable: true,
           label: "Date",
           format: (date) => dateformat(date, "dd/mm/yy--HH:mm"),
           sortable: true,
@@ -22,6 +23,7 @@ export default {
         },
         {
           field: "door",
+          searchable: true,
           format: (id) => this.getDoorName(id),
           sortable: true,
           label: "Porte",
