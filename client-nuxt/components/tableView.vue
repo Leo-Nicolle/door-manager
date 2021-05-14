@@ -57,3 +57,9 @@ export default {
   },
 };
 </script>
+
+<style>
+tbody> tr{
+  cursor: pointer;
+}
+</style>>

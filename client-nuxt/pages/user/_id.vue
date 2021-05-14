@@ -1,14 +1,13 @@
 <template>
     <item-view :route="route" :columns="columns">
-      <template slot-scope="{item}">
-        <user-form :user="item" @close="$router.push(route)"/>
+      <template slot-scope="{ item }">
+        <user-form :user="item" @close="$router.push(route)" />
       </template>
     </item-view>
-  </section>
 </template>
 
 <script>
-import ItemView from '../../components/itemView.vue';
+import ItemView from "../../components/itemView.vue";
 import UserForm from "../../components/userForm.vue";
 
 export default {
@@ -27,6 +26,12 @@ export default {
           field: "lastname",
           searchable: true,
           label: "nom",
+          width: "40",
+        },
+        {
+          field: "badges",
+          searchable: true,
+          label: "badges",
           width: "40",
         },
         {

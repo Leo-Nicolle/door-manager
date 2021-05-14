@@ -1,22 +1,51 @@
 <template>
-  <form-modal
-    ref="form"
-    :title="
-      $route.params.id === 'new'
-        ? 'Nouvel Utilisateur'
-        : `${user.firstname} ${user.lastname}`
-    "
-    :item="userWithGroupNames"
-    :filteredData="filteredGroups"
-    :schema="schema"
-    @submit="submit"
-    @remove="remove"
-    @close="$emit('close')"
-  />
+  <div>
+    <form-modal
+      ref="form"
+      :title="
+        $route.params.id === 'new'
+          ? 'Nouvel Utilisateur'
+          : `${user.firstname} ${user.lastname}`
+      "
+      :item="userWithGroupNames"
+      :filteredData="filteredGroups"
+      :schema="schema"
+      @submit="submit"
+      @remove="remove"
+      @close="$emit('close')"
+    >
+      <template v-slot:badge>
+        <span style="display: flex; width: 100%; margin-top: 0.75em">
+          <b-taginput
+            rounded
+            v-model="userWithGroupNames.badges"
+
+            style="width: 100%"
+            :locale="'fr-FR'"
+            hour-format="24"
+          />
+          <b-button
+            type="is-success"
+            @click="isAddingBadge = true"
+            style="margin-left: 0.75rem"
+            label="Ajouter"
+          />
+        </span>
+      </template>
+    </form-modal>
+    <modal-badge
+      :user="user"
+      :active="isAddingBadge"
+      :on-cancel="onStopAddingBadge"
+      @validate="onAddedBadge"
+      @close="onStopAddingBadge"
+    />
+  </div>
 </template>
 
 <script>
 import formModal from "./formModal";
+import ModalBadge from "./modalBadge.vue";
 
 export default {
   name: "UserForm",
@@ -43,6 +72,11 @@ export default {
             getFilteredData: (text) => {
               this.getFilteredGroups(text);
             },
+          },
+          {
+            name: "badge",
+            label: "Badges",
+            type: "slot",
           },
           {
             label: "Admin",
@@ -76,17 +110,28 @@ export default {
       filteredGroups: [],
       // the user with groupNames instead of ids
       userWithGroupNames: {},
+      isAddingBadge: false,
     };
   },
   methods: {
     getFilteredGroups(text) {
       this.filteredGroups = !text.length
-        ? this.groups.map(({name}) => name)
+        ? this.groups.map(({ name }) => name)
         : this.groups
             .filter(({ name }) => {
               return name.toLowerCase().indexOf(text.toLowerCase()) >= 0;
             })
             .map(({ name }) => name);
+    },
+    onAddedBadge(badge) {
+      this.userWithGroupNames.badges = [
+        ...this.userWithGroupNames.badges,
+        badge,
+      ];
+      this.onStopAddingBadge();
+    },
+    onStopAddingBadge() {
+      this.isAddingBadge= false;
     },
     submit() {
       const user = {
@@ -119,6 +164,7 @@ export default {
   },
   components: {
     formModal,
+    ModalBadge,
   },
   mounted() {
     return this.$axios.$get("/group").then((groups) => {
@@ -132,7 +178,7 @@ export default {
           })
           .filter((e) => e),
       };
-      this.getFilteredGroups('');
+      this.getFilteredGroups("");
     });
   },
   //   onConfirmAddBadge() {
