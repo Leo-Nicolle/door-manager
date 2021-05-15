@@ -6,15 +6,19 @@
 class RFID
 {
 public: 
+  static const int CS_PIN = 16;
+  static const int IRQ_PIN =  33;
+  static const int RST_PIN = 34;
+
   MFRC522 mfrc522;
   MFRC522::MIFARE_Key key;
   Database* database;
   unsigned long lastTimeUpdate = 0;
-  unsigned long refreshFrequency = 0.1;
+  unsigned long refreshFrequency = 1;
 
   tm currentTime;
   RFID();
-  void setup(Database* database);
+  bool setup(Database* database);
   void loop();
 };
 

@@ -72,6 +72,9 @@ bool Database::requestAccess(char *rfid)
   if(shouldAssignAccess){
     assignIdToBadge();
   }
+  Serial.print("URL ");
+  Serial.println(url);
+
   return access;
 }
 void Database::assignIdToBadge(){
@@ -86,25 +89,30 @@ void Database::assignIdToBadge(){
   http.end();
 }
 
-void Database::setupDatabase()
+bool Database::setupDatabase()
 {
-  setupSD();
+  return setupSD();
+  // return false;
 }
 
-void Database::setupSD()
+bool Database::setupSD()
 {
   Serial.print("Initializing SD card...");
   pinMode(SD_CS, OUTPUT);
   if (!SD.begin(SD_CS))
   {
     Serial.println("Card failed, or not present");
-    return;
+    return false;
   }
+
   Serial.println("card initialized.");
+  return true;
 }
 
 void Database::downloadDatabase()
 {
+  Serial.println("Download");
+  Serial.print(SD.cardType() == CARD_NONE);
   if (SD.cardType() == CARD_NONE) return;
   strcpy(url, baseUrl);
   strcat(url, "access/download/badge/");
@@ -112,11 +120,13 @@ void Database::downloadDatabase()
   http.begin(url);
   http.GET();
   file = SD.open(F("/badge.csv"), FILE_WRITE);
-  http.writeToStream(&file);
+  int status = http.writeToStream(&file);
   file << EOF;
   file.close();
   http.end();
 
+  Serial.print("Downloaded badge status ");
+  Serial.println(status);
   strcpy(url, baseUrl);
   strcat(url, "access/download/schedule/");
   strcat(url, doorId);

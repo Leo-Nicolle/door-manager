@@ -11,7 +11,7 @@ void Ota::setup(){
   ArduinoOTA.setPassword(passwordOTA);
 
   ArduinoOTA.onStart([&]() {
-    updating = true;
+    // updating = true;
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH)
       type = "sketch";
@@ -41,7 +41,7 @@ void Ota::setup(){
       Serial.println("End Failed");
   });
   ArduinoOTA.begin();
-  Serial.println("Ready");
+  Serial.println("OTA Ready");
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
 }
@@ -66,14 +66,11 @@ void Ota::checkForUpdates(){
   Serial.println(url);
 
   int httpResponseCode = http.GET();
-  Serial.print("ICI ");
-  Serial.println(httpResponseCode);
 
   if (httpResponseCode == 200){
-    Serial.println("200");
+    Serial.println("There are code updates to download");
   }else{
-    Serial.print("NOT ");
-    Serial.println(httpResponseCode);
+    Serial.print("There are no code updates to download ");
   }
   http.end();
 }

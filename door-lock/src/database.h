@@ -5,7 +5,7 @@
 #include <ArduinoJson.h>
 #include "config.h"
 
-#define SD_CS 27
+#define SD_CS 4
 class Database {
 
   public:
@@ -18,8 +18,8 @@ class Database {
 
   Database();
   void readFiles();
-  void setupSD();
-  void setupDatabase();
+  bool setupSD();
+  bool setupDatabase();
   void assignIdToBadge();
   void downloadDatabase();
   int compareHours(int hourA, int minA, int hourB, int minB);
