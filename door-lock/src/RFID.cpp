@@ -22,6 +22,7 @@ void RFID::loop()
     return;
   }
   lastTimeUpdate = now;
+  mfrc522.PCD_AntennaOn();
   if (!mfrc522.PICC_IsNewCardPresent())
   {
     return;

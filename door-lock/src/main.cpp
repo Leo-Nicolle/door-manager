@@ -3,11 +3,11 @@
 #include <SPI.h>
 #include "config.h"
 #include "database.h"
-// #include "ota.h"
+#include "ota.h"
 #include "RFID.h"
 
 Database database;
-// Ota ota;
+Ota ota;
 RFID rfid;
 
 tm currentTime;
@@ -17,10 +17,10 @@ const unsigned long refreshFrequency = 3600;
 void setupSerial()
 {
   Serial.begin(9600);
-  while (!Serial)
-  {
-    ;
-  }
+  // while (!Serial)
+  // {
+  //   ;
+  // }
   Serial.println("STARTED SERIAL");
 }
 void refreshSystem(bool force = false)
@@ -30,9 +30,9 @@ void refreshSystem(bool force = false)
   if (now - lastTimeUpdate < refreshFrequency && !force)
     return;
   configTime(3600, 0, "pool.ntp.org");
-  // database.downloadDatabase();
+  database.downloadDatabase();
   lastTimeUpdate = now;
-  // ota.checkForUpdates();
+  ota.checkForUpdates();
 }
 void printLocalTime()
 {
@@ -76,7 +76,7 @@ void setup()
   rfid.setup(&database);
   connectWifi();
   Serial.println("WIFI Conected");
-  // ota.setup();
+  ota.setup();
   Serial.println("OTA Initialized");
   // refreshSystem(true);
   Serial.println("Initialisation done.");
@@ -84,12 +84,12 @@ void setup()
 
 void loop()
 {
-  // if (!ota.updating)
-  // {
+  if (!ota.updating)
+  {
     // make sure wifi is connected
-    // connectWifi();
-    // refreshSystem();
+    connectWifi();
+    refreshSystem();
     rfid.loop();
-  // }
-  // ota.loop();
+  }
+  ota.loop();
 }
