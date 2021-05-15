@@ -1,5 +1,6 @@
 import { v4 as uuid } from 'uuid';
 import { compareHours } from './utils/index';
+import { dbLogs } from './logController';
 
 function getMergedIntervals(intervals) {
   if (!intervals.length) return [{}];
@@ -83,15 +84,6 @@ function authorizeAccess(doorId, badgeId, db) {
   return authorized ? { authorized } : { authorized, error: 'not-in-shcedule' };
 }
 
-function getLastUnknownBadge(db) {
-  return db
-    .get('logs')
-    .filter({ error: 'unknown-badge' })
-    .sort((a, b) => b.date - a.date)
-    .value()
-    .slice(0, 1)
-    .filter(({ date }) => Date.now() - date < 5 * 60 * 1000);
-}
 const state = {
   isAddingBadge: false,
   timeoutAddingBadge: null,
@@ -154,11 +146,9 @@ export default function accessController({ app, db, authMiddleware }) {
 
   app.get('/access/:doorId/:badgeId', (req, res) => {
     const { badgeId, doorId } = req.params;
-
-    // console.log('request DoorId', doorId, 'badgeId', badgeId);
-
+    console.log('Access', doorId, badgeId);
     const { authorized, error } = authorizeAccess(doorId, badgeId, db);
-    db.get('logs')
+    dbLogs.get('logs')
       .push({
         id: uuid(),
         date: Date.now(),
@@ -181,18 +171,18 @@ export default function accessController({ app, db, authMiddleware }) {
     const user = db.get('users')
       .find(({ id }) => id === req.body.userId)
       .value();
+
     if (!user) return res.sendStatus(400);
     if (state.isAddingBadge) return res.sendStatus(402);
 
     resetState();
     state.isAddingBadge = true;
-    state.lastUnknown = getLastUnknownBadge(db);
     state.user = user;
     state.timeoutAddingBadge = setTimeout(() => {
       resetState();
     }, 5 * 60 * 1000);
 
-    res.send(state.lastUnknown);
+    res.send(200);
   });
 
   app.post('/badge/stop-adding', authMiddleware, (req, res) => {

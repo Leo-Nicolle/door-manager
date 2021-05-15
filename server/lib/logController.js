@@ -10,6 +10,8 @@ db.defaults({
   logs: [],
 }).write();
 
+export { db as dbLogs };
+
 export default function logController({ app, authMiddleware }) {
   app.get('/log', authMiddleware, (req, res) => {
     const logs = db.get('logs').value();
