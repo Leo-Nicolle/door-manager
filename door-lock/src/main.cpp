@@ -61,18 +61,8 @@ void setup()
   setupSerial();
   SPI.begin(18, 19, 23);
   Serial.println("SPI BEGIN");
-  bool setupDbSuccess = database.setupDatabase();
-  Serial.println("SETUP SD Card:");
-  if (setupDbSuccess)
-  {
-    Serial.println("success");
-  }
-  else
-  {
-    Serial.println("failed");
-  }
+  database.setupDatabase();
   delay(1000);
-
   rfid.setup(&database);
   connectWifi();
   Serial.println("WIFI Conected");
