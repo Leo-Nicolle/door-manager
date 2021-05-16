@@ -25,8 +25,9 @@ export default function doorController({ app, db, authMiddleware }) {
         return res.status(422).json({ errors: errors.array() });
       }
       // modify entry
-      if (req.body.id) {
-        db.get('doors').find({ id: req.body.id }).assign(req.body).write();
+      const door = db.get('doors').find({ id: req.body.id });
+      if (req.body.id && door) {
+        db.get('doors').assign({ ...door, ...req.body }).write();
       } else {
         // make new entry
         db.get('doors')
@@ -61,8 +62,18 @@ export default function doorController({ app, db, authMiddleware }) {
 
     res.sendStatus(200);
   });
+  app.get('/ping/:id', (req, res) => {
+    const door = db.get('doors').find({ id: req.params.id }).value();
+    if (!door) {
+      return res.sendStatus(500);
+    }
+    const lastPing = Date.now();
+    // console.log('diff', (lastPing - door.lastPing) / (60 * 1000));
+    db.get('doors').find({ id: req.params.id }).assign({
+      ...door,
+      lastPing,
+    }).write();
 
-  app.get('/newbadge', authMiddleware, (req, res) => {
-    res.send(uuid());
+    res.sendStatus(200);
   });
 }

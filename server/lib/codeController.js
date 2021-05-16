@@ -7,6 +7,10 @@ import config from './config';
 
 let compileLock = false;
 
+const promises = {
+
+};
+
 function jsonToHFile(json) {
   let file = '#ifndef LABAUX_CONFIG_H\n';
   file += '#define LABAUX_CONFIG_H\n';
@@ -14,7 +18,7 @@ function jsonToHFile(json) {
     if (typeof value === 'string') {
       hFile += `static const char* ${key} = "${value}";\n`;
     } else {
-      hFile += `#define ${key} ${value}\n`;
+      hFile += `static const float ${key} = ${value};\n`;
     }
     if (i === array.length - 1) {
       hFile += '#endif // config\n';
@@ -49,10 +53,9 @@ function compile(options, db) {
     })
     .then(({ platformioPath, doorLockPath }) => new Promise((resolve, reject) => {
       const child = exec(`${platformioPath} run -d ${doorLockPath}`);
-      child.stdout.on('data', (data) => {
-      });
       child.stderr.on('data', (data) => {
         if (data.match('error: ')) {
+          console.log('Error', data);
           compileLock = false;
           reject(data);
         }
@@ -65,12 +68,11 @@ function compile(options, db) {
     .then((date) => {
       const { doorId } = options;
       // update the date of the code in the database
-      const door = db.get('doors').find({ doorId }).value();
+      const door = db.get('doors').find({ id: doorId }).value();
       if (door) {
-        db.get('doors').find({ doorId }).assign({
+        db.get('doors').find({ id: doorId }).assign({
           ...door,
-          codeDate:
-           date,
+          codeDate: date,
         }).write();
       } else {
         // db.get('doors').push({ doorId, date }).write();
@@ -86,7 +88,6 @@ function transferCode({
     .then(() => config
       .getValue('doorLockPath'))
     .then((doorLockPath) => {
-      console.log('doorLockPath', doorLockPath);
       res.sendStatus(200);
       const esp = new EspOTA();
       // Optional arguments in this order: (bindAddress, bindPort, chunkSize, secondsTimeout)
@@ -109,11 +110,11 @@ function transferCode({
       ip,
       3232);
       return transfer;
-    })
-    .catch((e) => {
-      console.error(e);
-      res.sendStatus(400);
     });
+  // .catch((e) => {
+  //   console.error(e);
+  //   res.sendStatus(400);
+  // });
 }
 
 function handleUnassigned({ ip, res, db }) {
@@ -122,7 +123,8 @@ function handleUnassigned({ ip, res, db }) {
   db.set('locks', db
     .get('locks')
     .value()
-    .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1));
+    .filter(({ date }) => (now - date) / (1000 * 3600 * 24) < 1))
+    .write();
   const lock = db.get('locks').find({ ip }).value();
   // if the lock was not created, create it
   if (!lock) {
@@ -140,7 +142,6 @@ function handleUnassigned({ ip, res, db }) {
     ip,
     doorId: lock.doorId,
     res,
-    id,
   })
     .then(() => {
       // assign id to the door:
@@ -157,12 +158,30 @@ function handleUnassigned({ ip, res, db }) {
           .filter((lock) => lock.ip !== ip)
           .value(),
       ).write();
+    })
+    .then(() => {
+      if (promises[lock.doorId]) {
+        promises[lock.doorId].resolve();
+      }
+    })
+    .catch((e) => {
+      console.error(e);
+      if (promises[lock.doorId]) {
+        promises[lock.doorId].reject(e);
+      }
+      res.sendStatus(400);
     });
 }
 
 export default function doorController({ app, db, authMiddleware }) {
   app.get('/code-compile', (req, res) => {
     compile({}, db).then(() => {
+      const now = Date.now();
+      db.set('doors',
+        db.get('doors').value().map((door) => {
+          if (!door.codeDate) return door;
+          return { ...door, codeDate: now };
+        })).write();
       res.sendStatus(200);
     })
       .catch((e) => {
@@ -172,19 +191,15 @@ export default function doorController({ app, db, authMiddleware }) {
   });
 
   app.get('/code-update/:ip/:date/:doorId', (req, res) => {
-    // const ip2 = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-    const date = +req.params.date;
+    const { date } = req.params;
     const { ip } = req.params;
     const { doorId } = req.params;
 
-    console.log('UPDATE', ip);
     if (doorId === 'unassigned') {
       return handleUnassigned({ ip, res, db });
     }
-    const door = db.get('doors').find({ doorId }).value();
+    const door = db.get('doors').find({ id: doorId }).value();
     const mostRecentCodeDate = door && door.codeDate ? door.codeDate : 0;
-    console.log('request code update', ip, date, doorId);
-
     if (mostRecentCodeDate <= date) {
       // code is already updated
       res.sendStatus(400);
@@ -192,6 +207,9 @@ export default function doorController({ app, db, authMiddleware }) {
     }
     transferCode({
       db, ip, doorId, res,
+    }).catch((e) => {
+      console.error(e);
+      res.sendStatus(400);
     });
   });
 
@@ -202,7 +220,29 @@ export default function doorController({ app, db, authMiddleware }) {
       return;
     }
     db.get('locks').find({ ip: req.body.ip }).assign(req.body).write();
-    res.send(db.get('locks').value());
+    // res.send(db.get('locks').value());
+    const promiseParams = {
+      promise: null,
+      resolve: null,
+      reject: null,
+
+    };
+    const promise = new Promise((resolve, reject) => {
+      promiseParams.resolve = resolve;
+      promiseParams.reject = reject;
+    })
+      .then(() => {
+        res.send(200);
+      })
+      .catch((e) => {
+        console.error(e);
+        res.status(500).json(e);
+      })
+      .finally(() => {
+        delete promises[req.body.doorId];
+      });
+    promiseParams.promise = promise;
+    promises[req.body.doorId] = promiseParams;
   });
 
   app.get('/lock', (req, res) => {
