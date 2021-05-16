@@ -5,15 +5,26 @@
 #include "database.h"
 #include "ota.h"
 #include "RFID.h"
+#include "ping.h"
 
 Database database;
 Ota ota;
 RFID rfid;
+Ping ping;
 
+bool isAssigned = false;
 tm currentTime;
 unsigned long lastTimeUpdate = 0;
 // time between two updates of the database (in secondes)
 const unsigned long refreshFrequency = 3600;
+const unsigned long refreshFrequencyFast = 2;
+
+bool checkAssigned()
+{
+  isAssigned = strcmp("unassigned", doorId);
+  return isAssigned;
+}
+
 void setupSerial()
 {
   Serial.begin(9600);
@@ -27,11 +38,21 @@ void refreshSystem(bool force = false)
 {
   time_t now;
   time(&now);
-  if (now - lastTimeUpdate < refreshFrequency && !force)
+
+  if (!force && now - lastTimeUpdate <  (isAssigned ? refreshFrequency : refreshFrequencyFast) )
     return;
-  configTime(3600, 0, "pool.ntp.org");
-  database.downloadDatabase();
+    Serial.println("Refresh system");
+    Serial.println(isAssigned);
+
+
   lastTimeUpdate = now;
+  if (isAssigned)
+  {
+    configTime(3600, 0, "pool.ntp.org");
+    database.downloadDatabase();
+  }else if(checkAssigned()){
+    database.downloadDatabase();
+  }
   ota.checkForUpdates();
 }
 void printLocalTime()
@@ -61,6 +82,7 @@ void setup()
   setupSerial();
   SPI.begin(18, 19, 23);
   Serial.println("SPI BEGIN");
+  checkAssigned();
   database.setupDatabase();
   delay(1000);
   rfid.setup(&database);
@@ -68,7 +90,7 @@ void setup()
   Serial.println("WIFI Conected");
   ota.setup();
   Serial.println("OTA Initialized");
-  // refreshSystem(true);
+  refreshSystem(true);
   Serial.println("Initialisation done.");
 }
 
@@ -80,6 +102,7 @@ void loop()
     connectWifi();
     refreshSystem();
     rfid.loop();
+    ping.loop();
   }
   ota.loop();
 }

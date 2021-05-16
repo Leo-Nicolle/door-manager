@@ -11,7 +11,7 @@ void Ota::setup(){
   ArduinoOTA.setPassword(passwordOTA);
 
   ArduinoOTA.onStart([&]() {
-    // updating = true;
+    updating = true;
     String type;
     if (ArduinoOTA.getCommand() == U_FLASH)
       type = "sketch";
