@@ -1,6 +1,6 @@
 <template>
   <form action="">
-    <div class="modal-card" style="width: auto">
+    <div class="card" style="width: auto; padding-bottom: 6.5em;">
       <header class="modal-card-head">
         <p class="modal-card-title">
           {{ title }}
@@ -22,6 +22,7 @@
           <b-field
             v-else
             :label="field.label"
+            is-grouped
             :message="getMessage(field.model)"
             :type="getInputType(field.model)"
           >
@@ -89,6 +90,11 @@
           </b-field>
         </div>
       </section>
+    </div>
+
+    <div class="card fixed-bottom" style="padding-top: 0">
+      <section class="modal-card-body">
+
       <footer
         class="modal-card-foot is-full"
         style="justify-content: space-between"
@@ -112,6 +118,7 @@
           type="is-primary"
         />
       </footer>
+      </section>
     </div>
   </form>
 </template>
@@ -126,7 +133,7 @@ export default {
     filteredData: Array,
     buttons: {
       type: Array,
-      default: ["close", "remove", "submit"],
+      default: () => ["close", "remove", "submit"],
     },
   },
   data() {
@@ -135,5 +142,32 @@ export default {
     };
   },
   methods: {},
+  // mounted() {
+  //   document.querySelector("html").classList.add("no-scroll");
+  // },
+  // destroyed() {
+  //   document.querySelector("html").classList.remove("no-scroll");
+  // },
 };
 </script>
+
+<style>
+.margined{ 
+  margin-top: 24px;
+  margin-left: 24px
+}
+.fixed-bottom {
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  box-shadow: 0px -4px 6px #ddd;
+  z-index: 60;
+}
+.fixed-bottom> section{
+  padding: 0;
+}
+/* .no-scroll {
+  overflow: hidden !important;
+} */
+</style>

@@ -25,8 +25,8 @@
     <template v-slot:allDay>
       <b-checkbox
         rounded
+        class="margined"
         v-model="currentDay.allDay"
-        style="margin-top: 0.75rem"
         :locale="'fr-FR'"
         hour-format="24"
       >
@@ -36,12 +36,13 @@
     <template v-slot:times>
       <b-field
         v-for="(c, i) in currentDatesPerDay"
-        style="margin-top: 0.75rem"
+        class="margined"
         :key="`dates-${i}`"
         :type="getPickerType(i)"
       >
         <b-clockpicker
           v-if="!isAllDay"
+          class="control"
           placeholder="Heure de début"
           icon="clock"
           hours-label="Heures"
@@ -51,6 +52,7 @@
         />
         <b-clockpicker
           v-if="!isAllDay"
+          class="control"
           currentDatesPerDay
           placeholder="Heure de fin"
           icon="clock"
@@ -59,7 +61,20 @@
           :locale="'fr-FR'"
           hour-format="24"
         />
+        <button
+          type="button"
+          class="delete control"
+          style="margin-left: 12px"
+          @click="removeInterval(i)"
+        />
       </b-field>
+      <b-button
+        class="margined"
+        style="margin-top: 4px"
+        @click="addInterval"
+        type="is-success"
+        >Ajouter</b-button
+      >
     </template>
   </form-modal>
 </template>
@@ -107,6 +122,7 @@ export default {
   data() {
     return {
       startTime: null,
+      datesPerDay: [],
       dayIndex: -1,
       currentDay: "",
       days: [
@@ -128,6 +144,21 @@ export default {
       return invalid
         ? "is-danger"
         : `is-primary ${i === this.dayIndex ? "is-light" : "is-dark"}`;
+    },
+    addInterval() {
+      this.datesPerDay = this.datesPerDay.map((intervals, i) => {
+        if (i !== this.dayIndex) return intervals;
+        return intervals.concat({
+          start: this.generateDate(),
+          end: this.generateDate(1),
+        });
+      });
+    },
+    removeInterval(index) {
+      this.datesPerDay = this.datesPerDay.map((intervals, i) => {
+        if (i !== this.dayIndex) return intervals;
+        return intervals.slice(0, index).concat(intervals.slice(index + 1));
+      });
     },
     getPickerType(i) {
       const invalid = this.invalidFields.find(({ param }) =>
@@ -215,5 +246,8 @@ export default {
   display: flex;
   flex-wrap: wrap;
   margin-top: 0.75rem;
+}
+.field {
+  align-items: center;
 }
 </style>

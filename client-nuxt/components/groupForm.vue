@@ -1,11 +1,7 @@
 <template>
   <form-modal
     ref="form"
-    :title="
-      $route.params.id === 'new'
-        ? 'Nouveau Groupe'
-        : `${group.name}`
-    "
+    :title="$route.params.id === 'new' ? 'Nouveau Groupe' : `${group.name}`"
     :item="group"
     :filteredData="filteredSchedules"
     :schema="schema"
@@ -14,17 +10,22 @@
     @close="$emit('close')"
   >
     <template v-slot:schedules>
-      <b-autocomplete
-        rounded
-        v-model="schedulePerDoor[doorIndex]"
-        style="margin-bottom: 85px;"
-        :data="filteredSchedules"
-        icon="clock-time-four-outline"
-        placeholder="Choisir un horraire"
-        clearable
-        @typing="getFilteredSchedules"
-      >
-      </b-autocomplete>
+      <p class="control margined">
+        <a class="button is-primary is-outlined" > Horraire: </a>
+      </p>
+      <p class="control margined">
+        <b-autocomplete
+          rounded
+          v-model="schedulePerDoor[doorIndex]"
+          style="margin-bottom: 85px; "
+          :data="filteredSchedules"
+          icon="clock-time-four-outline"
+          placeholder="Choisir un horraire"
+          clearable
+          @typing="getFilteredSchedules"
+        >
+        </b-autocomplete>
+      </p>
     </template>
   </form-modal>
 </template>
@@ -91,14 +92,17 @@ export default {
       const group = {
         ...this.group,
         doorAccess: this.schedulePerDoor.reduce(
-          (doorAccess, scheduleName,i) =>{
-             const schedule = this.schedules.find((g) => g.name === scheduleName)
-             if(!schedule) return doorAccess;
-             const doorId = this.doors[i].id
-             doorAccess[doorId] = schedule.id
-             return doorAccess;
-          }
-        ,{}),
+          (doorAccess, scheduleName, i) => {
+            const schedule = this.schedules.find(
+              (g) => g.name === scheduleName
+            );
+            if (!schedule) return doorAccess;
+            const doorId = this.doors[i].id;
+            doorAccess[doorId] = schedule.id;
+            return doorAccess;
+          },
+          {}
+        ),
       };
       this.$axios
         .$post("/group", {
@@ -129,25 +133,23 @@ export default {
       this.doors = doors;
       this.schedules = schedules;
 
-      this.schedulePerDoor = this.doors.reduce(
-        (schedulePerDoor, { id }) => {
-          const scheduleId = this.group.doorAccess[id];
-          const schedule = this.schedules.find(
-            (schedule) => schedule.id === scheduleId
-          );
-          const scheduleName = schedule ? schedule.name : "";
-          schedulePerDoor.push(scheduleName);
-          return schedulePerDoor;
-        },
-          [],
-      );
+      this.schedulePerDoor = this.doors.reduce((schedulePerDoor, { id }) => {
+        const scheduleId = this.group.doorAccess[id];
+        const schedule = this.schedules.find(
+          (schedule) => schedule.id === scheduleId
+        );
+        const scheduleName = schedule ? schedule.name : "";
+        schedulePerDoor.push(scheduleName);
+        return schedulePerDoor;
+      }, []);
       this.getFilteredSchedules("");
     });
   },
 };
 </script>
 
-<style >
+<style>
+
 .button-section {
   justify-content: space-between;
   display: flex;

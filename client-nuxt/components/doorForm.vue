@@ -1,11 +1,7 @@
 <template>
   <form-modal
     ref="form"
-    :title="
-      $route.params.id === 'new'
-        ? 'Nouvelle Porte'
-        : `${door.name}`
-    "
+    :title="$route.params.id === 'new' ? 'Nouvelle Porte' : `${door.name}`"
     :item="door"
     :schema="schema"
     @submit="submit"
@@ -36,8 +32,7 @@ export default {
     },
   },
   data() {
-    return {
-    };
+    return {};
   },
   methods: {
     submit() {
@@ -65,8 +60,7 @@ export default {
   components: {
     formModal,
   },
-  mounted() {
-  },
+  mounted() {},
 };
 </script>
 
