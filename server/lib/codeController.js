@@ -86,6 +86,7 @@ function transferCode({
     .then(() => config
       .getValue('doorLockPath'))
     .then((doorLockPath) => {
+      console.log('doorLockPath', doorLockPath);
       res.sendStatus(200);
       const esp = new EspOTA();
       // Optional arguments in this order: (bindAddress, bindPort, chunkSize, secondsTimeout)
@@ -171,10 +172,12 @@ export default function doorController({ app, db, authMiddleware }) {
   });
 
   app.get('/code-update/:ip/:date/:doorId', (req, res) => {
+    // const ip2 = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     const date = +req.params.date;
     const { ip } = req.params;
     const { doorId } = req.params;
 
+    console.log('UPDATE', ip);
     if (doorId === 'unassigned') {
       return handleUnassigned({ ip, res, db });
     }

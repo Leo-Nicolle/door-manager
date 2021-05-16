@@ -13,6 +13,7 @@ import groupController from './groupController';
 import accessController from './accessController';
 import logController from './logController';
 import codeController from './codeController';
+import settingController from './settingController';
 
 passport.serializeUser((user, done) => {
   done(null, user.id);
@@ -67,6 +68,7 @@ groupController({ authMiddleware, app, db });
 accessController({ authMiddleware, app, db });
 logController({ authMiddleware, app });
 codeController({ authMiddleware, app, db });
+settingController({ authMiddleware, app });
 
 // mailController();
 if (require.main === module) {

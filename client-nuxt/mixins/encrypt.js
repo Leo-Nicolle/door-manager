@@ -1,6 +1,6 @@
 import quickEncrypt from "quick-encrypt";
-
 import Vue from 'vue'
+
 Vue.mixin({
   methods: {
     encrypt(toEncrypt = []) {

@@ -64,6 +64,10 @@ export default {
           to: "/door",
         },
         {
+          title: "Configuration",
+          to: "/settings",
+        },
+        {
           title: "Logs",
           to: "/log",
         },

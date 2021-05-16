@@ -17,11 +17,13 @@ export default {
 
   // Global CSS: https://go.nuxtjs.dev/config-css
   css: [
+    { src: '@creativebulma/bulma-divider/dist/bulma-divider.min.css', lang: 'css' }
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
     '~/plugins/axios',
+    {src: '~/plugins/vue-json-editor.js', ssr: false},
     '~/mixins/encrypt',
     '~/mixins/validation',
     '~/mixins/json-schema'

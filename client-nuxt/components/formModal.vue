@@ -93,14 +93,21 @@
         class="modal-card-foot is-full"
         style="justify-content: space-between"
       >
-        <b-button label="Annuler" type="is-danger" @click="$emit('close')" />
+        <b-button
+          v-if="buttons.find((b) => b === 'close')"
+          label="Annuler"
+          type="is-danger"
+          @click="$emit('close')"
+        />
         <b-button
           label="Suppirmer"
+          v-if="buttons.find((b) => b === 'remove')"
           @click="$emit('remove', item)"
           type="is-dark"
         />
         <b-button
           label="Valider"
+          v-if="buttons.find((b) => b === 'submit')"
           @click="$emit('submit', item)"
           type="is-primary"
         />
@@ -112,7 +119,16 @@
 <script>
 export default {
   name: "FormModal",
-  props: ["title", "item", "schema", "selectedData", "filteredData"],
+  props: {
+    title: String,
+    item: Object,
+    schema: Object,
+    filteredData: Array,
+    buttons: {
+      type: Array,
+      default: ["close", "remove", "submit"],
+    },
+  },
   data() {
     return {
       invalidFields: [],
