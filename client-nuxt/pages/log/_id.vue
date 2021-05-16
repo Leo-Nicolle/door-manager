@@ -1,11 +1,11 @@
 <template>
-    <item-view :route="route" :columns="columns" :selectable="false">
-    </item-view>
-  </section>
+  <div>
+    <table-view :columns="columns" :route="'/log'"  />
+  </div>
 </template>
 
 <script>
-import ItemView from "../../components/itemView.vue";
+import TableView from "../../components/tableView.vue";
 import dateformat from "dateformat";
 
 export default {
@@ -29,6 +29,18 @@ export default {
           label: "Porte",
           width: "40",
         },
+        {
+          field: "authorized",
+          format: (auth) =>
+            `<p  class="${auth ? 'has-text-success' : 'has-text-danger'}">${
+              auth ? "oui" : "non"
+            }</p>`,
+          sortable: true,
+          searchable: true,
+          centered: true,
+          label: "Autorisée",
+          width: "40",
+        },
       ];
     },
   },
@@ -46,7 +58,7 @@ export default {
     },
   },
   components: {
-    ItemView,
+    TableView,
   },
   mounted() {
     this.$axios.$get("/door").then((doors) => {

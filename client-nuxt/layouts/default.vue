@@ -34,15 +34,17 @@
         </nuxt-link>
       </div>
     </nav>
-
     <nuxt />
+    <door-assign v-if="loggedIn" :active="true" />
   </div>
 </template>
 
 <script>
+import doorAssign from '../components/doorAssign.vue';
 import loginout from "../mixins/loginout";
 
 export default {
+  components: { doorAssign },
   data() {
     return {
       loggedIn: false,

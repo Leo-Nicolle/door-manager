@@ -1,15 +1,16 @@
 <template>
   <section class="section">
     <section v-if="!item">
+      <slot name="buttons" />
       <b-button
         label="Nouveau"
         @click="$router.push(routeNew)"
         type="is-success"
         class="is-pulled-right"
       />
-      <table-view :columns="columns" :selectable="selectable" :route="route" />
+      <table-view :columns="columns" :route="route" />
     </section>
-    <slot v-else :item="item" />
+    <slot v-else name="default" :item="item" />
   </section>
 </template>
 
@@ -18,7 +19,7 @@ import tableView from './tableView'
 
 export default {
   name: "itemView",
-  props: ["route","columns","selectable"],
+  props: ["route","columns"],
   data() {
     return {
       item: null,

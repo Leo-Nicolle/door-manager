@@ -41,7 +41,7 @@
             type="password"
           />
         </b-field>
-          <tooltip-field
+        <tooltip-field
           label="Service"
           tooltip="Service associé à la boite mail (https://nodemailer.com/smtp/well-known/)"
         >
@@ -99,12 +99,23 @@
         </tooltip-field>
 
         <tooltip-field
+          label="Fréquence de Ping"
+          tooltip="Fréquence à laquelle les portes signalent au serveur qu'elles sont toujours en ligne.(en minutes)"
+        >
+          <b-numberinput
+            rounded
+            v-model="settings.doorDefaults.pingFrequency"
+            step="0.01"
+          />
+        </tooltip-field>
+
+        <tooltip-field
           label="Chemin vers le code"
           tooltip="Chemin (sur le serveur) vers la racine du dossier 'door-lock' contenant le code à transférer sur les portes "
         >
           <b-input rounded v-model="settings.doorLockPath" />
         </tooltip-field>
-         <tooltip-field
+        <tooltip-field
           label="Chemin vers le platformio"
           tooltip="Chemin (sur le serveur) vers l'executable de platformio."
         >
