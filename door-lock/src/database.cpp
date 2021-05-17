@@ -1,9 +1,11 @@
 #include "database.h"
 
-Database::Database(){
+Database::Database()
+{
 }
 
-void Database::readFiles(){
+void Database::readFiles()
+{
   if (SD.cardType() == CARD_NONE)
     return;
   // re-open the file for reading:
@@ -37,15 +39,16 @@ void Database::readFiles(){
   }
 }
 
-bool Database::authorize() {
-  if(WiFi.status() == WL_CONNECTED){
+bool Database::authorize()
+{
+  if (WiFi.status() == WL_CONNECTED)
+  {
     Serial.println("By wifi");
     return requestAccess(rfid);
   }
   Serial.println("By Card");
   return authorizeRFID(rfid);
 }
-
 
 bool Database::requestAccess(char *rfid)
 {
@@ -64,12 +67,14 @@ bool Database::requestAccess(char *rfid)
   {
     access = true;
   }
-  else if(httpResponseCode == 128){
+  else if (httpResponseCode == 128)
+  {
     // response is to assign ID to badge:
     shouldAssignAccess = true;
   }
   http.end();
-  if(shouldAssignAccess){
+  if (shouldAssignAccess)
+  {
     assignIdToBadge();
   }
   Serial.print("URL ");
@@ -77,14 +82,16 @@ bool Database::requestAccess(char *rfid)
 
   return access;
 }
-void Database::assignIdToBadge(){
+void Database::assignIdToBadge()
+{
   strcpy(url, baseUrl);
   strcat(url, "access/add-badge");
 
   int httpResponseCode = http.GET();
-  if (httpResponseCode == 200){
+  if (httpResponseCode == 200)
+  {
     strcpy(rfid, http.getString().c_str());
-    // TODO: write into RFID badge 
+    // TODO: write into RFID badge
   }
   http.end();
 }
@@ -113,7 +120,8 @@ void Database::downloadDatabase()
 {
   Serial.println("Download");
   Serial.print(SD.cardType() == CARD_NONE);
-  if (SD.cardType() == CARD_NONE) return;
+  if (SD.cardType() == CARD_NONE)
+    return;
   strcpy(url, baseUrl);
   strcat(url, "access/download/badge/");
   strcat(url, doorId);
@@ -133,7 +141,10 @@ void Database::downloadDatabase()
   http.begin(url);
   http.GET();
   file = SD.open(F("/schedule.json"), FILE_WRITE);
-  http.writeToStream(&file);
+  status = http.writeToStream(&file);
+  Serial.print("Downloaded schedules status ");
+  Serial.println(status);
+
   file << EOF;
   file.close();
   http.end();
@@ -144,7 +155,8 @@ int Database::compareHours(int hourA, int minA, int hourB, int minB)
   return hourA == hourB ? minA - minB : hourA - hourB;
 }
 
-bool Database::authorizeRFID(char *rfid){
+bool Database::authorizeRFID(char *rfid)
+{
   int badgeLength = strlen(rfid);
   if (!badgeLength)
     return false;
@@ -154,15 +166,18 @@ bool Database::authorizeRFID(char *rfid){
   file = SD.open(F("/badge.csv"), FILE_READ);
   bool lineFound;
   // finds the right line
-  while (file.available()){
+  while (file.available())
+  {
     lineFound = true;
     memset(fileLine, 0, sizeof(fileLine));
     file.readBytesUntil('\n', fileLine, 1024);
     if (strlen(fileLine) < badgeLength)
       continue;
     // checks if we are on the right line
-    for (int i = 0; i < badgeLength; i++){
-      if (fileLine[i] != rfid[i]){
+    for (int i = 0; i < badgeLength; i++)
+    {
+      if (fileLine[i] != rfid[i])
+      {
         lineFound = false;
         break;
       }
@@ -172,7 +187,8 @@ bool Database::authorizeRFID(char *rfid){
   }
   file.close();
   // we did not find the badge in the file
-  if(!lineFound) return false;
+  if (!lineFound)
+    return false;
 
   char *scheduleId = strchr(fileLine, ',') + 1;
   // read the schedule to authorize or not
@@ -186,19 +202,19 @@ bool Database::authorizeRFID(char *rfid){
   int hour = currentTime.tm_hour;
   int minute = currentTime.tm_min;
   JsonObject schedule = jsonBuffer[scheduleId]["days"][day];
-  if (schedule["allDay"]){
+  if (schedule["allDay"])
+  {
     authorize = true;
   }
   JsonArray intervals = schedule["intervals"];
-  for (JsonVariant interval : intervals){
+  for (JsonVariant interval : intervals)
+  {
     int startHour = interval["start"]["HH"].as<int>();
     int endHour = interval["end"]["HH"].as<int>();
     int startMinute = interval["start"]["mm"].as<int>();
     int endMinute = interval["end"]["mm"].as<int>();
 
-    authorize = authorize 
-      || (compareHours(startHour, startMinute, hour, minute) <= 0 
-      && compareHours(hour, minute, endHour, endMinute) <= 0);
+    authorize = authorize || (compareHours(startHour, startMinute, hour, minute) <= 0 && compareHours(hour, minute, endHour, endMinute) <= 0);
   }
   file.close();
   return authorize;
