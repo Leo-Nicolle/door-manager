@@ -132,14 +132,18 @@ export default function accessController({ app, db, authMiddleware }) {
       {},
     );
     if (type === 'badge') {
-      res.send(
-        Object.entries(schedulePerBadge).reduce(
-          (csv, [badgeId, scheduleId]) => (`${csv}${badgeId},${scheduleId}\n`),
-          '',
-        ),
+      const response = Object.entries(schedulePerBadge).reduce(
+        (csv, [badgeId, scheduleId]) => (`${csv}${badgeId},${scheduleId}\n`),
+        '',
+      );
+      console.log('Badge length', response.length);
+      return res.send(
+        response,
       );
     }
     if (type === 'schedule') {
+      console.log('schedule length', JSON.stringify(generatedSchedules).length);
+
       res.send(generatedSchedules);
     }
   });
