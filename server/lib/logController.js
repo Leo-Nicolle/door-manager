@@ -17,6 +17,20 @@ export default function logController({ app, authMiddleware }) {
     const logs = db.get('logs').value();
     res.send(logs);
   });
+  app.get('/log/before/:period', authMiddleware, (req, res) => {
+    const minDate = new Date();
+    if (req.params.period === 'month') {
+      minDate.setMonth(minDate.getMonth() - 1);
+    } else if (req.params.period === 'week') {
+      minDate.setDate(minDate.getDate() - 7);
+    } else {
+      minDate.setDate(minDate.getDate() - 1);
+    }
+    const logs = db.get('logs').value()
+      .filter(({ date }) => date > minDate);
+    res.send(logs);
+  });
+
   app.get('/log/:id', authMiddleware, (req, res) => {
     const log = db.get('logs').find({ id: req.params.id }).value();
     res.send(log);
