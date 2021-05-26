@@ -10,14 +10,13 @@
     @close="$emit('close')"
   >
     <template v-slot:schedules>
-      <p class="control margined">
-        <a class="button is-primary is-outlined" > Horraire: </a>
-      </p>
-      <p class="control margined">
+      <b-field grouped style="margin: 20px 0 85px 0">
+        <a class="is-primary"
+          style="margin-right: 10px;"
+        > Horraire: </a>
         <b-autocomplete
           rounded
           v-model="schedulePerDoor[doorIndex]"
-          style="margin-bottom: 85px; "
           :data="filteredSchedules"
           icon="clock-time-four-outline"
           placeholder="Choisir un horraire"
@@ -25,7 +24,7 @@
           @typing="getFilteredSchedules"
         >
         </b-autocomplete>
-      </p>
+      </b-field>
     </template>
   </form-modal>
 </template>
@@ -53,6 +52,7 @@ export default {
               type: `is-primary ${
                 i === this.doorIndex ? "is-light" : "is-dark"
               }`,
+              focused: i === this.doorIndex,
               click: () => (this.doorIndex = i),
             })),
           },
@@ -149,7 +149,6 @@ export default {
 </script>
 
 <style>
-
 .button-section {
   justify-content: space-between;
   display: flex;

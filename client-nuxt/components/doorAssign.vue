@@ -25,6 +25,7 @@
                 v-for="(door, i) in doors"
                 :key="i"
                 :type="`is-primary ${door === selectedDoor ? 'is-light' : ''}`"
+                :focused="door === selectedDoor"
                 @click="selectedDoor = selectedDoor !== door ? door : null"
               >
                 {{ door.name }}

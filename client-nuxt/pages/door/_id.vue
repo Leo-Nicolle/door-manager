@@ -1,6 +1,6 @@
 <template>
   <section>
-    <item-view :route="route" :columns="columns">
+    <item-view :route="route" :refreshFrequency="200" :columns="columns">
       <template v-slot:buttons>
         <b-button type="is-primary" @click="compile"> Compiler </b-button>
       </template>
@@ -22,32 +22,34 @@ export default {
     return {
       route: "/door",
       pingFrequency: 1,
+      cleaning: false,
       columns: [
         {
           field: "name",
-          searchable: true,
           label: "nom",
-          width: "40",
         },
         {
           field: "lastPing",
-          searchable: true,
           label: "Actif",
-          format: (e) => {
-            const online =  (Date.now() - e) / (1000 * 60) < this.pingFrequency + 0.1;
+          format: (date) => {
+            const online = this.isOnline(date)
             return `<p  class="${
               online ? "has-text-success" : "has-text-danger"
             }">${online ? "oui" : "non"}</p>`;
           },
-          centered: true,
-          width: "40",
+          customSearch: (door, query) => {
+            const isOnline = this.isOnline(door.lastPing)
+            return this.yesNo(query) ? isOnline : !isOnline;
+          },
         },
       ],
     };
   },
   methods: {
+    isOnline(date) {
+      return (Date.now() - date) / (1000 * 60) < this.pingFrequency + 0.1;
+    },
     compile() {
-      console.log("compile");
       this.$axios
         .$get("/code-compile")
         .then(() => {

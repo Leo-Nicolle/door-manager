@@ -20,9 +20,7 @@ export default {
       columns: [
         {
           field: "name",
-          searchable: true,
           label: "nom",
-          width: "40",
         },
       ],
     };

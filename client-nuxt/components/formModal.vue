@@ -7,7 +7,7 @@
         </p>
         <button type="button" class="delete" @click="$emit('close')" />
       </header>
-      <section class="modal-card-body">
+      <section class="modal-card-body" style="height: 100vh;">
         <div
           v-for="(field, i) in schema.fields"
           :key="i"
@@ -53,6 +53,7 @@
                 :key="j"
                 @click="b.click"
                 :type="b.type"
+                :focused="b.focused"
                 >{{ b.label }}</b-button
               >
             </section>

@@ -26,6 +26,8 @@ export default {
     {src: '~/plugins/vue-json-editor.js', ssr: false},
     '~/mixins/encrypt',
     '~/mixins/validation',
+    '~/mixins/string-dist',
+    '~/mixins/search',
     '~/mixins/json-schema'
   ],
 

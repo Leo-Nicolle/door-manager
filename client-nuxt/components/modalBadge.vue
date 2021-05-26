@@ -1,5 +1,5 @@
 <template>
-  <b-modal :width="640" :active="active" scroll="keep">
+  <b-modal :width="640" :active="active" style="z-index: 100;" scroll="keep">
     <div class="modal-card">
       <header class="modal-card-head">
         <p class="modal-card-title">Assigner un badge</p>

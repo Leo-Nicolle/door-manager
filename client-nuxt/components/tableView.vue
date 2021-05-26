@@ -5,10 +5,26 @@
       :striped="true"
       :hoverable="true"
       :paginated="true"
-      :data="transformedItems"
-      :columns="columns"
+      :data="items"
       @select="onSelect"
-    ></b-table>
+    >
+      <b-table-column
+        v-for="(c, i) in columns"
+        :key="i"
+        :field="c.field"
+        :label="c.label"
+        :width="c.width || 40"
+        :sortable="c.sortable === false ? false : true"
+        :centered ="c.centered === false ? false : true"
+        :searchable="c.searchable === false ? false : true"
+        :custom-search ="c.customSearch" 
+        v-slot="props"
+      >
+        <span
+          v-html="c.format ? c.format(props.row[c.field]) : props.row[c.field]"
+        ></span>
+      </b-table-column>
+    </b-table>
   </section>
 </template>
 
@@ -19,23 +35,16 @@ export default {
     route: { type: String },
     columns: { type: Array },
     selectable: { type: Boolean, default: () => true },
-  },
-  computed: {
-    transformedItems: function () {
-      const transform = this.columns.filter((c) => c.format);
-      return this.items.map((i) => {
-        const item = {...i}
-        transform.forEach(
-          ({ field, format }) => (item[field] = format(item[field]))
-        );
-        return item;
-      });
+    refreshFrequency: {
+      type: Number,
+      default: 0,
     },
   },
   data() {
     return {
       selectedItem: null,
       items: [],
+      refreshInterval: null,
     };
   },
   methods: {
@@ -44,22 +53,34 @@ export default {
       this.selectedItem = item;
       this.$router.push(`${this.route}/${item.id}`);
     },
+    fetch() {
+      this.$axios
+        .$get(`${this.route}`)
+        .then((items) => {
+          this.items = items;
+        })
+        .catch((error) => {
+          console.error("error", error);
+        });
+    },
   },
   mounted() {
-    this.$axios
-      .$get(`${this.route}`)
-      .then((items) => {
-        this.items = items;
-      })
-      .catch((error) => {
-        console.error("error", error);
-      });
+    if (this.refreshFrequency > 0) {
+      this.refreshInterval = setInterval(
+        () => this.fetch(),
+        this.refreshFrequency
+      );
+    }
+    this.fetch();
+  },
+  destroyed() {
+    clearInterval(this.refreshInterval);
   },
 };
 </script>
 
 <style>
-tbody> tr{
+tbody > tr {
   cursor: pointer;
 }
 </style>>

@@ -5,7 +5,7 @@
       role="navigation"
       aria-label="main navigation"
     >
-      <div class="navbar-brand">
+      <div class="navbar-brand" style="width:100%;">
         <nuxt-link class="navbar-item" to="/">
           <img
             src="~assets/passkey.png"
@@ -87,3 +87,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.nuxt-progress{
+  display: none;
+}
+</style>
