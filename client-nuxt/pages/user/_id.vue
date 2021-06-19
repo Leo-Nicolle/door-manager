@@ -30,7 +30,7 @@ export default {
           format: (badges) =>
             `<p  class="${
               badges.length ? "has-text-success" : "has-text-danger"
-            }">${badges.length ? badges.joint(" ") : "pas de badges"}</p>`,
+            }">${badges.length ? badges.join(" ") : "pas de badges"}</p>`,
         },
         {
           field: "isAdmin",

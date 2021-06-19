@@ -18,6 +18,7 @@
         :centered ="c.centered === false ? false : true"
         :searchable="c.searchable === false ? false : true"
         :custom-search ="c.customSearch" 
+        @filters-change="evt => console.log('change', evt)"
         v-slot="props"
       >
         <span

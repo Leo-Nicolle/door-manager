@@ -80,11 +80,22 @@ export default {
           field: "date",
           label: "Date",
           format: (date) => dateformat(date, "dd/mm/yy--HH:mm"),
+           customSearch: (log, query) => {
+             const date = dateformat(log.date, "dd/mm/yy--HH:mm");
+            return this.stringDist(date, query) 
+              <=
+              Math.abs(date.length - query.length);
+          }
         },
         {
           field: "door",
           label: "Porte",
           format: (id) => this.getDoorName(id),
+          customSearch: (log, query) => {
+            const name = this.getDoorName(log.door);
+            return this.stringDist(name, query) <=
+              Math.abs(name.length - query.length);
+          }
         },
         {
           field: "authorized",
