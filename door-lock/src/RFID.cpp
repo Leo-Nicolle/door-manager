@@ -51,6 +51,9 @@ void RFID::loop()
     Serial.println(database->rfid);
 
     database->rfid[mfrc522.uid.size] = 0;
-    database->authorize();
+    bool authorized = database->authorize();
+    Serial.print("Authorized: ");
+    Serial.println(authorized);
+
   };
 }

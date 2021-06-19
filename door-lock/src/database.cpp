@@ -99,7 +99,6 @@ void Database::assignIdToBadge()
 bool Database::setupDatabase()
 {
   return setupSD();
-  // return false;
 }
 
 bool Database::setupSD()
