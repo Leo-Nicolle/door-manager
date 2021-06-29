@@ -14,8 +14,9 @@ class Database {
   char url[512];
   char fileLine[1024];
   StaticJsonDocument<256> filter;
-  char rfid[512];
-
+  char rfid[128];
+  char newId[128];
+  
   Database();
   void readFiles();
   bool setupSD();

@@ -2,6 +2,7 @@
 
 Database::Database()
 {
+  newId[0] = 0;
 }
 
 void Database::readFiles()
@@ -56,6 +57,8 @@ bool Database::requestAccess(char *rfid)
   strcat(url, "access/");
   strcat(url, doorId);
   strcat(url, "/");
+  Serial.print("REQ RFID ");
+  Serial.println(rfid);
   strcat(url, rfid);
 
   http.begin(url);
@@ -67,7 +70,7 @@ bool Database::requestAccess(char *rfid)
   {
     access = true;
   }
-  else if (httpResponseCode == 128)
+  else if (httpResponseCode == 202)
   {
     // response is to assign ID to badge:
     shouldAssignAccess = true;
@@ -82,22 +85,27 @@ bool Database::requestAccess(char *rfid)
 
   return access;
 }
+
 void Database::assignIdToBadge()
 {
   strcpy(url, baseUrl);
-  strcat(url, "access/add-badge");
-
+  strcat(url, "badge/newid");
+  http.begin(url);
   int httpResponseCode = http.GET();
   if (httpResponseCode == 200)
   {
-    strcpy(rfid, http.getString().c_str());
-    // TODO: write into RFID badge
+    strcpy(newId, http.getString().c_str());
   }
+  Serial.print("RESPONSE CODE");
+  Serial.println(httpResponseCode);
+  Serial.print("newId ");
+  Serial.println(newId);
   http.end();
 }
 
 bool Database::setupDatabase()
 {
+  return true;
   return setupSD();
 }
 

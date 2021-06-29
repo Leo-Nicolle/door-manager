@@ -88,12 +88,14 @@ const state = {
   isAddingBadge: false,
   timeoutAddingBadge: null,
   lastUnknown: null,
+  newBadgeId: null,
   user: null,
 };
 function resetState() {
   state.isAddingBadge = false;
   state.lastUnknown = null;
   state.user = null;
+  state.newBadgeId = null;
   clearTimeout(state.timeoutAddingBadge);
 }
 export default function accessController({ app, db, authMiddleware }) {
@@ -132,14 +134,13 @@ export default function accessController({ app, db, authMiddleware }) {
       {},
     );
     if (type === 'badge') {
+      console.log('schedule', schedulePerBadge);
       const response = Object.entries(schedulePerBadge).reduce(
         (csv, [badgeId, scheduleId]) => (`${csv}${badgeId},${scheduleId}\n`),
         '',
       );
       console.log('Badge length', response.length);
-      return res.send(
-        response,
-      );
+      return res.send(response);
     }
     if (type === 'schedule') {
       console.log('schedule length', JSON.stringify(generatedSchedules).length);
@@ -152,6 +153,7 @@ export default function accessController({ app, db, authMiddleware }) {
     const { badgeId, doorId } = req.params;
     console.log('Access', doorId, badgeId);
     const { authorized, error } = authorizeAccess(doorId, badgeId, db);
+    console.log('authorize', doorId, badgeId, authorized, error);
     dbLogs.get('logs')
       .push({
         id: uuid(),
@@ -164,6 +166,7 @@ export default function accessController({ app, db, authMiddleware }) {
       .write();
     if (!authorized && error === 'unknown-badge' && state.isAddingBadge) {
       state.lastUnknown = badgeId;
+      state.newBadgeId = uuid().slice(0, 32);
       return res.sendStatus(202);
     }
 
@@ -199,7 +202,15 @@ export default function accessController({ app, db, authMiddleware }) {
       // if not adding badge, send timeout error
       return res.send(408);
     }
-    res.send(state.lastUnknown);
+    res.send(state.newBadgeId);
+  });
+
+  app.get('/badge/newid', (req, res) => {
+    if (!state.isAddingBadge || !state.newBadgeId) {
+      // if not adding badge, send timeout error
+      return res.send(408);
+    }
+    res.send(state.newBadgeId);
   });
 
   app.post('/badge/assign', authMiddleware, (req, res) => {
@@ -224,7 +235,7 @@ export default function accessController({ app, db, authMiddleware }) {
     }
     db.get('users').find({ id: user.id }).assign({
       ...user,
-      badges: user.badges.concat(state.lastUnknown),
+      badges: user.badges.concat(state.newBadgeId),
     }).write();
 
     resetState();

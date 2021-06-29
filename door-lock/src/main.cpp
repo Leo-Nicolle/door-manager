@@ -88,9 +88,9 @@ void setup()
   rfid.setup(&database);
   connectWifi();
   Serial.println("WIFI Conected");
-  ota.setup();
+  // ota.setup();
   Serial.println("OTA Initialized");
-  refreshSystem(true);
+  refreshSystem(false);
   Serial.println("Initialisation done.");
 }
 
@@ -104,5 +104,5 @@ void loop()
     rfid.loop();
     ping.loop();
   }
-  ota.loop();
+  // ota.loop();
 }
