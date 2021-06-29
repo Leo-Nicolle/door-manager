@@ -89,12 +89,14 @@ const state = {
   timeoutAddingBadge: null,
   lastUnknown: null,
   newBadgeId: null,
+  alreadyScannedNew: false,
   user: null,
 };
 function resetState() {
   state.isAddingBadge = false;
   state.lastUnknown = null;
   state.user = null;
+  state.alreadyScannedNew = false;
   state.newBadgeId = null;
   clearTimeout(state.timeoutAddingBadge);
 }
@@ -164,8 +166,11 @@ export default function accessController({ app, db, authMiddleware }) {
         error,
       })
       .write();
-    if (!authorized && error === 'unknown-badge' && state.isAddingBadge) {
+    if (!authorized && error === 'unknown-badge' && state.isAddingBadge && !state.alreadyScannedNew) {
+      // todo: stop the whole procedure when alreadyScannedNew is true
+      // (prevents from messing things up and assigning wrong things to a random badge)
       state.lastUnknown = badgeId;
+      state.alreadyScannedNew = true;
       state.newBadgeId = uuid().slice(0, 32);
       return res.sendStatus(202);
     }
