@@ -31,7 +31,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "quick-encrypt": "^1.0.8",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
